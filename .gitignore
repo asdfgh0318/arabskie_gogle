@@ -1,0 +1,6 @@
+*.bgcode
+*.gcode
+.pio/
+build/
+.venv/
+__pycache__/
