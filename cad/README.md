@@ -61,7 +61,7 @@ Z tych pomiarów wyjdzie `helm_z` i ewentualna przedłużka.
 
 ---
 
-## pod.scad — pod sterownika w lewej zatoce modułu VRx (v0.2, WERSJA ROBOCZA)
+## pod.scad — pod sterownika w lewej zatoce modułu VRx (v0.2.1, WERSJA ROBOCZA)
 
 Decyzja 2026-11-03: pod zastępuje drzwiczki lewej zatoki VRx (moduł RX wyjęty), obsługa **lewą ręką**, **cienkie
 rękawice**. Źródła: `research/07a` (wymiary części), `07b` (miejsce, obrys, pomiary P1–P9), `07c` (ergonomia,
@@ -79,6 +79,10 @@ wejścia z pomiaru są w bloku **P1** na początku pliku (`bay`, `bay_r`, `bay_o
 | `stl/pod_print_knob.stl` | wierzchem do stołu | gałka Ø20, otwór D + M3 dociskowa (nakrętka od spodu) |
 | `stl/pod_print_caps.stl` | wierzchem do stołu, 3 szt. | nakładka CAM; wybrać najlepszą |
 | `stl/pod_print_shims.stl` | płasko | podkładki B3S 0,2/0,4/0,6/0,8/1,0 |
+
+**v0.2.1 — odbicie lustrzane:** układ poda (x do przodu, y w górę, z na zewnątrz po lewej) jest lewoskrętny.
+Wszystkie pliki `print_*` są więc odbite w x, a dopiero włożony wydruk ma gałkę z przodu i wyjście przewodu z
+tyłu. Podgląd `assembly` w `pod.scad` pokazuje model nieodbity. W `scene_all.scad` pod siedzi na goglach poprawnie.
 
 **Sterowanie (v0.2):** enkoder (obrót = jasność/paleta, krótkie wciśnięcie = zmiana trybu, długie = NUC) + przycisk
 **CAM** (termo ↔ Infra). Przycisk AUX z v0.1 usunięty: nie dawał się wydrukować, nie miał skoku i leżał na drodze
@@ -119,3 +123,25 @@ Elektronika jeszcze niekupiona. Do zmierzenia na sztukach:
 - grubość PCB i wysokość elementów XIAO;
 - wysokość B3S;
 - tolerancja otworu D gałki (wydrukować próbkę).
+
+---
+
+## aibox_mount.scad — uchwyt AI Boxa na prawym boku (v0.1, PROPOZYCJA)
+AI Box ma 33,5×33,5×16,5 mm i otwory 25,5×25,5 (rysunek BZB). Stoi na prawym boku, przed gniazdem AV, bo:
+- tam są gniazdo AV i zasilania HDO2, więc przewody CVBS i zasilania są krótkie;
+- równoważy masę poda po lewej.
+
+Płytka 38×37 mm na taśmie VHB 5952, 4 dystanse M2 o wysokości 5 mm (miejsce na złącze kamer na spodzie boxa),
+szczeliny na opaskę przy przedniej krawędzi. Płytka zasłania drzwiczki Expansion Bay.
+
+Do sprawdzenia po dostawie:
+- długość przewodów kamera ↔ box (z przodu do prawego boku to ok. 80–100 mm);
+- położenie złącza kamer;
+- pomiar P3 (07b).
+
+## scene_all.scad — wszystko na HDO2 (podgląd)
+Gogle to bryła zastępcza z wymiarów (research/04, 06, 07b), nie model producenta. Pełnego modelu HDO2 nie znaleziono:
+na Printables są tylko akcesoria i przednie skorupy Walksnail/Dominator. Na GrabCAD jest model oryginalnego HDO, ale
+pobranie wymaga logowania, a autor pisze, że wymiary są niedokładne.
+
+Podgląd w przeglądarce: `cd cad/web && python3 -m http.server 8765`, potem http://127.0.0.1:8765/ (bez internetu).

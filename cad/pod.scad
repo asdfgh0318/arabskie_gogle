@@ -1,4 +1,4 @@
-// arabskie_gogle — POD STEROWNIKA w lewej zatoce modułu VRx HDO2 — v0.2 (WERSJA ROBOCZA)
+// arabskie_gogle — POD STEROWNIKA w lewej zatoce modułu VRx HDO2 — v0.2.1 (WERSJA ROBOCZA; wydruki odbite w x)
 // Źródła: research/07a (wymiary części), 07b (miejsce, obrys, pomiary P1–P9), 07c (ergonomia, sprężynka).
 // v0.2 = poprawki z przeglądu v0.1 (cad/README.md, sekcja Pod). Wymiary zatoki są ZASTĘPCZE → blok „P1” niżej.
 //
@@ -336,12 +336,19 @@ module assembly() {
 }
 
 // ================= DRUK =================
-module print_shell()   { translate([0, 0, body_top]) mirror([0, 0, 1]) shell(); }
-module print_chassis() { translate([0, 0, -(ch_top - ch_t)]) chassis(); }
-module print_knob()    { translate([0, 0, knob_h]) mirror([0, 0, 1]) knob(); }
+// UWAGA (v0.2.1): układ poda (x do przodu, y w górę, z na zewnątrz po LEWEJ) jest lewoskrętny. Model w tym
+// pliku to lustro rzeczywistej części, więc każdy wydruk odbijamy w x. Dopiero wtedy włożony pod ma gałkę
+// z przodu, a wyjście przewodu z tyłu, zgodnie z założeniem.
+module mx() { mirror([1, 0, 0]) children(); }
+module print_shell()   { mx() translate([0, 0, body_top]) mirror([0, 0, 1]) shell(); }
+module print_chassis() { mx() translate([0, 0, -(ch_top - ch_t)]) chassis(); }
+module print_knob()    { mx() translate([0, 0, knob_h]) mirror([0, 0, 1]) knob(); }
 module print_caps()    { for (i = [0 : 2]) translate([i*30 - 30, 0, cap_stop + cap_t]) mirror([0, 0, 1]) cap_cam(); }
 module print_shims()   { for (i = [1 : 5]) translate([(i - 3)*10, 0, 0]) shim(0.2*i); }
-module print_gauge()   { translate([0, 0, fl_t]) mirror([0, 0, 1]) gauge(); }
+module print_gauge()   { mx() translate([0, 0, fl_t]) mirror([0, 0, 1]) gauge(); }
+// pod w układzie gogli (x do przodu, y w lewo, z w górę; jak camera_mount.scad): odwzorowanie (x, y, z) → (x, z, y)
+// = odbicie, więc zgadza się z rzeczywistą, odbitą częścią
+module to_goggle() { multmatrix([[1,0,0,0],[0,0,1,0],[0,1,0,0],[0,0,0,1]]) children(); }
 
 if (part == "shell") shell();
 else if (part == "chassis") chassis();

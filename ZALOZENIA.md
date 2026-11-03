@@ -70,4 +70,5 @@ podawany do gogli, sterowanie kamerą (paleta, zoom, przełączanie kanałów, N
 | 2026-11-03 | Research 06: wentylator jest **na górze** gogli (nie z przodu) → adapter = płytka na 4 śrubach 20×20 + ramię do przodu, kamery wiszą przed przednią ścianą (`cad/`, v0.2) |
 | 2026-11-03 | **Pod sterownika w lewej zatoce modułu VRx** (zamiast drzwiczek, moduł RX wyjęty); obsługa **lewą ręką**, **cienkie rękawice** — research 07b/07c, `cad/pod.scad` v0.1 |
 | 2026-11-03 | **Gogle do kasku też przez gniazdo wentylatora, w tej samej części co kamera**: adapter ma z przodu przegub kamery, nad płytką 2 nogi GoPro do klamry na **podstawce VHB z przodu kasku** (`cad/camera_mount.scad` v0.4) |
+| 2026-11-03 | PROPOZYCJA (do akceptacji): **AI Box na prawym boku** przy gnieździe AV/zasilania, uchwyt na VHB (`cad/aibox_mount.scad`) |
 | 2026-11-03 | Pod v0.2: **enkoder + 1 przycisk CAM** (AUX usunięty po przeglądzie; PAL/BRT/NUC na obrocie i krótkim/długim wciśnięciu enkodera) — `cad/README.md` |
