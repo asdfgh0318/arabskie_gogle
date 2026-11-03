@@ -9,6 +9,9 @@ use <pod.scad>
 use <aibox_mount.scad>
 
 which = "all";
+// model GrabCAD (Aisak, oryginalne HDO, „wymiary niedokładne” wg autora) — plik lokalny, nie w repo (papers/ ignorowane)
+hdo_model = true;
+hdo_file = "../papers/hdo2_body_models/grabcad_fatshark-hdo-goggles-1/hdo_grabcad_goggle_frame.stl";
 tilt = 10;
 
 W = 169.2; D = 80; H = 45.5;      // HDO2 [V: instrukcja s.11]
@@ -16,8 +19,10 @@ front_x = 23.1;                   // środek wentylatora → przód (research/06
 corner_R = 58; corner_c = 27;     // research/07b §1.1
 eye_z = -23;                      // oś okularów (seat_above_eye, do pomiaru M5)
 side_y = W/2;
-pod_c  = [front_x - corner_R - 6, -H/2];      // środek poda na lewym boku (x, z) — zastępczo
-box_c  = [front_x - corner_R - 4, -H/2 + 1];  // środek AI boxa na prawym boku (x, z) — zastępczo
+// środki zatok wg modelu GrabCAD (bryły zatok: x −30,3…11,7, z −42,2…−4,2, bok y ≈ ±83)
+pod_c  = hdo_model ? [-9.3, -23.2] : [front_x - corner_R - 6, -H/2];
+box_c  = hdo_model ? [-9.3, -23.2] : [front_x - corner_R - 4, -H/2 + 1];
+side_m = hdo_model ? 83.0 : W/2;
 
 module hdo2_body() {
     color([0.18, 0.19, 0.21]) difference() {
@@ -49,20 +54,20 @@ function axis_z_() = (5.6 + 15.6)/2;
 function cage_axis_x_() = -(15.4 + 1.0) - 4.5 - 9.0;
 
 module pod_on_goggle() {
-    translate([pod_c[0], side_y, pod_c[1]]) to_goggle() {
+    translate([pod_c[0], side_m, pod_c[1]]) to_goggle() {
         shell(); chassis();
         translate([12.5, 0, 12 + 1.2]) knob();
         translate([-14.5, 1.2, 12]) cap_cam();
     }
 }
-module aibox_on_goggle() { translate([box_c[0], -side_y, box_c[1]]) to_goggle_right() { aibox_mount(); aibox_ghost(); } }
+module aibox_on_goggle() { translate([box_c[0], -side_m, box_c[1]]) to_goggle_right() { aibox_mount(); aibox_ghost(); } }
 
-if (which == "all" || which == "hdo2") hdo2_body();
+if (which == "all" || which == "hdo2") { if (hdo_model) color([0.18, 0.19, 0.21]) import(hdo_file); else hdo2_body(); }
 if (which == "all" || which == "camera") camera_stack();
 if (which == "all" || which == "pod") pod_on_goggle();
 if (which == "all" || which == "aibox") aibox_on_goggle();
 if (which == "adapter") adapter_top();
 if (which == "cage") translate([adapter_axis_x_(), 0, 0]) rotate([0, tilt, 0]) translate([-cage_axis_x_(), 0, -axis_z_()]) cage();
 if (which == "cams") translate([adapter_axis_x_(), 0, 0]) rotate([0, tilt, 0]) translate([-cage_axis_x_(), 0, -axis_z_()]) ghost_cams();
-if (which == "aibox_mount") translate([box_c[0], -side_y, box_c[1]]) to_goggle_right() aibox_mount();
-if (which == "aibox_box") translate([box_c[0], -side_y, box_c[1]]) to_goggle_right() aibox_ghost();
+if (which == "aibox_mount") translate([box_c[0], -side_m, box_c[1]]) to_goggle_right() aibox_mount();
+if (which == "aibox_box") translate([box_c[0], -side_m, box_c[1]]) to_goggle_right() aibox_ghost();
