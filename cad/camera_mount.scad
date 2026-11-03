@@ -1,5 +1,5 @@
 // arabskie_gogle — mocowanie kamer Caddx TR1-220SL na przód Fat Shark HDO2
-// v0.3 (2026-11-03) — WERSJA ROBOCZA po 2 przeglądach adwersarialnych + test kolizji (test/run_clash.sh). Wymiary kamer z rysunków sklepu BZB UAS,
+// v0.4 (2026-11-03): + przegub GoPro do podstawki VHB na kasku (helm_*). v0.3 — WERSJA ROBOCZA po 2 przeglądach adwersarialnych + test kolizji (test/run_clash.sh). Wymiary kamer z rysunków sklepu BZB UAS,
 // geometria HDO2 ze zdjęć/modeli społeczności (research/06) — NIC nie zmierzone na sprzęcie.
 //
 // Dwie części:
@@ -88,6 +88,14 @@ boss_len = 5.0;                            // występ na nakrętkę M5 po stroni
 boss_x0 = fuse_x + (fem_out - fuse_core/2) + boss_len + 0.5;  // występ zaczyna się przed bezpiecznikiem (nie mostkuje go)
 root_x1 = adapter_axis_x - gp_od/2 - 0.8;  // przód pełnego bloku (za tarczami męskimi)
 root_h = adapter_axis_z + gp_od/2 + 1.0;   // wysokość bloku nad blatem
+// ---------- przegub do kasku (decyzja 2026-11-03: gogle wiszą na podstawce GoPro VHB z przodu kasku) ----------
+// 2 nogi męskie (jak na kamerze GoPro) → wchodzą w klamrę 3-palcową na podstawce VHB kasku; oś M5 poprzeczna (y),
+// więc gogle obracają się w pionie (dopasowanie kąta, podniesienie gogli do góry). Obciążenie z kasku idzie
+// blokiem i płytką na 4 śruby wentylatora — NIE przez bezpiecznik kamery (fuse_x leży przed nim).
+helm_on = true;
+helm_x = -seat/2 + gp_od/2;                // oś nad płytką; tylna krawędź nóg = tył płytki (= stół przy druku)
+helm_z = root_h + gp_od/2 + 2.0;           // oś nad blatem: 2 mm luzu między klamrą a blokiem [A] → pomiar H1/H2
+helm_y = [-(gp_slit/2 + gp_leg/2), gp_slit/2 + gp_leg/2];
 
 // ======================================================================
 module rbox(p0, p1, r=1) {   // prostopadłościan z zaokrągleniem w XZ (oś y bez zaokrągleń)
@@ -194,6 +202,11 @@ module adapter_top() {
         translate([root_x1 - 6, yc - gp_leg/2, 0]) cube([6, gp_leg, root_h]);
         translate([adapter_axis_x, yc - gp_leg/2, adapter_axis_z]) rotate([-90,0,0]) cylinder(d=gp_od, h=gp_leg);
       }
+      // nogi męskie do kasku
+      if (helm_on) for (yc = helm_y) hull() {
+        translate([-seat/2, yc - gp_leg/2, root_h - 2]) cube([gp_od, gp_leg, 2]);
+        translate([helm_x, yc - gp_leg/2, helm_z]) rotate([-90,0,0]) cylinder(d=gp_od, h=gp_leg);
+      }
       // występ na nakrętkę M5 (+y), zrośnięty z blokiem
       hull() {
         translate([adapter_axis_x, fem_out - 0.01, adapter_axis_z]) rotate([-90,0,0]) cylinder(d=gp_od, h=boss_len);
@@ -209,6 +222,8 @@ module adapter_top() {
     }
     // otwór M5 (łezka: w druku tyłem w dół oś M5 jest pozioma, daszek do góry = +x)
     translate([adapter_axis_x, -20, adapter_axis_z]) rotate([-90,0,0]) rotate([0,0,180]) teardrop(gp_hole, 40);
+    // otwór M5 przegubu do kasku (łezka, daszek do +x = do góry w druku)
+    if (helm_on) translate([helm_x, -20, helm_z]) rotate([-90,0,0]) rotate([0,0,180]) teardrop(gp_hole, 40);
     // pułapka na nakrętkę M5 w występie: dno 0.6 mm → nakrętka dociska nogę żeńską, nie męską
     translate([adapter_axis_x, fem_out + 0.6, adapter_axis_z]) rotate([-90,0,0])
       cylinder(d=gp_nut_af/cos(30), h=boss_len + 1, $fn=6);      // wierzchołek do +x = do góry w druku

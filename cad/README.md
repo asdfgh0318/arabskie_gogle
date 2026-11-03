@@ -1,6 +1,6 @@
 # cad/ — części drukowane
 
-## camera_mount.scad — mocowanie kamer na HDO2 (v0.3, WERSJA ROBOCZA)
+## camera_mount.scad — mocowanie kamer i gogli do kasku na HDO2 (v0.4, WERSJA ROBOCZA)
 Po dwóch przeglądach adwersarialnych. **Nic nie zostało zmierzone na sprzęcie**: kamery z rysunków sklepu,
 HDO2 ze zdjęć i modeli społeczności (`research/06`). Gotowe STL (PETG, Prusa MK4, w orientacji do druku) w `stl/`.
 
@@ -8,7 +8,7 @@ HDO2 ze zdjęć i modeli społeczności (`research/06`). Gotowe STL (PETG, Prusa
 |---|---|---|
 | Próbka przegubu (drukować **najpierw**) | `stl/coupon.stl` | 3 pary 3.2/3.3/3.4; 4 obwody; para, która składa się ręką bez luzu → `gp_slit` |
 | Klatka na kamery | `stl/print_cage.stl` | przodem w dół, **bez brimu**, bez podpór, 4 obwody |
-| Adapter na gnieździe wentylatora | `stl/print_adapter.stl` | tyłem w dół (stoi, 54 mm), brim 5 mm (zewnętrzny), bez podpór, 4 obwody |
+| Adapter na gnieździe wentylatora (kamera z przodu + przegub do kasku nad płytką) | `stl/print_adapter.stl` | tyłem w dół (stoi, 54 mm), brim 5 mm (zewnętrzny), bez podpór, 4 obwody; ≈47 min, 6,7 g |
 
 ```
 openscad -D 'part="assembly"' -D tilt=10 camera_mount.scad   # podgląd; ECHO = wysokości obiektywów nad osią okularów
@@ -24,7 +24,12 @@ openscad -D 'part="assembly"' -D tilt=10 camera_mount.scad   # podgląd; ECHO = 
    w pułapce (+y). Dokręcaj **ręcznie** (≤0.3 N·m). **Przed zmianą pochylenia poluzuj M5.**
 4. Podziałka (−y): kreski 0/10/20°, nacięcia 5/15°, czytane grotem płetwy klatki. Zero i wysokości z ECHO są
    liczone względem blatu, dopóki nie zmierzysz `seat_pitch` (M4).
-5. Zbieżność: cel ciepły z 10 m, adapter przekręć w luzie otworów i dokręć; resztę → `th_yaw_trim` / `ir_yaw_trim`
+5. **Kask (v0.4):** na przodzie kasku przyklej podstawkę GoPro VHB, w nią klamrę 3-palcową. Wchodzi w dwie męskie
+   nogi na adapterze (oś M5 poprzeczna, nad płytką, `helm_x`/`helm_z`). Gogle wiszą na kasku i obracają się w
+   pionie na tym przegubie. Pasek gogli tylko dociska je do twarzy. Jeśli klamra nie sięga, wstaw przedłużkę GoPro.
+   Obciążenie z kasku idzie blokiem i płytką na 4 śruby wentylatora, **nie** przez bezpiecznik kamery.
+   Nogi drukują się na stole razem z resztą adaptera (tył płytki = stół).
+6. Zbieżność: cel ciepły z 10 m, adapter przekręć w luzie otworów i dokręć; resztę → `th_yaw_trim` / `ir_yaw_trim`
    (krok 0.25°, przedruk klatki).
 
 ### Bezpieczeństwo (kolejność zniszczenia)
@@ -41,6 +46,14 @@ Wartości wyliczone (PETG ~25 MPa międzywarstwowo), nie zmierzone.
 
 Przy `seat_above_eye` z zakresu 19–29 obie liczby przesuwają się o tyle samo → po pomiarze M5 ustaw
 `axis_rel_seat`, żeby wrócić do tabeli. Klatka **nie** jest gwarantowanie zgodna z fabryczną klamrą GoPro.
+
+**Do zmierzenia (kask, v0.4):**
+- **H1**: przy goglach założonych z kaskiem: odległość od środka gniazda wentylatora do miejsca na podstawkę VHB na
+  kasku (w przód/tył i w górę).
+- **H2**: którędy klamra wychodzi z podstawki (w dół czy do przodu).
+- **H3**: wysokość ramki twarzy tuż za gniazdem.
+
+Z tych pomiarów wyjdzie `helm_z` i ewentualna przedłużka.
 
 **Do zmierzenia** (research/06 §3): M1 śruba, M2 pod wentylatorem (`post_relief`), M4 pochylenie blatu
 (`seat_pitch`), **M5 wysokość blatu nad osią okularów** (`seat_above_eye`), M6 środek wentylatora → przód
