@@ -7,9 +7,9 @@
 |---|---|---|
 | Gogle | **Zakładamy Fat Shark Dominator HDO2** (1280×960 OLED, FOV 46°, AV + HDMI) — decyzja Adama 2026-11-03 | posiadane |
 | Kamera | Caddx TR1-220SL Dual ([BZB UAS](https://www.bzbuas.com/pl/shop/tr1-220sl-kamera-termowizyjna-caddx-tr1-220sl-dual-3230)) | posiadana |
-| Kask | Protec — model do uzupełnienia | posiadany |
+| Kask | Protec — model nieistotny (mocowanie przez GoPro VHB) | posiadany |
 | Mocowania | GoPro VHB (płaskie/zakrzywione?) | posiadane |
-| Sterownik | ESP32 / Seeed XIAO (ESP32-C3/S3?) | do wyboru |
+| Sterownik | ESP32 / Seeed XIAO (ESP32-C3/S3?) | do wyboru, brak |
 
 ### 1a. Caddx TR1-220SL Dual — dane ze strony sklepu (nie z instrukcji producenta)
 - Wyjście: analog CVBS, **PAL**; średnie opóźnienie 20 ms (wg sklepu)
@@ -36,13 +36,13 @@ podawany do gogli, sterowanie kamerą (paleta, zoom, przełączanie kanałów, N
 - [x] Scenariusz użycia: **chodzenie w nocy / teren** (2026-11-03)
 - [x] **Pełne zasłonięcie** w goglach — akceptowane (2026-11-03)
 - [x] Wyjście wideo: analog CVBS PAL
-- [ ] Sterowanie kamery: co robi kabel GPIO, czy jest UART/OSD menu
+- [ ] Sterowanie kamery: co robi kabel GPIO, czy jest UART/OSD menu — pomiary dopiero po dostawie elektroniki
 - [ ] Zasilanie: napięcie kamery, gogli, z czego (wspólna bateria?)
 - [ ] Pozycja kamery: oś oczu (paralaksa ~0) vs czoło vs szczyt kasku
 - [ ] Waga i środek ciężkości na kasku, przeciwwaga z tyłu?
 - [x] Przyciski: **na goglach, kompaktowo** (2026-11-03); liczba — zależy od interfejsu kamery
 - [x] Elementy drukowane: **kompaktowe**
-- [ ] Model kasku Protec (krzywizna pod VHB, daszek)
+- [x] Model kasku — nieistotny (2026-11-03)
 - [ ] Zakres zasilania HDO2 → jedna bateria dla gogli i kamery?
 
 ## 4. Decyzje
