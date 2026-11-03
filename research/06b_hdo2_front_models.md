@@ -26,8 +26,8 @@ Evidence tags: **[STL]** = my measurement of a downloaded mesh (plane slices + c
 | 6 | Floor thickness under the stock cover (adds to the screw stack) | 0.7–1.3 mm | high (as modelled) | [STL] |
 | 7 | Mating face of every part | **flat (planar)**, no curvature, no locating pins on the underside | high (as modelled) | [STL] |
 | 8 | Hinge axis of existing forward mounts | **24.5 / 26.0 / 28.3 mm** ahead of the fan centre, **3.6–4.0 mm** above the seat, pin Ø3.0 | high (as modelled) | [STL] 279676, 370383, 1073216 |
-| 9 | Fan centre to the front silhouette of the shell (plan view) | **≈24 mm ± 2 mm** | medium | [img] manual p.5 |
-| 10 | The fan seat plane is tilted down toward the front | ≈18–28° (very rough) | **low** | [img] manual p.5 (foreshortened hole pitch) |
+| 9 | Fan centre to the front silhouette of the shell (plan view) | **≈23 mm ± 1.5 mm** (corrected 2026-11-03 by the 06 check; was 24.4: the two front screw heads had been mis-picked) | medium | [img] manual p.5 |
+| 10 | ~~The fan seat plane is tilted down toward the front, ≈18–28°~~ **RETRACTED** (06 check): re-picked screw heads give a square pattern, 115.6 × 115.0 px, so no foreshortening is visible. Tilt is unknown and must be measured | — | none | [img] manual p.5, re-measured in `papers/models_hdo2_measure/manual_p5_topview_300dpi_06recheck.png` |
 | 11 | Posts on the goggle at the 4 screw positions | fit inside Ø3.5 mm blind holes 2.75 mm deep | low–medium (one model, goggle model not named) | [STL] + [desc] 570569 |
 | 12 | Stock screws | **size not found.** "fewer threads holding it down" when a 5 mm plate is stacked under the stock cover; "Longer screws is fine" | screw size: none | [desc] 1179662 |
 | 13 | How far the fan or boss stands proud of the shell | **not measurable from any download** | none | — |
@@ -37,7 +37,7 @@ on a 20 × 20 mm square, sized to the 25 mm footprint (or a cup that clears 25.5
 25–30 mm from the fan centre to clear the front edge. The existing designs put their hinge at 24.5–28.3 mm.
 Expect to need **longer screws than stock**, and **close the Ø23–24 mm hole**: with the fan gone, an open hole
 into the headset lets in dust and probably light. Leave tilt and pocket depth as parameters until Adam has
-measured the goggles (section 6).
+measured the goggles (section 6). *(06 check: the tilt estimate in row 10 is retracted; the fan-to-front distance is ≈23 mm, not 24.)*
 
 ---
 
@@ -59,7 +59,7 @@ measured the goggles (section 6).
 - The same 25 mm cover and 4-screw pattern also appear on a black Dominator V2/V3 faceplate (96977 photos) and a
   white **HD3** (472353 img1). The fan place is common across the Dominator line. Exception: #182674 (Dominator V2
   vertical fan mount) uses a different pattern (below).
-- **Consequence [inf]:** a camera mounted at the fan sits **on top of the shell, about 24 mm behind the front
+- **Consequence [inf]:** a camera mounted at the fan sits **on top of the shell, about 23 mm behind the front
   silhouette**. To look forward past the goggle front, it needs a forward arm, as every antenna/VRx mount here
   has, or it must sit high enough to see over the front edge.
 
@@ -149,7 +149,7 @@ surround at the foam, visible in 21866 img1) leaves no room for a wall.
 | PyroPatch 1179662 | "M2x25mm bolt and nut" [desc] | fan-mount part not in the files | — | — |
 
 [inf] Three makers each put the pivot between **24.5 and 28.3 mm** ahead of the fan centre. With the front
-silhouette at about 24 mm (section 4), that places the pivot just at, or a few mm beyond, the front edge in
+silhouette at about 23 mm (section 4), that places the pivot just at, or a few mm beyond, the front edge in
 plan. None of the hinges is the GoPro standard (Ø5 / M5). All use a Ø3 pin, or M2 in PyroPatch.
 
 ### 3.4 Covers (height budget)
@@ -174,16 +174,22 @@ Source: `papers/FatShark_HDO2_Manual_RevC.pdf` p.5, rendered at 300 dpi; annotat
 - **Scale reference:** shell width 169.2 mm [V p.11] = left edge x = 386 to right edge x = 1329 at row y = 560
   → 943 px → **5.573 px/mm**. Check: the rear edge (y = 375–383) to the front silhouette (y = 820) is 437–445 px
   = 78.4–79.8 mm, against the 80 mm spec [V p.11]. The view is close to orthographic, so the scale holds to about 2%.
-- **Screw heads** (centres picked from dark blobs, ±4 px): TL (791, 633), TR (903, 633), BL (791, 735),
-  BR (903, 735).
-  - Left-to-right pitch 112 px = **20.1 mm** (±1.0). This **confirms the 20 mm pattern on the HDO2 itself.**
-  - Front-to-back pitch 102 px = 18.3 mm (±1.0). It is shorter than the true 20 mm, so the cover plane is
-    foreshortened, i.e. **tilted down toward the front by roughly arccos(18.3/20) ≈ 24° (range ≈ 18–28°)**.
-    Confidence is **low**: the shell photo may not be exactly top-down at that spot. Supporting hint: 1073216's
-    author says his design keeps the VRx "più parallela alla parte anteriore dei googles" ("more parallel to the
-    front of the goggles") [desc]. That implies the seat is not square to the front face.
-- **Fan (pattern) centre** (847, 684) to the front silhouette (853, 820): 136 px = **24.4 mm ± 2 mm** in plan.
-  The centre is 1.9 mm left of the shell mid-line (857.5), which is inside the uncertainty, so: centred.
+- **Screw heads.** *Corrected 2026-11-03 by the reconciliation check (`06_hdo2_front_and_gopro.md`, Verification).*
+  The original picks were TL (791, 633), TR (903, 633), BL (791, 735), BR (903, 735). The two front (lower)
+  heads were mis-picked about 13 px too high. Re-picked on a 4× crop of the same 300 dpi render, ±1.5 px:
+  TL (793.8, 632.5), TR (909.5, 633.3), BL (793.0, 748.0), BR (909.0, 747.5).
+  - Left-to-right pitch 115.6 px = **20.8 mm**. Front-to-back pitch 115.0 px = **20.7 mm**. The pattern is
+    square to within ±2 % (ratio 0.995 ± 0.025). The extracted image `papers/hdo2_front_img/manual/img-001.png`
+    gives the same result: 176.7 × 177.7 px (06a).
+  - **There is no foreshortening, so the photo gives no evidence of tilt.** The earlier "≈24° (18–28°) tilted
+    down toward the front" came only from the mis-picked heads and is **retracted**. The photo only bounds the
+    tilt of the cover top relative to the camera's line of sight, to about ≤14°, and that line of sight is
+    itself unknown. **Seat tilt: unknown. Measure it.**
+  - The 1073216 author's remark ("più parallela alla parte anteriore dei googles") is still a hint that the seat
+    is not exactly square to the front face. It gives no magnitude.
+- **Fan (pattern) centre** (851.6, 690.3) to the front silhouette (y = 819 at x = 850–865): 128.7 px =
+  **23.1 mm ± 1.5 mm** in plan, using 5.56–5.57 px/mm. 06a gets 23.1 mm independently from `img-001.png`. The
+  centre is 1.2 mm left of the shell mid-line (858), inside the uncertainty, so: centred.
 - **Not measurable here:** the height of the fan/cover above the shell, the depth of the recess around it, and the
   surface curvature around the seat.
 - **Stock screw head (attempt, low confidence):** in 21866 img1 (HDO), using the 20 mm screw pitch as scale
@@ -213,7 +219,7 @@ Source: `papers/FatShark_HDO2_Manual_RevC.pdf` p.5, rendered at 300 dpi; annotat
    the seat (compare with the 570569 posts ≤ Ø3.5 × 2.75).
 3. Fan: outer size (expect 25), thickness, connector type.
 4. Seat plane: its tilt to the front face (a phone inclinometer on a flat card), and the distance from the fan
-   centre to the front edge (expect ≈24).
+   centre to the front edge (expect ≈23).
 5. Space on the face side of the seat (why every cup is open there).
 6. Test fit: print `papers/models_hdo2/262727…/fan.stl` or `96977` (1–2 min prints) to confirm the 20 × 20 / Ø2
    pattern before designing.

@@ -67,3 +67,4 @@ podawany do gogli, sterowanie kamerą (paleta, zoom, przełączanie kanałów, N
 | 2026-11-03 | Przyciski na goglach, kompaktowo; druki kompaktowe |
 | 2026-11-03 | Repo publiczne: github.com/asdfgh0318/arabskie_gogle |
 | 2026-11-03 | **Wentylator HDO2 usunięty** — mocowanie kamer wchodzi na jego miejsce (gogle nie będą szczelne do twarzy, wentylacja zbędna) |
+| 2026-11-03 | Research 06: wentylator jest **na górze** gogli (nie z przodu) → adapter = płytka na 4 śrubach 20×20 + ramię do przodu, kamery wiszą przed przednią ścianą (`cad/`, v0.2) |

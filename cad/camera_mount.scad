@@ -3,17 +3,18 @@
 //
 // Dwie części:
 //   1) cage       — klatka: termo (dół, oś na wysokości oczu) + Infra (nad nią), z tyłu 2 palce GoPro (męskie)
-//   2) adapter_fan — ramka nasuwana na wentylator 25x25 z przodu HDO2 (śruby 20x20), z 3 palcami GoPro (żeńskie)
+//   2) adapter_top — płytka w miejscu usuniętego wentylatora NA GÓRZE HDO2 (śruby 20x20), ramię do przodu
+//                    nad krawędź, 3 palce GoPro (żeńskie) tuż przed przednią ścianą
 //   Klatka pasuje też do każdej klamry GoPro na podstawce VHB (standard GoPro).
-// Pochylenie (0–20° w dół) = przegub GoPro na śrubie M5 (tarcie). Odchylenie (yaw) ustala ramka
-// nasunięta na obudowę wentylatora — bez kleju, powtarzalnie.
+// Pochylenie (0–20° w dół) = przegub GoPro na śrubie M5 (tarcie), podziałka co 5°. Odchylenie (yaw)
+// ustalają 4 śruby wentylatora (20x20) — bez kleju, powtarzalnie; Infra względem termo: ir_yaw_trim.
 //
 // Układ: x = do przodu (oś optyczna), y = w lewo, z = do góry.
 // Klatka: początek = środek przedniej ściany korpusu kamery termo (oś optyczna termo).
-// Adapter: początek = środek wentylatora, x=0 = przednia płaszczyzna wentylatora.
+// Adapter: początek = środek wzoru śrub wentylatora, z=0 = blat skorupy (gniazdo wentylatora).
 //
 // Użycie:  openscad -D 'part="cage"' -o cage.stl camera_mount.scad
-//          part = "cage" | "adapter_fan" | "assembly" | "print_cage" | "print_adapter"
+//          part = "cage" | "adapter_top" | "assembly" | "print_cage" | "print_adapter" | "coupon"
 
 part = "assembly";
 tilt = 10;              // [deg] pochylenie kamer w dół (tylko podgląd assembly)
@@ -59,15 +60,25 @@ axis_back = 9.0;                           // odległość osi przegubu za belk�
 cage_bar_x0 = cage_x0 - bar_t;
 cage_axis_x = cage_bar_x0 - axis_back;     // oś przegubu we współrz. klatki
 
-// ---------- wentylator HDO2 (z Printables #262727, zmierzone ze STL: otwór 25.2, otwory Ø2 w 20x20) ----------
-fan_size = 25.2;     // kieszeń na obudowę wentylatora
-fan_hole = 20;       // rozstaw śrub
-fan_wall = 2.0;
-fan_wall_depth = 5;  // [A] jak daleko ramka schodzi w stronę skorupy gogli (#262727 ma 6)
-fan_plate = 2.0;     // płytka z uszami na przedniej ścianie wentylatora
-thermal_z_rel_fan = 0;  // [A] oś termo względem środka wentylatora (ustawić po pomiarze wysokości oczu!)
-adapter_axis_x = fan_plate + 9.5;          // oś przegubu przed wentylatorem
-adapter_axis_z = thermal_z_rel_fan + axis_z;
+// ---------- gniazdo wentylatora HDO2 — NA GÓRZE gogli (research/06, wentylator usunięty) ----------
+// Układ adaptera: początek = środek wzoru śrub wentylatora na płaszczyźnie gniazda (z=0 = blat skorupy),
+// x = do przodu, z = do góry. [A] = oszacowanie ze zdjęć/modeli społeczności, do zmierzenia (research/06 §3).
+seat = 25.0;              // płytka 25x25 = obrys wentylatora (A4); z tyłu przylega do ramki twarzy (A5)
+fan_hole = 20;            // rozstaw śrub 20x20 (A1, pewne)
+plate_t = 3.0;            // płytka zamyka otwór Ø23–24 → szczelna na światło (A6)
+post_relief = 0;          // [A] (A7) kieszenie Ø4 x post_relief od spodu na ewentualne słupki pod śrubami (0 = brak)
+screw_cb_d = 4.2;         // pogłębienie pod łeb śruby wentylatora (łeb ≈3 mm, A2)
+screw_cb_h = 1.0;
+front_x = 23.1;           // [A] środek wentylatora → przednia ściana gogli (A10, ±1.5)
+seat_above_eye = 23;      // [A] blat nad osią okularów (C3: 19–29!) — KLUCZOWY POMIAR M5
+axis_rel_seat = 0;        // wysokość osi przegubu nad blatem; 0 → termo ≈ +12.4 mm nad oczami przy tilt=0
+adapter_axis_x = front_x + gp_od/2 + 1.5;  // oś przegubu tuż przed przednią ścianą (tarcze nie trą o gogle)
+adapter_axis_z = axis_rel_seat;
+fem_y = [-(gp_leg + gp_slit), 0, (gp_leg + gp_slit)];
+fem_out = 1.5*gp_leg + gp_slit;            // zewnętrzna ściana nóg żeńskich (7.8)
+boss_len = 5.0;                            // występ na nakrętkę M5 po stronie +y (przegląd mech-3)
+root_x1 = adapter_axis_x - gp_od/2 - 0.8;  // przód pełnego bloku (za tarczami męskimi)
+root_h = adapter_axis_z + gp_od/2 + 1.0;   // wysokość bloku nad blatem
 
 // ======================================================================
 module rbox(p0, p1, r=1) {   // prostopadłościan z zaokrągleniem w XZ (oś y bez zaokrągleń)
@@ -156,44 +167,39 @@ module teardrop(d, h) {    // otwór z daszkiem 45° (w kierunku -x lokalnie = d
   rotate([0,0,180]) linear_extrude(h) polygon([[0, d/2/sqrt(2)], [d/2*sqrt(2), 0], [0, -d/2/sqrt(2)]]);
 }
 
-// ---------------- ADAPTER NA WENTYLATOR ----------------
-module adapter_fan() {
-  fo = fan_size/2 + fan_wall;               // zewnętrzna połowa ramki
-  fem_y = [-(gp_leg + gp_slit), 0, (gp_leg + gp_slit)];
+// ---------------- ADAPTER NA GNIEŹDZIE WENTYLATORA (góra gogli) ----------------
+module adapter_top() {
   difference() {
     union() {
-      // tuleja wokół obudowy wentylatora (w stronę skorupy gogli: x<0)
-      translate([-fan_wall_depth, -fo, -fo]) cube([fan_wall_depth + fan_plate, 2*fo, 2*fo]);
-      // nogi żeńskie (3) — podstawa na górnej części ramki
+      // płytka 25x25 na 4 śrubach wentylatora, pełna (zamyka otwór)
+      translate([-seat/2, -seat/2, 0]) cube([seat, seat, plate_t]);
+      // pełny blok-nasada od tyłu płytki do przegubu (przegląd mech-1: żadnej cienkiej szyjki)
+      rbox([-seat/2, -fem_out, 0], [root_x1, fem_out, root_h], r=1.5);
+      // nogi żeńskie (3)
       for (yc = fem_y) hull() {
-        translate([0, yc - gp_leg/2, fo - 6]) cube([fan_plate, gp_leg, 6]);
+        translate([root_x1 - 6, yc - gp_leg/2, 0]) cube([6, gp_leg, root_h]);
         translate([adapter_axis_x, yc - gp_leg/2, adapter_axis_z]) rotate([-90,0,0]) cylinder(d=gp_od, h=gp_leg);
       }
-      // żebro usztywniające pod nogami
+      // występ na nakrętkę M5 (+y), zrośnięty z blokiem
       hull() {
-        translate([0, -(1.5*gp_leg + gp_slit), fo - 2]) cube([fan_plate, 3*gp_leg + 2*gp_slit, 2]);
-        translate([adapter_axis_x - gp_od/2 + 1, -(1.5*gp_leg + gp_slit), adapter_axis_z + gp_od/2 - 3])
-          cube([1, 3*gp_leg + 2*gp_slit, 1]);
+        translate([adapter_axis_x, fem_out - 0.01, adapter_axis_z]) rotate([-90,0,0]) cylinder(d=gp_od, h=boss_len);
+        translate([fan_hole/2 + screw_cb_d/2 + 1.5, fem_out - 0.01, 0]) cube([root_x1 - fan_hole/2 - screw_cb_d/2 - 1.5, boss_len, root_h]);
       }
     }
-    // kieszeń na wentylator (przelotowa, z uszami na śruby w narożnikach)
-    difference() {
-      translate([-fan_wall_depth - 1, -fan_size/2, -fan_size/2]) cube([fan_wall_depth + 1 + fan_plate + 1, fan_size, fan_size]);
-      // uszy (płytka przednia) w 4 narożnikach — 2D w płaszczyźnie (y,z), wyciągnięte wzdłuż x
-      rotate([90,0,90]) linear_extrude(fan_plate) for (sy=[-1,1], sz=[-1,1]) hull() {
-        translate([sy*fan_hole/2, sz*fan_hole/2]) circle(d=5);
-        translate([sy*fan_size/2, sz*fan_size/2]) square(2, center=true);
-      }
+    // otwory na śruby wentylatora + pogłębienia pod łby
+    for (sx=[-1,1], sy=[-1,1]) translate([sx*fan_hole/2, sy*fan_hole/2, -1]) {
+      cylinder(d=m2_d, h=root_h + 2);
+      translate([0,0,1 + plate_t - screw_cb_h]) cylinder(d=screw_cb_d, h=root_h + 2);
+      if (post_relief > 0) cylinder(d=4.0, h=1 + post_relief);
     }
-    // otwory M2 (śruby wentylatora, dłuższe o grubość płytki)
-    for (sy=[-1,1], sz=[-1,1]) translate([-1, sy*fan_hole/2, sz*fan_hole/2]) rotate([0,90,0]) cylinder(d=m2_d, h=fan_plate+2);
-    // szczeliny między nogami (żeby nogi były rozdzielone także w hull żebra)
-    for (yc = [-(gp_leg/2 + gp_slit/2), (gp_leg/2 + gp_slit/2)])
-      translate([fan_plate, yc - gp_slit/2, fo - 8]) cube([adapter_axis_x + gp_od, gp_slit, 40]);
-    // M5 + pułapka na nakrętkę (strona +y)
-    translate([adapter_axis_x, -20, adapter_axis_z]) rotate([-90,0,0]) cylinder(d=gp_hole, h=40);
-    translate([adapter_axis_x, 1.5*gp_leg + gp_slit - gp_nut_h + 1.2, adapter_axis_z]) rotate([-90,0,0])
-      rotate([0,0,30]) cylinder(d=gp_nut_af/cos(30), h=10, $fn=6);
+    // otwór M5 (łezka: w druku tyłem w dół oś M5 jest pozioma, daszek do góry = +x)
+    translate([adapter_axis_x, -20, adapter_axis_z]) rotate([-90,0,0]) rotate([0,0,180]) teardrop(gp_hole, 40);
+    // pułapka na nakrętkę M5 w występie: dno 0.6 mm → nakrętka dociska nogę żeńską, nie męską
+    translate([adapter_axis_x, fem_out + 0.6, adapter_axis_z]) rotate([-90,0,0]) rotate([0,0,30])
+      cylinder(d=gp_nut_af/cos(30), h=boss_len + 1, $fn=6);
+    // podziałka pochylenia 0/5/10/15/20° na zewnętrznej ścianie -y (czytana płetwą klatki)
+    for (t=[0:5:20]) translate([adapter_axis_x, -fem_out - 0.01, adapter_axis_z]) rotate([0, t, 0])
+      translate([5.6, -0.01, -0.25]) cube([t % 10 == 0 ? 1.9 : 1.2, 0.41, 0.5]);
   }
 }
 
@@ -208,14 +214,19 @@ module fov_thermal(len=60) {   // 50° H x 37.2° V
     translate([len, 0, 0]) cube([0.1, 2*len*tan(25), 2*len*tan(18.6)], center=true);
   }
 }
-module hdo2_ghost() {          // [A] gogle jako prostopadłościan 169.2 x 80 x 45.5, wentylator na środku przodu
-  color("black", 0.25) translate([-45.5 - fan_wall_depth, -169.2/2, -40]) cube([45.5, 169.2, 80]);
-  color("red", 0.3) translate([-fan_wall_depth, -12.5, -12.5]) cube([fan_wall_depth, 25, 25]);
+module hdo2_ghost() {          // [A] gogle jako bryła: przód na x=front_x, blat na z=0, oś okularów na z=-seat_above_eye
+  color("black", 0.25) translate([front_x - 80, -169.2/2, -45.5]) cube([80, 169.2, 45.5]);
+  color("red", 0.6) for (s=[-1,1]) translate([front_x - 30, s*30, -seat_above_eye]) rotate([0,90,0]) cylinder(d=6, h=30.2);
 }
 
+// wysokość środka przedniej soczewki termo / Infra nad osią okularów dla danego pochylenia
+function lens_z(t, xl, zl) = adapter_axis_z + seat_above_eye
+   + (-(xl - cage_axis_x) * sin(t) + (zl - axis_z) * cos(t));
+for (t=[0,10,20]) echo(str("tilt ", t, "°: termo ", lens_z(t, th_lens_len, 0), " mm, Infra ",
+   lens_z(t, ir_lens_len, ir_z), " mm nad osią okularów (cel 0…+35)"));
 module assembly() {
   hdo2_ghost();
-  color("steelblue") adapter_fan();
+  color("steelblue") adapter_top();
   // klatka: oś przegubu klatki pokrywa się z osią adaptera, obrót o tilt w dół
   translate([adapter_axis_x, 0, adapter_axis_z]) rotate([0, tilt, 0])
     translate([-cage_axis_x, 0, -axis_z]) {
@@ -225,15 +236,41 @@ module assembly() {
     }
 }
 
+// ---------------- PRÓBKA dopasowania przegubu (drukować najpierw, research/06 M8) ----------------
+// 5 bloków żeńskich (szczeliny 3.1…3.5, liczba wybita na podstawie) + 1 męski (noga 3.0, szczelina = gp_slit).
+// Druk jak części: nogi pionowo (płetwy), oś M5 pozioma. Wybierz szczelinę, która wchodzi ręką bez luzu.
+module coupon_leg_set(ys, base_w) {
+  translate([-9, -base_w/2, 0]) cube([18, base_w, 3]);
+  for (yc = ys) hull() {
+    translate([-6, yc - gp_leg/2, 0]) cube([12, gp_leg, 3]);
+    translate([0, yc - gp_leg/2, 13]) rotate([-90,0,0]) cylinder(d=gp_od, h=gp_leg);
+  }
+}
+module coupon() {
+  slits = [3.1, 3.2, 3.3, 3.4, 3.5];
+  for (i=[0:len(slits)-1]) translate([0, i*24, 0]) difference() {
+    g = slits[i];
+    coupon_leg_set([-(gp_leg+g), 0, gp_leg+g], 3*gp_leg + 2*g + 4);
+    translate([0, -20, 13]) rotate([-90,0,0]) rotate([0,0,90]) teardrop(gp_hole, 40);
+    translate([7.6, 0, 2.5]) linear_extrude(1) rotate([0,0,90]) text(str(g), size=2.2, halign="center", valign="center");
+  }
+  translate([0, -26, 0]) difference() {
+    coupon_leg_set([-(gp_slit/2 + gp_leg/2), gp_slit/2 + gp_leg/2], 2*gp_leg + gp_slit + 4);
+    translate([0, -20, 13]) rotate([-90,0,0]) rotate([0,0,90]) teardrop(gp_hole, 40);
+  }
+}
+
 // ---------------- orientacje do druku (PETG, MK4) ----------------
 // klatka PRZODEM W DÓŁ (x=0 na stole): ścianki kieszeni pionowe i dokładne, nogi GoPro rosną jako płetwy
 // bez podpór (przegląd print/fit-06). Brim 5 mm. Nogi: 4 obwody lub modyfikator 100% (przegląd print-legs-sparse-core).
 module print_cage() { rotate([0,90,0]) cage(); }
-// adapter na boku (oś M5 pionowo)
-module print_adapter() { translate([0,0,fan_size/2+fan_wall]) rotate([-90,0,0]) adapter_fan(); }
+// adapter TYŁEM W DÓŁ (tylna krawędź płytki x=-seat/2 na stole): nogi rosną do góry jako płetwy, podziałka na
+// pionowej ścianie, bez podpór. Brim 5 mm (wysoka, wąska część).
+module print_adapter() { translate([0,0,seat/2]) rotate([0,-90,0]) adapter_top(); }
 
 if (part == "cage") cage();
-else if (part == "adapter_fan") adapter_fan();
+else if (part == "adapter_top") adapter_top();
 else if (part == "print_cage") print_cage();
 else if (part == "print_adapter") print_adapter();
+else if (part == "coupon") coupon();
 else assembly();

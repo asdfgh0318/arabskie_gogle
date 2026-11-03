@@ -144,3 +144,7 @@ W repo są cytaty `extracts_*.md` (cytat + plik + strona) dla każdego tagu [V] 
 - USAARL_HMD2009_Section-26-Chapter-17-Guidelines-for-HMD-design.txt
 - Zhang2012_minification_distance_HMD_TAP.pdf
 - Zhang2012_minification_distance_HMD_TAP.txt
+
+## gopro_dims/ (2026-11-03, research/06c)
+
+- gopro_dims/ — GoPro mount sources: GitHub OpenSCAD (j-h-a, MoonCactus, julietta via mbugert, connector-foundry), Printables metadata + STL/3MF/STEP (#93976, #153569, #579629, #95616, #934640, #1063720, #189423, #65294, #1642521, #1394238, #1031776, #1264483 and others), Instructables freeza36 caliper sketches, GoPro patents US9423673B2/US10642133B2, `measurements_raw.txt` + `_measure_tools/` (my ray-cast measurement scripts). Quotes: `extracts_gopro_dims.md`.
