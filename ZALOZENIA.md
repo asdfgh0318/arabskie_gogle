@@ -68,3 +68,5 @@ podawany do gogli, sterowanie kamerą (paleta, zoom, przełączanie kanałów, N
 | 2026-11-03 | Repo publiczne: github.com/asdfgh0318/arabskie_gogle |
 | 2026-11-03 | **Wentylator HDO2 usunięty** — mocowanie kamer wchodzi na jego miejsce (gogle nie będą szczelne do twarzy, wentylacja zbędna) |
 | 2026-11-03 | Research 06: wentylator jest **na górze** gogli (nie z przodu) → adapter = płytka na 4 śrubach 20×20 + ramię do przodu, kamery wiszą przed przednią ścianą (`cad/`, v0.2) |
+| 2026-11-03 | **Pod sterownika w lewej zatoce modułu VRx** (zamiast drzwiczek, moduł RX wyjęty); obsługa **lewą ręką**, **cienkie rękawice** — research 07b/07c, `cad/pod.scad` v0.1 |
+| 2026-11-03 | Pod v0.2: **enkoder + 1 przycisk CAM** (AUX usunięty po przeglądzie; PAL/BRT/NUC na obrocie i krótkim/długim wciśnięciu enkodera) — `cad/README.md` |
