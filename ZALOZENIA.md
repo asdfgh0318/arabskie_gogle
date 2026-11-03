@@ -66,3 +66,4 @@ podawany do gogli, sterowanie kamerą (paleta, zoom, przełączanie kanałów, N
 | 2026-11-03 | Pełne zasłonięcie wzroku akceptowane |
 | 2026-11-03 | Przyciski na goglach, kompaktowo; druki kompaktowe |
 | 2026-11-03 | Repo publiczne: github.com/asdfgh0318/arabskie_gogle |
+| 2026-11-03 | **Wentylator HDO2 usunięty** — mocowanie kamer wchodzi na jego miejsce (gogle nie będą szczelne do twarzy, wentylacja zbędna) |
