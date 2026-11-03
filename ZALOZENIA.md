@@ -23,10 +23,23 @@
 
 ### 1b. Wnioski z dopasowania (do weryfikacji)
 - Obraz PAL CVBS → wejście AV gogli bezpośrednio; HDMI niepotrzebne.
-- Termo 50°H na ekranie HDO2 46° → powiększenie ~0,92× (bliskie 1:1) → świat „mniejszy i dalszy”, istotne przy chodzeniu (ocena odległości, stopnie).
-- Noktowizja 120° na 37–46° = silne pomniejszenie (~0,3–0,4×), dystorsja szerokokątna.
-- Zasilanie 9–24 V → nie 2S; 3S/4S Li-ion albo przetwornica; sprawdzić zakres zasilania gogli, czy da się jedną baterią.
+- ~~Termo 50°H na HDO2 46° → ~0,92×~~ **BŁĄD** (porównanie przekątnej z poziomem). HDO2 46° to przekątna → ekran ≈37,5°H × 28,6°V → termo **≈0,75×** (25% pomniejszenia) — `research/02` §1.2 → świat „mniejszy i dalszy”, istotne przy chodzeniu (ocena odległości, stopnie).
+- Noktowizja 120° → **≈0,38×** + dystorsja; PAL przenosi max ≈390 TVL, więc „1500 TVL” nie dociera do gogli — `research/02`
+- Zasilanie: HDO2 **7–13 V** (instrukcja Rev C p.11), kamera 9–24 V → wspólny zakres **9,0–12,6 V = 3S Li-ion** bez regulatora, pod warunkiem odcięcia ≥3,0 V/ogniwo. 4S przekracza 13 V gogli, LiHV też (13,05 V). Alarm baterii HDO2 (6,8 V) na 3S bezużyteczny → własny pomiar napięcia — `research/04`, `05`
 - Sterownik: przynajmniej przełączanie kamer przez GPIO; reszta zależy od odkrytego interfejsu.
+
+### 1c. Wnioski z researchu 2026-11-03 — PROPOZYCJE do akceptacji Adama
+Źródło: `research/01`–`05` (wersje robocze, zweryfikowane adwersarialnie; tam cytaty i poziomy pewności). Gdzie ten skrót różni się od plików research — rozstrzygają pliki research.
+1. **Pozycja kamery:** na froncie HDO2, w osi między oczami, termo możliwie na wysokości oczu (0…+35 mm), Infra **nad** termo (nie obok). Nie na szczycie kasku. Offset do przodu tani, w górę i w bok drogi (Mullins 2008: +17,8 cm do przodu → +2,9% czasu; w górę → +14,2% czasu, +14,3% błędów). — `01`
+2. **Zbieżność w poziomie (yaw) ≤0,5°** między kamerą a goglami (inaczej „chodzenie po łuku”; źródło wtórne Rash 2009 → Melzer & Moffitt 2007) → mocowanie sztywne, kluczowane, kamera na skorupie gogli, nie na kasku. — `01`
+3. **Domyślna kamera: termo** (≈0,75×), Infra pod przyciskiem jako „szeroki rzut”. 1:1 nieosiągalne bez cropu 1,33× — nie gonić w v1. — `02`
+4. **Pochylenie kamery w dół ≈10° (regulowane 0–20°):** przy poziomej kamerze najbliższy widoczny grunt ≈5,3 m, przy 10° ≈3,3 m. — `02`
+5. **Sterowanie kamerą (prawdopodobne, z siostrzanego Eclipse 004 Dual — do potwierdzenia na stole):** GPIO2 3,3 V = przełączanie kamer; UART 3,3 V 115200 (ramki `FF 5A…`, CRC16/MODBUS): paleta, jasność, kontrast, NUC, hot-tracking. Zoom/PiP — brak w udokumentowanym interfejsie. — `03`
+6. **Przyciski na goglach (3):** CAM (GPIO2) · PAL (paleta; długie = NUC) · BRT (jasność; długie = hot-tracking). Propozycja: enkoder Alps EC11 z push + 2× Omron B3S IP67 z drukowanymi nakładkami. — `03`, `05`
+7. **Sterownik:** XIAO ESP32-C3 (21×17,8 mm) w pudełku z przyciskami na goglach; 5 V z Pololu D36V6F5. — `05`
+8. **Bateria:** 3S Li-ion (3×18650) **z tyłu kasku jako przeciwwaga**; ostrzeżenie wibracją przy ≈10,2 V (3,4 V/ogniwo). Szacunek ≈4–6 h (na założeniach). — `04`, `05`
+9. **Wideo:** CVBS do gniazda AV 3,5 mm HDO2 (tulejka = GND, pierścień 2 = Video); moduł RX wyjąć/wyłączyć; tryb Analog 4:3. — `04`
+10. **Bezpieczeństwo:** mocowanie kamery ma się odłamać przy upadku (jedna śruba M5 w przegubie GoPro, bez sztywnej dźwigni w twarz). — `04`
 
 ## 2. Cel (do potwierdzenia)
 Widzieć w termowizji „na żywo” z głowy (chodzenie/jazda w nocy?), obraz z kamery na kasku
@@ -38,12 +51,12 @@ podawany do gogli, sterowanie kamerą (paleta, zoom, przełączanie kanałów, N
 - [x] Wyjście wideo: analog CVBS PAL
 - [ ] Sterowanie kamery: co robi kabel GPIO, czy jest UART/OSD menu — pomiary dopiero po dostawie elektroniki
 - [ ] Zasilanie: napięcie kamery, gogli, z czego (wspólna bateria?)
-- [ ] Pozycja kamery: oś oczu (paralaksa ~0) vs czoło vs szczyt kasku
-- [ ] Waga i środek ciężkości na kasku, przeciwwaga z tyłu?
+- [~] Pozycja kamery: propozycja 1c.1 — czeka na akceptację
+- [~] Waga/CoG: propozycja 1c.8 (bateria z tyłu) — czeka na akceptację
 - [x] Przyciski: **na goglach, kompaktowo** (2026-11-03); liczba — zależy od interfejsu kamery
 - [x] Elementy drukowane: **kompaktowe**
 - [x] Model kasku — nieistotny (2026-11-03)
-- [ ] Zakres zasilania HDO2 → jedna bateria dla gogli i kamery?
+- [x] Zakres zasilania HDO2: 7–13 V → jedna bateria 3S (patrz 1c.8)
 
 ## 4. Decyzje
 | Data | Decyzja |

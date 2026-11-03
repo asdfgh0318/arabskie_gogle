@@ -4,3 +4,10 @@
 build/
 .venv/
 __pycache__/
+
+# Źródła (PDF/strony/obrazy) zostają lokalnie — repo jest publiczne, nie redystrybuujemy cudzych tekstów.
+# Wersjonujemy tylko cytaty (extracts_*.md) i indeks.
+papers/*
+!papers/extracts_*.md
+!papers/README.md
+!papers/.gitkeep
