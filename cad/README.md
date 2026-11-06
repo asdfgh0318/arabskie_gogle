@@ -1,67 +1,260 @@
 # cad/ — części drukowane
 
-## camera_mount.scad — mocowanie kamer i gogli do kasku na HDO2 (v0.4, WERSJA ROBOCZA)
-Po dwóch przeglądach adwersarialnych. **Nic nie zostało zmierzone na sprzęcie**: kamery z rysunków sklepu,
-HDO2 ze zdjęć i modeli społeczności (`research/06`). Gotowe STL (PETG, Prusa MK4, w orientacji do druku) w `stl/`.
+## camera_mount.scad — mocowanie kamer i gogli do kasku na HDO2 (v0.6, WERSJA ROBOCZA, 2026-11-06)
+Decyzje Adama z 2026-11-06:
+1. Przy kamerze zostaje przegub GoPro („wierzę, że mocowanie GoPro puści pierwsze”), więc czop i bezpiecznik PA66 z
+   v0.5 odpadają.
+2. Dodatkowe +12 g masy — zgoda.
+3. Przewody z tyłu u góry klatki — zgoda.
+4. Nowe: indeksowany kąt kamery na wypustkach.
 
-| Część | Plik | Druk |
-|---|---|---|
-| Próbka przegubu (drukować **najpierw**) | `stl/coupon.stl` | 3 pary 3.2/3.3/3.4; 4 obwody; para, która składa się ręką bez luzu → `gp_slit` |
-| Klatka na kamery | `stl/print_cage.stl` | przodem w dół, **bez brimu**, bez podpór, 4 obwody |
-| Adapter na gnieździe wentylatora (kamera z przodu + przegub do kasku nad płytką) | `stl/print_adapter.stl` | tyłem w dół (stoi, 54 mm), brim 5 mm (zewnętrzny), bez podpór, 4 obwody; ≈47 min, 6,7 g |
+v0.6 = architektura v0.4 (adapter na gnieździe wentylatora, bezpiecznik V w bloku, przegub GoPro, klatka ładowana od
+przodu, nogi do kasku) + te elementy v0.5, które pasują do przegubu GoPro. v0.4 jest w historii git (commit `6217b93`).
+**Gdzie ten opis różni się od `camera_mount.scad`, rozstrzyga plik `.scad`** (zmiany oznaczone `v0.6:`, odstępstwa
+od zlecenia `ODSTĘPSTWO`). **Nic nie zostało zmierzone na sprzęcie**: kamery z rysunków sklepu, HDO2 ze zdjęć i
+modeli społeczności (`research/06`) oraz z modelu GrabCAD oryginalnego HDO (plik lokalny, poza repo).
+
+**Co się zmienia względem v0.4:**
+- **Popychacze yaw (z v0.5).**
+  - Belka nad przegubem (z 9–13) jest przyczepiona do bloku adaptera **przed** bezpiecznikiem (od x 17.3; rowki
+    kończą się na 16.8).
+  - Z belki schodzą dwa słupki i ukośne podpory 45° do bloków z gwintem M3 na y ±17.75, z −9.5.
+  - Dwa wkręty bez łba M3×20 pchają w −x na przednią ścianę gogli. Zbieżność ustawia się nimi w terenie, bez
+    przedruku.
+- **Gałka bez narzędzi po lewej (+y):** Ø16, radełkowana, z wciśniętym łbem M5×20 ISO 4017. Nakrętka M5 i podziałka
+  przeszły na −y.
+- **Zapadki pochylenia 0/10/20°** na stykach palców GoPro. Wypustki są na zewnętrznych ścianach palców męskich klatki,
+  rowki na wewnętrznych ścianach zewnętrznych palców żeńskich.
+- **Osłona przednia (nowa część `shroud`, z v0.5):** osłona termo, tuba Infra i daszek. Trzyma się na językach pod
+  istniejącymi śrubami M2 kamer, bez nowych śrub.
+- **Przewody wychodzą z tyłu u góry po −y.** Przewód termo biegnie pod belką i w górę zatrzaskowym kanałem w końcu
+  belki −y. Przewód Infra biegnie nad belką. Wiązka idzie do tyłu na poziomie Infra, z boku przegubu i klamry kasku.
+- **`cam_gap` 1.5 → 2.0.** Strefa widzenia termo liczona z całej soczewki Ø16 dotykała przy 1.5 dolnej krawędzi
+  obiektywu Infra. Teraz zostaje 0.3 mm. Infra jest wyżej o 0.5.
+- **`keep_x` = front_x + 1.5 + 1.0 (było +0.5).** Pod blatem nic nie wchodzi bliżej ściany niż 1 mm przy najgorszym
+  `front_x`, więc obrót adaptera o ±2° przy ustawianiu zbieżności jest wolny (test).
+
+| Część | Plik | Druk (PETG, MK4, 0,2 mm, 15% wypełnienia, 4 obwody, **bez podpór**) | Czas / masa (PrusaSlicer) |
+|---|---|---|---|
+| Próbka (drukować **najpierw**) | `stl/coupon.stl` | 3 pary szczelin 3.2/3.3/3.4 → `gp_slit`; wycinek adaptera z rowkami, pułapką nakrętki i podziałką; wycinek klatki z wypustkami | 1 h 08 min / 18,1 g |
+| Klatka na kamery | `stl/print_cage.stl` | przodem w dół, **bez brimu** | 35 min / 9,0 g |
+| Adapter (kamera z przodu, popychacze, nogi do kasku nad płytką) | `stl/print_adapter.stl` | tyłem w dół (stoi, 54 mm), brim 5 mm zewnętrzny | 56 min / 11,9 g |
+| Osłona przednia | `stl/print_shroud.stl` | przodem w dół (stoi, 30 mm), brim 5 mm zewnętrzny | 26 min / 6,3 g |
+| Gałka | `stl/print_knob.stl` | wierzchem w dół, gniazdem łba do góry | 5 min / 0,9 g |
+
+Masa wszystkich części v0.6 (adapter, klatka, osłona, gałka): **28,1 g** (z brimem). To samo cięcie dla STL v0.4 daje adapter 9,3 g + klatka 9,0 g =
+18,3 g, więc **v0.6 = +9,8 g** (zgoda była na +12). Przy 2 obwodach: 9,1 + 7,5 + 6,1 + 0,75 = 23,5 g.
+Profil: „Original Prusa MK4 Input Shaper 0.4 nozzle” + „0.20mm SPEED @MK4IS 0.4” + „Generic PETG @PGIS” (spłaszczony
+`mk4_petg.ini`, ten sam co w projekcie Rotorwing), przy czym 4 obwody są ustawione z linii poleceń.
+
+**Kupne:**
+- przegub:
+  - M5×20 **ISO 4017** (łeb sześciokątny) wciśnięty w gałkę + kropla CA;
+  - podkładka DIN 125 Ø10 × 1;
+  - nakrętka M5 w pułapce −y;
+- popychacze: 2× wkręt bez łba **M3×20 ISO 4026** z nylonową końcówką albo naklejoną kropką PTFE Ø3 × 1;
+- kamery: śruby M2 z zestawu **dłuższe o 1,2 mm** (języki osłony leżą pod łbami);
+- gogle: 4 fabryczne śruby wentylatora.
 
 ```
-openscad -D 'part="assembly"' -D tilt=10 camera_mount.scad   # podgląd; ECHO = wysokości obiektywów nad osią okularów
-./test/run_clash.sh                                          # kolizje: tilt 0/10/20 × przód gogli 21.6/23.1/24.6 (ostatni wynik: OK)
+openscad -D 'part="assembly"' -D tilt=10 camera_mount.scad   # podgląd; ECHO: wysokości obiektywów, zapadki, momenty, popychacze
+./test/run_clash.sh                                          # kolizje (80 zadań, ~12 min przy 8 wątkach; ostatni wynik: OK)
+PROFILE=…/mk4_petg.ini ./test/export.sh                      # eksport STL + manifold + nawisy + wyspy + cięcie + brim w osłonie
 ```
+Podgląd: `img/assembly_iso.png` (tilt 10, od lewej), `img/side_t0.png`, `img/side_t20.png` (widok z prawej, −y),
+`img/front.png`, `img/shroud.png`, `img/adapter_top.png`, `img/cage_rear.png`, `img/coupon.png`.
 
 ### Montaż
-1. Zdejmij osłonę i wentylator z **góry** gogli. Adapter na 4 śruby **fabryczne** (pod łbem 1.2 mm = kołnierz
-   osłony). Zanim kupisz inne śruby: zmierz śrubę i to, co jest pod wentylatorem (research/06 M1/M2).
-2. Kamery wsuń od przodu (przewód wkładasz z boku przez szczelinę w mostku), dosuń do tylnych zderzaków.
-   Najpierw dokręć M2 po stronie **+y (lewej)** — korpus dociąga się do ścianki, która jest bazą kierunku — potem −y.
-3. Przegub: **M5×20 ISO 4762 + podkładka DIN 125 (Ø10 — większa zakryje podziałkę)** od strony −y, nakrętka M5
-   w pułapce (+y). Dokręcaj **ręcznie** (≤0.3 N·m). **Przed zmianą pochylenia poluzuj M5.**
-4. Podziałka (−y): kreski 0/10/20°, nacięcia 5/15°, czytane grotem płetwy klatki. Zero i wysokości z ECHO są
-   liczone względem blatu, dopóki nie zmierzysz `seat_pitch` (M4).
-5. **Kask (v0.4):** na przodzie kasku przyklej podstawkę GoPro VHB, w nią klamrę 3-palcową. Wchodzi w dwie męskie
-   nogi na adapterze (oś M5 poprzeczna, nad płytką, `helm_x`/`helm_z`). Gogle wiszą na kasku i obracają się w
-   pionie na tym przegubie. Pasek gogli tylko dociska je do twarzy. Jeśli klamra nie sięga, wstaw przedłużkę GoPro.
-   Obciążenie z kasku idzie blokiem i płytką na 4 śruby wentylatora, **nie** przez bezpiecznik kamery.
-   Nogi drukują się na stole razem z resztą adaptera (tył płytki = stół).
-6. Zbieżność: cel ciepły z 10 m, adapter przekręć w luzie otworów i dokręć; resztę → `th_yaw_trim` / `ir_yaw_trim`
-   (krok 0.25°, przedruk klatki).
+1. Zdejmij osłonę i wentylator z **góry** gogli.
+2. Adapter przykręć **luźno** 4 śrubami **fabrycznymi** (pod łbem 1.2 mm = kołnierz osłony). Zanim kupisz inne śruby,
+   zmierz śrubę i to, co jest pod wentylatorem (research/06 M1/M2).
+3. Popychacze M3×20 wkręć od przodu w bloki popychaczy, aż wystaną z tyłu ok. 10 mm.
+4. **Nakrętkę M5 wsuń w pułapkę po −y ukośnie, od przodu-góry (45°), przed założeniem klatki.** Prosto z boku się
+   nie da: drogę zasłania podpora popychacza −y.
+5. Kamery wsuń od przodu i dosuń do tylnych zderzaków. Najpierw dokręć M2 po stronie **+y (lewej)**, bo ta ścianka jest
+   bazą kierunku, potem po −y. Na razie tylko lekko: przed dokręceniem M2 trzeba jeszcze założyć osłonę (krok 7).
+6. Przewody:
+   - termo: bucik prosto do tyłu, pod belką w stronę −y za tylnym końcem ścianki, potem wcisnąć w kanał w końcu
+     belki −y (wejście 2,5 mm, oplot Ø3 wchodzi na zatrzask) i w górę do poziomu Infra;
+   - Infra: nad belką w stronę −y;
+   - oba razem do tyłu na poziomie Infra, nad belką popychaczy, do AI Boxa po prawej;
+   - przy przegubie zostawić pętlę ≥15 mm na zmianę pochylenia.
+7. Osłonę nasuń językami na zewnętrzne strony ścianek klatki, aż oprze się o czoła kamer. Teraz dokręć M2 (dłuższe o
+   1,2 mm) przez szczeliny w językach. Osłona dociska kamery do zderzaków.
+8. Klatkę wsuń palcami w przegub. M5×20 z gałką włóż od **+y** (podkładka pod łbem) i dokręć **ręką, gałką**. Gałka
+   Ø16 ogranicza moment do ≈0,2–0,4 N·m [A].
+9. Kask (jak v0.4): na przodzie kasku przyklej podstawkę GoPro VHB, w nią klamrę 3-palcową, która wchodzi w dwie
+   męskie nogi nad płytką. Obciążenie z kasku idzie blokiem i płytką na 4 śruby wentylatora, **nie** przez bezpiecznik.
+   Klamra jest wolna przy kątach −30…75° (0 = do góry, + = do przodu). Przy 90° dotyka belki popychaczy (test,
+   pomiar H2).
 
-### Bezpieczeństwo (kolejność zniszczenia)
-poślizg przegubu (≈1.3 N·m przy dokręceniu ręcznym) → **bezpiecznik w adapterze** (przewężenie 10×8 mm za
-przednimi śrubami, ≈2.6 N·m zginania) → nogi klatki (≈5 N·m). Gniazda śrub w goglach: wytrzymałość nieznana.
-Wartości wyliczone (PETG ~25 MPa międzywarstwowo), nie zmierzone.
+### Zbieżność (yaw) popychaczami
+Popychacze ustawiają kierunek adaptera **w luzie otworów śrub wentylatora** (±0,6–1,6°). Rozstaw 35,5 mm. Przy
+procedurze „jeden wkręcany, drugi wykręcany o tyle samo” **1 obrót = 1,61°, 1/8 obrotu = 0,20° ≈ 1 piksel termo** (ECHO).
+1. Poluzuj 4 śruby wentylatora (o ćwierć obrotu).
+2. Oba popychacze wkręć do dotknięcia ściany gogli.
+3. Wyceluj w ciepły cel z 10 m. Najpierw **wykręć** jeden popychacz o n, potem **wkręć** drugi o n, tylko kątem.
+   Kluczem 1,5 wchodzisz od przodu wzdłuż osi popychacza; droga klucza jest wolna przy tilt 0–20 (test). **Po każdej
+   korekcie wyjmij klucz** i dopiero wtedy oceń cel.
+4. Oba popychacze ustaw na dotyk + 1/8 obrotu (≈5–15 N [A]). Docisk wypycha adapter do przodu, więc śruby
+   wentylatora opierają się o tylne krawędzie otworów.
+5. Dokręć 4 śruby wentylatora. Przednie dokręca się przez pogłębienia, wkrętakiem pionowo z góry: belka zaczyna się
+   na x 17.3, ale dostępu wkrętaka nie sprawdza żaden test.
+6. Namaluj linie kontrolne przez popychacz i blok oraz przez krawędź płytki i skorupę. Przerwana linia oznacza, że
+   coś się przesunęło.
+
+Korekta Infra względem termo (różnica osi na celu 10 m) nadal tylko przez `ir_yaw_trim` i przedruk klatki.
+
+### Pochylenie: przegub GoPro + zapadki 0/10/20°
+- **Zmiana pozycji:** poluzuj gałkę o ok. 1 obrót, przestaw klatkę do następnego kliku i dokręć ręką.
+- **Pozycje:** 0 (oś termo poziomo względem osi okularów, to samo zero co podziałka i ECHO), 10 (nominalnie) i 20.
+  - Rowki są liczone za `seat_pitch`.
+  - Między rowkami wypustka rozpiera palce, więc przegub dokręca się tylko w zapadce.
+- **Podziałka:** kreski 0/10/20 (10 dłuższa) na zewnętrznej ścianie występu nakrętki (−y), czytane grotem płetwy
+  klatki. Są widoczne z prawej strony nad ukośną podporą.
+- **Geometria** (ECHO):
+  - wypustka: czasza kuli R 0,7, wysokość 0,2, podstawa Ø0,98; brzeg czaszy 44° od pionu, więc drukuje się bez podpór
+    na pionowej ścianie;
+  - rowki: V 100°, głębokość 0,44, szerokość 1,04, co 10° na promieniu 6,5 (1,13 mm), promieniowo do obrzeża tarczy;
+  - wypustka leży pod osią M5. Luz kula–zbocze to 0,02.
+- **ODSTĘPSTWO od zlecenia (0/5/10/15/20):** na tarczach Ø15 rowki co 5° się nie mieszczą.
+  - 5° na r 6,5 to 0,57 mm, a rowek pod wypustkę r 0,5–0,7 ma ≥1 mm szerokości. Osobne rowki co 5° wymagałyby r ≥ 14.
+  - Druga wypustka przesunięta o 5° też nie pomaga: każda wypustka poza rowkiem rozpiera dokręcony przegub.
+  - Pozycje 5/15 są dostępne tylko po przedruku klatki z `det_off = 5` (wtedy pozycje to 5/15/25).
+- **Moment poślizgu** (ECHO, [calc], μ i τ założone):
+  - M5 dokręcona ręką ≤0,3 N·m daje ≈300 N docisku. Tarcie 4 styków palców to **1,32 N·m przy μ 0,2** (założenie v0.4)
+    albo 2,31 N·m przy μ 0,35.
+  - Zapadki dokładają **0,20–0,34 N·m**. Przy dokręconej M5 wypustka nie wysunie się sprężyście (pakiet palców jest
+    sztywny), więc przy uderzeniu ścina się albo rozgniata krawędź rowka (τ 20–35 MPa na podstawie Ø0,98, dwie
+    wypustki na r 6,5).
+  - Razem 1,51–1,66 N·m przy μ 0,2 wobec bezpiecznika ≈2,6 N·m: przegub nadal puszcza pierwszy.
+  - **Przy μ 0,35 zapas znika** (2,51–2,65 N·m), ale już samo tarcie v0.4 przy μ 0,35 to 2,31. Rozstrzyga próbka:
+    waga bagażowa na wycinku klatki, na sucho, z gałką dokręconą ręką.
+  - Po takim uderzeniu wypustki mogą być ścięte. Wtedy przegub działa dalej na samo tarcie; przedruk klatki.
+
+### Bezpieczeństwo (kolejność zniszczenia, wyliczone, nie zmierzone)
+poślizg przegubu (≈1,5–1,7 N·m z zapadkami przy μ 0,2) → **bezpiecznik w adapterze** (przewężenie za przednimi
+śrubami, ≈2,6 N·m zginania) → nogi klatki (≈5 N·m).
+
+Belka popychaczy jest przyczepiona tylko przed bezpiecznikiem, więc po jego pęknięciu przód adaptera z kamerami
+odpada razem z popychaczami. Popychacze dociskają ścianę tylko siłą 5–15 N. Gniazda śrub w goglach: wytrzymałość
+nieznana. PETG ~25 MPa międzywarstwowo.
 
 ### Wysokość obiektywów nad osią okularów (`seat_above_eye` = 23, nie zmierzone; cel research/01: 0…+35)
 | tilt | termo | Infra |
 |---|---|---|
-| 0° | 12.4 | 33.9 |
-| 10° | 6.1 | 25.2 |
-| 20° | 0.3 | 16.5 |
+| 0° | 12,4 | 34,4 |
+| 10° | 6,1 | 25,7 |
+| 20° | 0,3 | 17,0 |
 
-Przy `seat_above_eye` z zakresu 19–29 obie liczby przesuwają się o tyle samo → po pomiarze M5 ustaw
-`axis_rel_seat`, żeby wrócić do tabeli. Klatka **nie** jest gwarantowanie zgodna z fabryczną klamrą GoPro.
+Infra jest o 0,5 wyżej niż w v0.4 (`cam_gap`). Przy `seat_above_eye` z zakresu 19–29 obie liczby przesuwają się o tyle
+samo, więc po pomiarze M5 ustaw `axis_rel_seat`. Klatka **nie** jest gwarantowanie zgodna z fabryczną klamrą GoPro.
 
-**Do zmierzenia (kask, v0.4):**
-- **H1**: przy goglach założonych z kaskiem: odległość od środka gniazda wentylatora do miejsca na podstawkę VHB na
-  kasku (w przód/tył i w górę).
-- **H2**: którędy klamra wychodzi z podstawki (w dół czy do przodu).
-- **H3**: wysokość ramki twarzy tuż za gniazdem.
+### Osłona przednia
+- **Wnętrze osłony termo** = strefa widzenia z całej soczewki Ø16 (50 × 37,2°) + 0,5 mm; ścianki 1,6.
+- **Tuba Infra:** Ø20 (szkło Ø19 + 0,5), kończy się 0,55 mm za szkłem Infra (x 18,55).
+- **Daszek** 16 × 1,6 nad tubą; w dnie osłony termo odpływ 2 × 2.
+- **ODSTĘPSTWO:** osłona termo kończy się w tej samej płaszczyźnie co tuba, czyli 11,25 mm przed szkłem termo
+  (zlecenie: ≈5,3).
+  - Osłonę drukuje się przodem w dół, więc przody osłony i tuby muszą leżeć na stole razem.
+  - Ścianki rozchylają się zgodnie ze strefą widzenia, więc dłuższa osłona nie wchodzi w pole (test).
+  - Na przodzie osłona ma 30,7 mm szerokości, czyli wystaje 2,4 mm poza każdy bok klatki.
+- **Lejki:** z tyłu dwie osobne ramki z lejkami 45° (do szyjki termo i do tuby). Jedna ramka nad przewężeniem między
+  obiektywami dawała w druku płaski nawis 22 × 11 mm.
+- **Języki:** 1,2 mm, ze szczelinami jak w klatce (3 mm wzdłuż osi).
 
-Z tych pomiarów wyjdzie `helm_z` i ewentualna przedłużka.
+### Testy (wynik dla wersji w repo)
+`test/run_clash.sh` — 80 zadań OpenSCAD ($fn 32):
+- adapter (z belką, słupkami, podporami, blokami popychaczy) + gałka + M5 vs gogle przy przodzie 21,6/23,1/24,6 i
+  yaw 0/±2°;
+- klatka + osłona + kamery + przewody vs gogle oraz vs adapter/gałka/M5/popychacze/droga klucza przy tilt
+  0/5/10/15/20 × przód 21,6/23,1/24,6;
+- zapadki w rowkach przy 0/10/20 (z luzem szczeliny i z palcami dociśniętymi);
+- gałka vs adapter/popychacze/klucz; osłona vs klatka i kamery; kamery vs klatka; przewody vs klatka i osłona;
+- strefy widzenia:
+  - termo 50 × 37,2° z całej soczewki Ø16;
+  - Infra 96 × 72° z całego szkła Ø19;
+  - obie od 0,5 mm za soczewką/szkłem, z osłoną, popychaczami, gałką, przewodami i goglami, tilt 0–20 × 3 przody;
+- pomiar zakresu klamry kasku;
+- model GrabCAD (`grabcad_check.py`, adapter też przy yaw ±2) i zasięg popychaczy (`pusher_reach.py`).
 
-**Do zmierzenia** (research/06 §3): M1 śruba, M2 pod wentylatorem (`post_relief`), M4 pochylenie blatu
-(`seat_pitch`), **M5 wysokość blatu nad osią okularów** (`seat_above_eye`), M6 środek wentylatora → przód
-(`front_x`), kamery suwmiarką (`th_*`, `ir_*`, położenie otworów M2, średnica przewodu → `cable_slot_w`).
+Kontrole pozytywne muszą trafić (trafiają):
+- osłona z marginesem −0,5 → pole termo;
+- wypustka przy tilt 5 (między rowkami, palce dociśnięte) → palec żeński;
+- rowek bez luzu (`det_c` −0,1) → wypustka przy 0;
+- gogle z przodem na 26,5 → adapter;
+- GrabCAD z przodem na 40 → adapter.
+
+**Wynik:**
+```
+pomiar: korpus klamry GoPro kasku wolny (vs adapter z belką, gałka, klatka tilt 10) przy kątach [°, 0 = do góry, + = do przodu]: -30 -15 0 15 30 45 60 75
+zasięg popychacza: front_x 21.6, y ±17.75, z -9.5: ściana x 21.55 (pochylenie 4° od pionu), wysuw 14.05, wkręcenie 5.95
+zasięg popychacza: front_x 23.1, y ±17.75, z -9.5: ściana x 23.05 (pochylenie 4° od pionu), wysuw 12.55, wkręcenie 7.45
+zasięg popychacza: front_x 24.6, y ±17.75, z -9.5: ściana x 24.55 (pochylenie 4° od pionu), wysuw 11.05, wkręcenie 8.95
+OK: brak kolizji (80 zadań OpenSCAD, $fn=32; kontrole pozytywne trafiają; GrabCAD sprawdzony (adapter też przy yaw ±2))
+```
+`test/export.sh` (PROFILE jak wyżej):
+- wszystkie STL są manifold: 1 bryła, próbka 8 brył, 0 naprawionych krawędzi;
+- `float_check.py` nie znajduje wysp bez podparcia;
+- osłona i gałka nie mają nawisów > 45°;
+- w osłonie i tubie nie ma brimu (`gcode_check.py`).
+
+`overhang.py` wypisuje dla adaptera i klatki te same nawisy co dla STL v0.4: płaskie cięcie palców żeńskich pod
+blatem, nogi do kasku, zderzaki kamer, mostki. Wyjątek: zniknął sufit pułapki nakrętki (41,6 mm²), bo pułapka jest
+teraz otwarta ukośnie do przodu. Próbka nie ma nawisów > 45° (tak samo jak próbka v0.4).
+
+PrusaSlicer zgłasza dla klatki „Collapsing overhang, Long bridging extrusions” (identycznie dla klatki v0.4). Dla
+próbki zgłasza „Loose extrusions”, choć żaden z jej wycinków osobno nie daje ostrzeżenia. Można ją podzielić na
+obiekty w slicerze.
+
+### Do zmierzenia
+- **S2 (przed drukiem adaptera):**
+  - przednia ściana gogli przy y ±17,75 na wysokości z −8…−11 (`pad_z`): położenie, płaskość, czy nic tam nie wystaje;
+  - `front_x` (M6);
+  - wytrzymałość ściany pod jednym popychaczem.
+
+  GrabCAD (oryginalne HDO, „wymiary niedokładne”) mówi, że zaokrąglenie krawędzi kończy się na z ≈ −10,4, a na −9,5
+  ściana jest 0,05 mm za `front_x`.
+- **M5:** wysokość blatu nad osią okularów (`seat_above_eye`) → `axis_rel_seat`.
+- **M4:** pochylenie blatu (`seat_pitch`) — rowki zapadek i podziałka idą za nim.
+- **M1/M2:** śruba wentylatora i to, co jest pod nią (`post_relief`).
+- **Kamery suwmiarką:**
+  - `th_*`, `ir_*`, położenie otworów M2;
+  - długość obiektywów (osłona: 0,55 mm za szkłem Infra);
+  - śruby M2 z zestawu (długość, łeb);
+  - średnica przewodów (kanał Ø3,2 z wejściem 2,5; S5).
+- **H1–H3 (kask):** `helm_z`, zakres kąta klamry (przy 90° dotyka belki).
+
+**Próbka** (`coupon`, przed resztą):
+1. Para szczelin składająca się ręką bez luzu → `gp_slit`.
+2. Na wycinkach z gałką i M5×20:
+   - czy klik na 0/10/20 jest wyczuwalny i czy wypustka siada w rowku;
+   - moment poślizgu na sucho (waga bagażowa na wycinku klatki, ramię znane);
+   - czy wypustka się ścina, czy rozgniata rowek;
+   - czy nakrętka wchodzi ukośnie w pułapkę.
+
+### Znane braki / otwarte
+- Zapadki dają tylko 0/10/20 (patrz odstępstwo). Wypustka 0,2 mm na ścianie pionowej jest na granicy dokładności FDM,
+  dlatego rozstrzyga próbka.
+- Zapas przegubu do bezpiecznika zależy od μ (0,2 vs 0,35). To problem odziedziczony po v0.4, zapadki dokładają
+  0,2–0,34 N·m.
+- Popychacze mają wysuw 11–14 mm (M3×20 wystający w powietrzu). Oś wchodzi w blok dopiero na x 35,6, bo pod blatem
+  wszystko musi rosnąć ze skosem 45° od płaszczyzny `keep_x`.
+- Gałka siedzi między palcem a słupkiem +y. Słupek i podpora zasłaniają od boku pas ≈5 mm przez tylną część gałki,
+  przód i dół są dostępne. Próba w rękawicach (P6).
+- Podziałka −y jest widoczna tylko z prawej strony nad podporą, a przy założonych goglach w ogóle niewidoczna.
+  Pozycję rozpoznaje się po kliknięciach i kącie klatki.
+- Wiązka przewodów za klatką (poza 8 mm ogona w modelu) jest prowadzona ręcznie. Test sprawdza tylko odcinek przy klatce.
+- Model GrabCAD to oryginalne HDO; HDO2 może mieć inny przód (S2).
 
 ---
 
-## tactical_mount.scad — v0.5 PANCERZ+ (WERSJA ROBOCZA po przeglądzie R1, decyzje do akceptacji)
+## tactical_mount.scad — v0.5 PANCERZ+ — odrzucona 2026-11-06 (czop zamiast GoPro) — nie drukować, zostaje jako źródło pomysłów
+
+> Adam 2026-11-06: przy kamerze zostaje przegub GoPro, więc czop i bezpiecznik PA66 odpadają. Popychacze i osłona
+> przednia przeszły do `camera_mount.scad` v0.6 (wyżej). Opis niżej dotyczy v0.5 i nie był aktualizowany. Zdanie o
+> v0.4 jako wersji zapasowej jest nieaktualne: `camera_mount.scad` to teraz v0.6, a v0.4 jest w historii git.
+
 
 Implementacja punktów MUST (M1–M10) ze specyfikacji `spec/v05_tactical_spec.md` plus poprawki z przeglądu
 adwersarialnego R1 (lista niżej). Gdzie ten opis różni się od `tactical_mount.scad`, rozstrzyga plik `.scad`. Gdzie

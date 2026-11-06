@@ -45,10 +45,11 @@ module hdo2_body() {
 }
 
 module camera_stack() {
-    adapter_top();
-    translate([adapter_axis_x_(), 0, 0]) rotate([0, tilt, 0]) translate([-cage_axis_x_(), 0, -axis_z_()]) { cage(); ghost_cams(); }
+    adapter_top(); knob(); m5_hw(); pushers();        // v0.6: gałka, M5, popychacze (moduły same się ustawiają)
+    translate([adapter_axis_x_(), 0, 0]) rotate([0, tilt, 0]) translate([-cage_axis_x_(), 0, -axis_z_()]) { cage(); shroud(); ghost_cams(); cables(); }
 }
-// wartości z camera_mount.scad (przez `use` zmienne nie są widoczne → funkcje-kopie, zgodne z v0.4)
+// wartości z camera_mount.scad (przez `use` zmienne nie są widoczne → funkcje-kopie, zgodne z v0.6 — położenie osi
+// przegubu nie zmieniło się od v0.4)
 function adapter_axis_x_() = 23.1 + 15/2 + 3.0;
 function axis_z_() = (5.6 + 15.6)/2;
 function cage_axis_x_() = -(15.4 + 1.0) - 4.5 - 9.0;
@@ -68,6 +69,8 @@ if (which == "all" || which == "pod") pod_on_goggle();
 if (which == "all" || which == "aibox") aibox_on_goggle();
 if (which == "adapter") adapter_top();
 if (which == "cage") translate([adapter_axis_x_(), 0, 0]) rotate([0, tilt, 0]) translate([-cage_axis_x_(), 0, -axis_z_()]) cage();
+if (which == "shroud") translate([adapter_axis_x_(), 0, 0]) rotate([0, tilt, 0]) translate([-cage_axis_x_(), 0, -axis_z_()]) shroud();
+if (which == "knob") knob();
 if (which == "cams") translate([adapter_axis_x_(), 0, 0]) rotate([0, tilt, 0]) translate([-cage_axis_x_(), 0, -axis_z_()]) ghost_cams();
 if (which == "aibox_mount") translate([box_c[0], -side_m, box_c[1]]) to_goggle_right() aibox_mount();
 if (which == "aibox_box") translate([box_c[0], -side_m, box_c[1]]) to_goggle_right() aibox_ghost();
