@@ -13,7 +13,8 @@
 #define PIN_CAM_TX    21    // D6  — UART TX → RX kamery (przez 1 kΩ)
 #define PIN_MOTOR     20    // D7  — bramka FET silnika wibracyjnego (pull-down 100k na bramce)
 #define PIN_CAM_GPIO2 10    // D10 — linia GPIO2 kamery (przełączanie termo/Infra, przez 1 kΩ)
-// RX kamery nie jest podłączony (magistrala ma 5 żył: VBAT, GND, CVBS, GPIO2, UART-TX — research/05).
+// Linia zwrotna (TX kamery → RX sterownika) nie jest podłączona: firmware v0.1 tylko nadaje. Układ 5-żyłowy
+// z research/05, podawany tu wcześniej jako powód, jest tam oznaczony jako zastąpiony (§5); linia zwrotna — otwarte.
 
 // ---------- kamera ----------
 #define CAM_UART_BAUD     115200   // [V: Eclipse 004 Dual], dla TR1 nie potwierdzone
@@ -26,16 +27,23 @@
 #define DEBOUNCE_MS       15       // B3S: drgania ≤ 5 ms [V], 10–20 ms w firmware (research/05)
 #define LONG_PRESS_MS     800
 #define VLONG_PRESS_MS    3000
+#define HAPTIC_CUT_GAP_MS 300      // [A] cisza po przerwaniu wibracji przez przycisk CAM, przed jego potwierdzeniem
 #define BRIGHT_STEP       10
 #define CONTRAST_STEP     10
 #define PALETTE_COUNT     6        // [A] 0 = bez pseudokoloru („0 is off pseudo-color”), 1..5 → sprawdzić na stole
 
-// ---------- bateria 3S ----------
-#define VBAT_DIV          (122.0f / 22.0f)   // 100k + 22k
+// ---------- bateria 4S Li-ion (decyzja Adama 2026-11-12; wcześniej 3S) ----------
+// Dzielnik 100k + 15k: 16,8 V → 2,19 V na pinie. Poprzedni 100k + 22k dawałby 3,03 V, ponad zakres pomiaru ADC
+// ESP32-C3 (≈2,5 V przy tłumieniu 11 dB [A — sprawdzić w dokumentacji ADC przed lutowaniem]).
+#define VBAT_DIV          (115.0f / 15.0f)   // 100k + 15k
 #define VBAT_CAL          1.000f             // korekta po pomiarze multimetrem
-#define VBAT_WARN_MV      10200              // 3.4 V/ogniwo (research/05 §4)
-#define VBAT_CRIT_MV      9600               // 3.2 V/ogniwo
+#define VBAT_WARN_MV      13600              // 3.4 V/ogniwo × 4 (progi na ogniwo z research/05 §4)
+#define VBAT_CRIT_MV      12800              // 3.2 V/ogniwo × 4
 #define VBAT_HYST_MV      150
+// [A] Średnia poniżej tego progu = brak pakietu / dzielnik niepodłączony (np. praca na stole z samego USB): bez alarmu.
+// 8000 mV = 2,0 V/ogniwo (8000/4), czyli poniżej 10,0 V = 4 × 2,5 V odcięcia ogniwa (research/05 §4.1) — sprawny
+// pakiet tu nie schodzi. Skutek uboczny: pakiet rozładowany poniżej progu też nie daje alarmu.
+#define VBAT_ABSENT_MV    8000
 #define VBAT_AVG_MS       10000
 #define WARN_REPEAT_MS    60000
 #define CRIT_REPEAT_MS    10000

@@ -20,6 +20,7 @@ struct BoardIo : Io {
   void camGpio2(bool level) override { digitalWrite(PIN_CAM_GPIO2, level ? HIGH : LOW); }
   void uart(const uint8_t* d, size_t n) override { CamSerial.write(d, n); }
   void buzz(uint8_t n, uint16_t onMs, uint16_t offMs) override { haptic.pulse(n, onMs, offMs); }
+  void buzzCancel() override { haptic.cancel(HAPTIC_CUT_GAP_MS); }
   void save() override { dirty = true; dirtyAt = millis(); }
 } io;
 
@@ -27,7 +28,7 @@ static Ui ui(io, settings, USE_CAM_UART, PALETTE_COUNT, BRIGHT_STEP, CONTRAST_ST
 static Encoder enc(2, DETENTS_PER_STEP);
 static Button btnCam(DEBOUNCE_MS, LONG_PRESS_MS, VLONG_PRESS_MS);
 static Button btnKnob(DEBOUNCE_MS, LONG_PRESS_MS, VLONG_PRESS_MS);
-static Battery bat({VBAT_WARN_MV, VBAT_CRIT_MV, VBAT_HYST_MV, VBAT_AVG_MS, WARN_REPEAT_MS, CRIT_REPEAT_MS});
+static Battery bat({VBAT_WARN_MV, VBAT_CRIT_MV, VBAT_HYST_MV, VBAT_AVG_MS, WARN_REPEAT_MS, CRIT_REPEAT_MS, VBAT_ABSENT_MV});
 static bool applied = false;
 
 static void loadSettings() {
@@ -47,15 +48,20 @@ static void saveSettings() {
 }
 
 void setup() {
-  Serial.begin(115200);                       // USB: diagnostyka
+  Serial.begin(115200);                       // USB-CDC (flagi w platformio.ini): diagnostyka
   pinMode(PIN_MOTOR, OUTPUT); digitalWrite(PIN_MOTOR, LOW);
+  // Linia wyboru kamery: najpierw zapisany poziom, dopiero potem wyjście — żeby po starcie nie było chwilowego
+  // stanu niskiego (research/03: reakcja boxa na zbocze / poziom nieznana). Zapis powtórzony po pinMode, bo nie
+  // sprawdzono, czy digitalWrite przed pinMode ustawia zatrzask w użytej wersji arduino-esp32 (nie kompilowane).
+  loadSettings();
+  const bool camLevel = settings.thermal ? CAM_GPIO2_THERMAL : !CAM_GPIO2_THERMAL;
+  digitalWrite(PIN_CAM_GPIO2, camLevel ? HIGH : LOW);
   pinMode(PIN_CAM_GPIO2, OUTPUT);
+  io.camGpio2(camLevel);                      // przełącznik od razu, UART po starcie boxa
   pinMode(PIN_ENC_A, INPUT_PULLUP); pinMode(PIN_ENC_B, INPUT_PULLUP);
   pinMode(PIN_ENC_SW, INPUT_PULLUP); pinMode(PIN_BTN_CAM, INPUT_PULLUP);
   analogReadResolution(12);
   CamSerial.begin(CAM_UART_BAUD, SERIAL_8N1, -1, PIN_CAM_TX);   // tylko TX
-  loadSettings();
-  io.camGpio2(settings.thermal ? CAM_GPIO2_THERMAL : !CAM_GPIO2_THERMAL);   // przełącznik od razu, UART po starcie boxa
   haptic.pulse(1, 150, 0);                    // sygnał „włączony”
 }
 

@@ -20,12 +20,17 @@ void Ui::applyAll() {
   setCamera(s_.thermal);
   if (!uartOn_) return;
   sendParam(Mode::Bright); sendParam(Mode::Contrast); sendParam(Mode::Palette);
-  uint8_t f[cx::MAX_FRAME]; size_t n = cx::hot_track(f, s_.hotTrack); io_.uart(f, n);
+  // ramka hot-track jest niezweryfikowana (caddx.h): po starcie idzie tylko wtedy, gdy użytkownik ją kiedyś włączył
+  if (s_.hotTrack) { uint8_t f[cx::MAX_FRAME]; size_t n = cx::hot_track(f, true); io_.uart(f, n); }
 }
 void Ui::onCam(BtnEvent e) {
+  if (e == BtnEvent::None) return;
+  io_.buzzCancel();       // potwierdzenie CAM nie czeka za alarmem baterii ani innym wzorem
   if (e == BtnEvent::Short) {
     setCamera(!s_.thermal); io_.buzz(s_.thermal ? 1 : 2, 60, 120); io_.save();
-  } else if (e == BtnEvent::Long) {
+  } else if (e == BtnEvent::Long || e == BtnEvent::VeryLong) {
+    // VeryLong przychodzi w trakcie trzymania (po nim Button nie daje już Long przy puszczeniu),
+    // więc trzymanie dowolnie długie też kończy się na termo
     setCamera(true); io_.buzz(3, 40, 80); io_.save();
   } else if (e == BtnEvent::LongArmed) {
     io_.buzz(1, 20, 0);   // krótki „tik”: puść teraz = długie naciśnięcie

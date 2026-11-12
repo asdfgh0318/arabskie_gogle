@@ -5,11 +5,14 @@ class Haptic {
  public:
   // n impulsów po onMs z przerwą offMs; dokłada do kolejki (maks. 16 impulsów)
   void pulse(uint8_t n, uint16_t onMs = 80, uint16_t offMs = 120);
+  // przerwij to, co gra i wyrzuć kolejkę; jeśli coś grało, przed następnym impulsem będzie gapMs ciszy
+  // (żeby nowego wzoru nie pomylić z urwanym). Używane przez potwierdzenia przycisku CAM.
+  void cancel(uint16_t gapMs);
   bool update(uint32_t now);   // stan wyjścia silnika
   bool busy() const { return count_ > 0 || on_; }
  private:
   uint16_t onMs_[16] = {}, offMs_[16] = {};
   uint8_t head_ = 0, count_ = 0;
-  bool on_ = false, inGap_ = false;
-  uint32_t t0_ = 0; uint16_t curOn_ = 0, curOff_ = 0;
+  bool on_ = false, inGap_ = false, cut_ = false;
+  uint32_t t0_ = 0; uint16_t curOn_ = 0, curOff_ = 0, cutGap_ = 0;
 };

@@ -5,6 +5,7 @@ BatState Battery::update(uint16_t mv, uint32_t now, bool& alert) {
   sum_ += mv; n_++;
   if (now - winStart_ < c_.avgMs) return st_;
   avg_ = sum_ / n_; sum_ = 0; n_ = 0; have_ = true;
+  if (avg_ < c_.absentMv) { st_ = BatState::Unknown; return st_; }   // brak pakietu / dzielnik niepodłączony: bez alarmu
   BatState prev = st_;
   switch (st_) {
     case BatState::Unknown:

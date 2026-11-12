@@ -1,6 +1,8 @@
 // Logika sterowania (pod v0.2: enkoder + przycisk CAM; ZALOZENIA.md 2026-11-03):
 //   CAM krótko        → przełącz termo / Infra (GPIO2), 1 impuls (termo) / 2 impulsy (Infra)
-//   CAM długo         → wymuś termo (np. po zgubieniu orientacji), 3 krótkie
+//   CAM długo         → wymuś termo (np. po zgubieniu orientacji), 3 krótkie; przy puszczeniu po ≥ LONG_PRESS_MS,
+//                       a przy dalszym trzymaniu samo po VLONG_PRESS_MS (bez górnej granicy czasu trzymania)
+//   Wibracje przycisku CAM przerywają to, co akurat gra (np. alarm baterii) — Io::buzzCancel().
 //   obrót gałki       → zmiana parametru bieżącego trybu (co DETENTS_PER_STEP ząbków), tik przy końcu zakresu
 //   gałka krótko      → następny tryb: JASNOŚĆ → PALETA → KONTRAST (impulsy = numer trybu)
 //   gałka długo       → NUC (ręczna kalibracja migawki), 1 długi
@@ -15,6 +17,7 @@ struct Io {
   virtual void camGpio2(bool level) = 0;
   virtual void uart(const uint8_t* d, size_t n) = 0;
   virtual void buzz(uint8_t n, uint16_t onMs, uint16_t offMs) = 0;
+  virtual void buzzCancel() = 0;    // przerwij bieżące wibracje i wyczyść kolejkę
   virtual void save() = 0;
   virtual ~Io() {}
 };
@@ -31,7 +34,7 @@ class Ui {
  public:
   Ui(Io& io, Settings& s, bool useUart, uint8_t paletteCount, uint8_t brightStep, uint8_t contrastStep, bool gpio2Thermal)
       : io_(io), s_(s), uartOn_(useUart), palN_(paletteCount), bStep_(brightStep), cStep_(contrastStep), thLevel_(gpio2Thermal) {}
-  void applyAll();                  // po starcie kamery: GPIO2 + zapisane ustawienia
+  void applyAll();                  // po starcie kamery: GPIO2 + zapisane ustawienia (hot-track tylko gdy zapisany jako wł.)
   void onCam(BtnEvent e);
   void onKnobPress(BtnEvent e);
   void onKnobTurn(int step);
