@@ -1,6 +1,8 @@
 #!/bin/bash
 # Test kolizji v0.5 „PANCERZ+” (tactical_mount.scad), §4.1 specyfikacji + przypadki z przeglądu R1.
+# v0.5 ODRZUCONA 2026-11-06 — nie drukować (aktualna wersja: camera_mount.scad v0.6, test: run_clash.sh)
 # Wypisuje tylko problemy, wyniki pomiarów i na końcu „OK: brak kolizji”.
+# ERROR/WARNING OpenSCAD albo nieznane `which` (assert w tactical_clash.scad) = błąd testu, jak w run_clash.sh.
 #  - części vs gogle (bryła zastępcza) przy przodzie gogli 21.6 / 23.1 / 24.6 (niepewność research/06 A10), FORK też przy yaw ±2
 #  - klatka+kamery+przewody+pokrywa vs gogle / FORK / BASE, gałka vs wszystko, droga klucza do popychaczy,
 #    strefy widzenia (termo 50×37.2 z Ø16, Infra 96×72 i 108×92 z Ø19, od 0.5 mm ZA soczewką/szkłem) — tilt −2…22
@@ -15,6 +17,7 @@
 #    wnęka 2.5 → bucik przewodu Infra w pokrywie; łeb kołka bez pogłębienia → wkrętak; GrabCAD przodem na 40 → FORK
 # Zmienne: J = liczba równoległych zadań (domyślnie nproc), FN = $fn w teście (domyślnie 32).
 cd "$(dirname "$0")"
+. ./scad_bin.sh
 T=$(mktemp -d); trap 'rm -rf "$T"' EXIT
 J=${J:-$(nproc)}; FN=${FN:-32}
 GRAB=../../papers/hdo2_body_models/grabcad_fatshark-hdo-goggles-1/hdo_grabcad_goggle_frame.stl
@@ -57,9 +60,16 @@ CACC="0 20 40 60"; BUCK="-30 -15 0 15 30 45 60 75 90"
 run_job() {
   id=$1; ex=$2; w=$3; t=$4; fx=$5; shift 5
   D=(); for kv in "$@"; do D+=(-D "$kv"); done
-  out=$(timeout 1800 openscad -D "\$fn=$FN" -D "which=\"$w\"" -D "tilt=$t" -D "g_fx=$fx" "${D[@]}" -o "$T/$id.stl" tactical_clash.scad 2>&1)
-  if echo "$out" | grep -qi "top level object is empty"; then r=0; v=0
-  elif [ -s "$T/$id.stl" ]; then r=1; v=$(admesh "$T/$id.stl" 2>/dev/null | awk '/Volume/{print $NF}')
+  out=$(timeout 1800 "$SCAD" -D "\$fn=$FN" -D "which=\"$w\"" -D "tilt=$t" -D "g_fx=$fx" "${D[@]}" -o "$T/$id.stl" tactical_clash.scad 2>&1)
+  # ERROR/WARNING (np. nieznany moduł, błąd składni, nieznane `which`) = błąd testu, także gdy wynik jest „pusty”
+  # (ostrzeżenie „2-manifold” przy niepustym wyniku to nie błąd renderu — wynik i tak liczy się jako trafienie)
+  msg=$(echo "$out" | grep -E "ERROR|WARNING|Parser error|Can't" | grep -v "2-manifold")
+  if [ -n "$msg" ]; then r=E; v=0; echo "$msg" | head -3 > "$T/$id.err"
+  elif echo "$out" | grep -qi "top level object is empty"; then r=0; v=0
+  elif [ -s "$T/$id.stl" ]; then v=$(admesh "$T/$id.stl" 2>/dev/null | awk '/Volume/{print $NF}')
+    # styk płaszczyznami: backend Manifold zwraca wtedy niepusty wynik o zerowej objętości (CGAL zwracał pusty).
+    # To nie kolizja; kolizja = objętość > 0.001 mm³ (ta sama reguła co w run_pod_clash.sh)
+    r=$(awk -v v="${v:-0}" 'BEGIN{print (v > 0.001) ? 1 : 0}')
   else r=E; v=0; fi
   echo "$id $ex $r $v $w tilt=$t przód_gogli=$fx $*" > "$T/$id.res"
 }
@@ -67,9 +77,11 @@ export -f run_job; export T FN
 xargs -P "$J" -L 1 bash -c 'run_job "$@"' _ < $T/jobs
 
 bad=0
+[ "$(ls $T/*.res 2>/dev/null | wc -l)" = "$(wc -l < $T/jobs)" ] || { echo "BŁĄD: brak wyników części zadań OpenSCAD"; bad=1; }
 for f in $T/*.res; do
+  [ -e "$f" ] || continue
   read -r id ex r v w rest < "$f"
-  if [ "$r" = E ]; then echo "BŁĄD OpenSCAD: $w $rest"; bad=1; continue; fi
+  if [ "$r" = E ]; then echo "BŁĄD OpenSCAD: $w $rest"; sed 's/^/    /' "$T/$id.err" 2>/dev/null; bad=1; continue; fi
   case $ex in
     c) [ "$r" = 1 ] && { echo "KOLIZJA $w $rest: ${v} mm3"; bad=1; } ;;
     h) [ "$r" = 0 ] && { echo "BŁĄD KONTROLI POZYTYWNEJ (test nie wykrył trafienia): $w $rest"; bad=1; } ;;
@@ -93,9 +105,9 @@ echo "pomiar: korpus klamry GoPro kasku wolny (vs BASE/FORK/gałka/klatka tilt 1
 # GrabCAD
 gmsg="GrabCAD: brak pliku lokalnie, pominięto"
 if [ -f "$GRAB" ]; then
-  openscad -D "\$fn=$FN" -D 'which="x_base"' -o $T/x_base.stl tactical_clash.scad >/dev/null 2>&1 &
-  for y in 0 2 -2; do openscad -D "\$fn=$FN" -D 'which="x_fork"' -D yaw=$y -o $T/x_fork_$y.stl tactical_clash.scad >/dev/null 2>&1 & done
-  for t in $TILTS; do openscad -D "\$fn=$FN" -D 'which="x_stack"' -D tilt=$t -o $T/x_stack_$t.stl tactical_clash.scad >/dev/null 2>&1 & done
+  "$SCAD" -D "\$fn=$FN" -D 'which="x_base"' -o $T/x_base.stl tactical_clash.scad >/dev/null 2>&1 &
+  for y in 0 2 -2; do "$SCAD" -D "\$fn=$FN" -D 'which="x_fork"' -D yaw=$y -o $T/x_fork_$y.stl tactical_clash.scad >/dev/null 2>&1 & done
+  for t in $TILTS; do "$SCAD" -D "\$fn=$FN" -D 'which="x_stack"' -D tilt=$t -o $T/x_stack_$t.stl tactical_clash.scad >/dev/null 2>&1 & done
   wait
   args="base=$T/x_base.stl"; for y in 0 2 -2; do args="$args fork+gałka_yaw$y=$T/x_fork_$y.stl"; done
   for t in $TILTS; do args="$args klatka_tilt$t=$T/x_stack_$t.stl"; done
@@ -108,7 +120,7 @@ include <$(pwd)/../tactical_mount.scad>
 part = "none";
 echo(str("PAR ", pad_x0, " ", pad_y, " ", pad_z, " ", pad_len, " ", pusher_len, " ", pad_x0 - (pad_bore_x1 - pusher_len)));
 EOF
-  openscad -o $T/par.echo $T/par.scad >/dev/null 2>&1; P=$(grep -o 'PAR [^"]*' $T/par.echo | cut -d' ' -f2-)
+  "$SCAD" -o $T/par.echo $T/par.scad >/dev/null 2>&1; P=$(grep -o 'PAR [^"]*' $T/par.echo | cut -d' ' -f2-)
   python3 pusher_reach.py "$GRAB" "$FXS" $P
   gmsg="GrabCAD sprawdzony (FORK też przy yaw ±2)"
 fi

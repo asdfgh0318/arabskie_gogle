@@ -2,7 +2,7 @@
 include <../camera_mount.scad>
 part = "none";
 which = "";
-grab = false;   // true = gogle z modelu GrabCAD (plik lokalny), false = bryła zastępcza z scene_all
+grab = false;   // true = gogle z modelu GrabCAD (plik lokalny, nie w repo), false = prostopadłościan hdo2_ghost() z camera_mount.scad
 module goggle_body() {
   if (grab) import("../../papers/hdo2_body_models/grabcad_fatshark-hdo-goggles-1/hdo_grabcad_goggle_frame.stl");
   else hdo2_ghost();

@@ -1,4 +1,5 @@
 // Test kolizji v0.5 „PANCERZ+” (tactical_mount.scad), §4.1 specyfikacji + przypadki z przeglądu R1.
+// v0.5 ODRZUCONA 2026-11-06 — nie drukować (aktualna wersja: camera_mount.scad v0.6, test: run_clash.sh)
 // openscad -D 'which="..."' -D tilt=.. -D g_fx=.. -o out.stl tactical_clash.scad   → pusty wynik = OK
 // Uruchamiać przez run_tactical_clash.sh (siatka tilt × przód gogli, kontrole pozytywne, kąty pierwszego styku).
 include <../tactical_mount.scad>
@@ -59,6 +60,10 @@ module buckle_body() translate([helm_x, 0, helm_z]) rotate([0, buckle, 0]) union
 }
 
 // ---- pary ----
+clash_known = ["base_ghost", "fork_ghost", "knob_fixed", "fork_base", "roll", "hinge", "fan_access", "cover_access", "buckle_disc",
+  "buckle_body", "cams_cage", "cover_cage", "cover_cams", "ins_th", "ins_ir", "stack_ghost", "stack_fork", "stack_base", "knob_stack",
+  "keypath", "fov", "swing", "x_base", "x_fork", "x_stack"];
+assert(len([for (k = clash_known) if (k == which) 1]) == 1, str("tactical_clash.scad: nieznane which = \"", which, "\""));   // literówka = błąd, nie „czysto”
 if (which == "base_ghost")   intersection() { base(); ghostbox(); }
 if (which == "fork_ghost")   intersection() { fork_yaw(); ghostbox(); }              // yaw 0, ±2
 if (which == "knob_fixed")   intersection() { knob(); union() { fork(); base(); ghostbox(); } }

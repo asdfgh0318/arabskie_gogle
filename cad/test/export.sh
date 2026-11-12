@@ -1,7 +1,11 @@
 #!/bin/bash
 # Eksport STL v0.6 (camera_mount.scad) do cad/stl/ + kontrola drukowalności: admesh (manifold, liczba brył),
-# overhang.py (ściany > 45° w dół; nawisy odziedziczone po v0.4 są wypisywane informacyjnie — ta sama lista co dla STL
-# v0.4), float_check.py (wyspy bez podparcia = BŁĄD). Opcjonalnie cięcie PrusaSlicerem:
+# overhang.py (ściany > 45° w dół, mosty > 10 mm, płaskie wsporniki; dla osłony i gałki = BŁĄD, dla adaptera, klatki
+# i próbki lista jest wypisywana informacyjnie — to cechy części do oceny przy druku, skrypt ich nie rozstrzyga),
+# float_check.py (wyspy bez podparcia = BŁĄD).
+# Render idzie do katalogu tymczasowego. Błąd OpenSCAD (kod wyjścia, ERROR/WARNING, pusty wynik) kończy skrypt kodem 1
+# PRZED sprawdzaniem i bez ruszania cad/stl/. Plik w cad/stl/ jest podmieniany tylko przy zmienionej geometrii.
+# Opcjonalnie cięcie PrusaSlicerem:
 #   PROFILE=/ścieżka/mk4_petg.ini ./export.sh   (4 obwody, bez podpór; brim 5 mm zewn. dla adaptera i osłony)
 # Masa przy 2 obwodach i przebieg z auto-podporami tylko jako wskaźniki. gcode_check.py: brim w środku osłony termo /
 # tuby Infra = BŁĄD. Ostrzeżenia PrusaSlicera (stabilność, „floating”, „overhang”) są wypisywane.
@@ -10,22 +14,30 @@ declare -A NP=([print_adapter]=1 [print_cage]=1 [print_shroud]=1 [print_knob]=1 
 declare -A BRIM=([print_adapter]=5 [print_cage]=0 [print_shroud]=5 [print_knob]=0 [coupon]=0)
 PARTS="print_adapter print_cage print_shroud print_knob coupon"
 bad=0
-for p in $PARTS; do openscad -D "part=\"$p\"" -o stl/$p.stl camera_mount.scad > /dev/null 2>&1 & done; wait
+. test/render_lib.sh
+R=$(mktemp -d); trap 'rm -rf "$R" "$T"' EXIT
+python3 -I test/overhang.py --selftest || { echo "NIEZALICZONE: overhang.py nie przechodzi własnych kontroli"; exit 1; }
+render_parts camera_mount.scad "$R" "" $PARTS || { echo "NIEZALICZONE: render się nie udał — cad/stl/ bez zmian, nic nie sprawdzono"; exit 1; }
+install_parts "$R" "" $PARTS
 for p in $PARTS; do
   a=$(admesh stl/$p.stl 2>/dev/null)
   n=$(echo "$a" | awk '/Number of parts/{print $5}'); v=$(echo "$a" | awk '/Volume/{print $NF}')
   fx=$(echo "$a" | awk '/Edges fixed/{print $4}'); dg=$(echo "$a" | awk '/Degenerate facets/{print $4}')
-  [ "$n" = "${NP[$p]}" ] && [ "$fx" = 0 ] && [ "$dg" = 0 ] || { echo "BŁĄD SIATKI $p: brył $n (oczek. ${NP[$p]}), naprawionych krawędzi $fx, zdegenerowanych $dg"; bad=1; }
+  # trójkąty o zerowym polu (backend Manifold zostawia ich kilkanaście–kilkaset) są wypisywane, ale nie są błędem:
+  # admesh je usuwa i nie musi potem naprawiać żadnej krawędzi (fx = 0), więc bryła jest szczelna
+  [ "$dg" = 0 ] || echo "  $p: $dg trójkątów o zerowym polu (bez wpływu na bryłę)"
+  [ "$n" = "${NP[$p]}" ] && [ "$fx" = 0 ] || { echo "BŁĄD SIATKI $p: brył $n (oczek. ${NP[$p]}), naprawionych krawędzi $fx, zdegenerowanych $dg"; bad=1; }
   printf "%-14s brył %s  V = %s cm³\n" "$p" "$n" "$(awk -v v="$v" 'BEGIN{printf "%.2f", v/1000}')"
 done
 python3 -I test/overhang.py stl/print_shroud.stl stl/print_knob.stl || bad=1
-echo "nawisy adaptera, klatki i próbki (informacyjnie; te same co w STL v0.4):"
-python3 -I test/overhang.py stl/print_adapter.stl stl/print_cage.stl stl/coupon.stl | sed 's#^stl/#  #'
+echo "nawisy, mosty i płaskie wsporniki adaptera, klatki i próbki (informacyjnie, do oceny przy druku):"
+oh=$(python3 -I test/overhang.py stl/print_adapter.stl stl/print_cage.stl stl/coupon.stl); echo "$oh" | sed 's#^stl/#  #'
+noh=$(echo "$oh" | grep -c .)
 python3 -I test/float_check.py $(for p in $PARTS; do echo stl/$p.stl; done) || bad=1
 if [ -n "$PROFILE" ]; then
-  T=$(mktemp -d); trap 'rm -rf "$T"' EXIT
+  T=$(mktemp -d)
   irz=$(echo 'include <'"$(pwd)"'/camera_mount.scad>
-part="none"; echo(str("IRZ ", ir_z));' > $T/p.scad; openscad -o $T/p.echo $T/p.scad >/dev/null 2>&1; grep -o 'IRZ [0-9.]*' $T/p.echo | cut -d' ' -f2)
+part="none"; echo(str("IRZ ", ir_z));' > $T/p.scad; "$SCAD" -o $T/p.echo $T/p.scad >/dev/null 2>&1; grep -o 'IRZ [0-9.]*' $T/p.echo | cut -d' ' -f2)
   for p in $PARTS; do
     b=${BRIM[$p]}
     log=$(prusa-slicer --export-gcode --load "$PROFILE" --perimeters 4 --no-support-material --brim-type outer_only --brim-width $b -o $T/$p.gcode stl/$p.stl 2>&1)
@@ -41,5 +53,5 @@ part="none"; echo(str("IRZ ", ir_z));' > $T/p.scad; openscad -o $T/p.echo $T/p.s
     fi
   done
 fi
-[ $bad = 0 ] && echo "OK: STL manifold, bez wysp w powietrzu, osłona i gałka bez nawisów > 45°${PROFILE:+, bez brimu w osłonie i tubie}"
+[ $bad = 0 ] && echo "OK: render bez błędów, STL manifold, bez wysp w powietrzu, osłona i gałka bez nawisów > 45°, mostów > 10 mm i płaskich wsporników${PROFILE:+, bez brimu w osłonie i tubie}; adapter, klatka i próbka: $noh pozycji informacyjnych wyżej (nie są sprawdzianem)" || echo "NIEZALICZONE: eksport v0.6 (patrz wyżej)"
 exit $bad

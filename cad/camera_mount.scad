@@ -99,7 +99,8 @@ adapter_axis_x = front_x + gp_od/2 + 3.0;  // oś przegubu przed przednią ścia
 seat_pitch = 0;           // [A] pochylenie blatu względem osi okularów, przód w dół = + (M4); 0 dopóki nie zmierzone
 deck_relief = 0.5;        // spód bloku przed płytką podniesiony → jedyną bazą jest gniazdo 25x25 (mech-8)
 fuse_x = 14.0;            // bezpiecznik: przewężenie bloku (rdzeń fuse_core x root_h), rowki V 45° z boków
-fuse_core = 10.0;         // ≈2.6 N·m na zginanie przy 25 MPa międzywarstwowo (> poślizg przegubu ≈1.3 N·m)
+fuse_core = 10.0;         // 10 × 8.0 → ≈2.67 N·m na zginanie przy 25 MPa międzywarstwowo [założenie]. Czy to więcej niż
+                          // poślizg przegubu przeliczony na TEN przekrój — patrz ECHO „bezpiecznik”; nierozstrzygnięte bez próbki
 fuse_x1 = fuse_x + (gp_leg*1.5 + gp_slit - fuse_core/2);   // przód rowków bezpiecznika (16.8): nic nie mostkuje go z przodu
 adapter_axis_z = axis_rel_seat;
 fem_y = [-(gp_leg + gp_slit), 0, (gp_leg + gp_slit)];
@@ -550,7 +551,41 @@ echo(str("zapadki: rowki ", 2*round(det_w*100)/100, " mm co ", round(det_rho*PI/
 echo(str("poślizg przegubu przy M5 ≤0.3 N·m (", F_m5, " N): tarcie ", round(T_fr[0]*100)/100, "–", round(T_fr[1]*100)/100,
    " N·m (μ 0.2–0.35) + zapadki ", round(T_det[0]*100)/100, "–", round(T_det[1]*100)/100,
    " N·m (ścięcie 2 wypustek; przy dokręconej M5 nie wysuną się sprężyście) = ", round((T_fr[0]+T_det[0])*100)/100, "–",
-   round((T_fr[1]+T_det[1])*100)/100, " N·m wobec bezpiecznika ≈2.6 N·m"));
+   round((T_fr[1]+T_det[1])*100)/100, " N·m NA OSI M5 (x ", adapter_axis_x, "); w bezpieczniku (x ", fuse_x, ") moment jest większy — niżej"));
+// KOLEJNOŚĆ ZNISZCZENIA — [calc], wszystkie wejścia założone (μ, τ, 25 MPa, moment ręki, docisk popychaczy).
+// Moment poślizgu działa wokół osi M5, bezpiecznik leży 19.6 mm bliżej gogli. Siła P na soczewce daje w bezpieczniku
+// moment większy o stosunek ramion k (tak samo liczyła v0.5: „2.13·T_slip”). Siła pionowa: k = (x_s − fuse_x)/(x_s − oś);
+// siła czołowa (wzdłuż −x): k = (z_s − z_b)/(z_s − oś z); czysta para sił: k = 1. Siła, której linia przechodzi przez oś
+// M5, w ogóle nie obraca przegubu — wtedy pracuje tylko bezpiecznik. Docisk popychaczy (2 × 5–15 N na z pad_z, belka jest
+// przed bezpiecznikiem) daje w bezpieczniku stały moment; dodaje się przy sile na obiektyw W GÓRĘ, odejmuje przy sile w dół.
+fuse_h = root_h - deck_relief;                           // wysokość przekroju bezpiecznika (8.0)
+fuse_zc = deck_relief + fuse_h/2;                        // środek przekroju (4.5)
+M_fuse = fuse_core*pow(fuse_h, 2)/6*25/1000;             // [N·m] zginanie przy 25 MPa międzywarstwowo [założenie]
+P_push = [5, 15];                                        // [N] docisk popychacza „dotyk + 1/8 obrotu” [A] (jak v0.5)
+M_pre = [2*P_push[0]*(fuse_zc - pad_z)/1000, 2*P_push[1]*(fuse_zc - pad_z)/1000];
+T_knob = [0.3, 0.4];                                     // [N·m] gałka: wartość z F_m5 i górna granica z opisu kn_d (0.2–0.4)
+function lens_xa(t, xl, zl) = adapter_axis_x + (xl - cage_axis_x)*cos(t) + (zl - axis_z)*sin(t);   // soczewka w układzie adaptera
+function lens_za(t, xl, zl) = adapter_axis_z - (xl - cage_axis_x)*sin(t) + (zl - axis_z)*cos(t);
+function k_vert(t, xl, zl) = (lens_xa(t, xl, zl) - fuse_x)/(lens_xa(t, xl, zl) - adapter_axis_x);
+function k_front(t, xl, zl) = abs((lens_za(t, xl, zl) - fuse_zc)/(lens_za(t, xl, zl) - adapter_axis_z));   // → ∞, gdy soczewka na wysokości osi
+function r2(v) = round(v*100)/100;
+lens_pts = [["termo", th_lens_len, 0], ["Infra", ir_lens_len, ir_z]];
+k_all = [for (L = lens_pts, T = [0, 10, 20]) k_vert(T, L[1], L[2])];
+echo(str("bezpiecznik: przekrój ", fuse_core, " × ", fuse_h, " na x ", fuse_x, " → ", r2(M_fuse), " N·m przy 25 MPa [założenie]; docisk popychaczy 2 × ",
+   P_push[0], "–", P_push[1], " N × ", fuse_zc - pad_z, " mm = ", r2(M_pre[0]), "–", r2(M_pre[1]), " N·m"));
+for (L = lens_pts) echo(str("bezpiecznik: stosunek ramion k dla siły na soczewce ", L[0], " przy tilt 0/10/20 (wzgl. adaptera): pionowa ",
+   r2(k_vert(0, L[1], L[2])), "/", r2(k_vert(10, L[1], L[2])), "/", r2(k_vert(20, L[1], L[2])), ", czołowa ",
+   r2(k_front(0, L[1], L[2])), "/", r2(k_front(10, L[1], L[2])), "/", r2(k_front(20, L[1], L[2])),
+   " (soczewka ", r2(lens_za(0, L[1], L[2])), "/", r2(lens_za(10, L[1], L[2])), "/", r2(lens_za(20, L[1], L[2])), " mm nad osią M5; k czołowe rośnie bez granic, gdy to 0)"));
+for (Tk = T_knob, mu = [0.2, 0.35]) {
+  Ts = [4*mu*(Tk/(0.2*0.005))*r_fr/1000 + T_det[0], 4*mu*(Tk/(0.2*0.005))*r_fr/1000 + T_det[1]];   // poślizg na osi M5
+  lo = min(k_all)*Ts[0] - M_pre[1];        // najmniej: siła w dół, najmniejsze k, największy docisk
+  mid = [min(k_all)*Ts[0], max(k_all)*Ts[1]];   // bez docisku popychaczy
+  hi = max(k_all)*Ts[1] + M_pre[1];        // najwięcej: siła w górę, największe k, największy docisk
+  echo(str("bezpiecznik: gałka ", Tk, " N·m, μ ", mu, ": poślizg ", r2(Ts[0]), "–", r2(Ts[1]), " N·m na osi M5 → przy sile pionowej na soczewce ",
+     "bezpiecznik widzi ", r2(mid[0]), "–", r2(mid[1]), " N·m, z dociskiem popychaczy ", r2(lo), "–", r2(hi), " N·m wobec ", r2(M_fuse), " → ",
+     hi < M_fuse ? "przegub puszcza pierwszy" : lo > M_fuse ? "BEZPIECZNIK PĘKA PIERWSZY" : "NIEROZSTRZYGNIĘTE (zależy od kierunku siły i docisku)"));
+}
 // popychacze
 echo(str("popychacze M3×", pusher_len, " na y ±", pad_y, ", z ", pad_z, ": wejście w występ x ", pad_xb, "; wysuw (płaska ściana) ",
    pad_xb - front_x - front_tol, "–", pad_xb - front_x + front_tol, ", z krawędzią wg GrabCAD ", pad_xb - front_x - front_tol + edge_set,

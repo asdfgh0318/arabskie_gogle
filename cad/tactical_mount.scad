@@ -1,4 +1,5 @@
 // arabskie_gogle — mocowanie kamer v0.5 „PANCERZ+” (wersja taktyczna) na przód Fat Shark HDO2
+// ODRZUCONA 2026-11-06 — nie drukować (aktualna wersja: camera_mount.scad v0.6; ten plik zostaje jako źródło pomysłów, nagłówek niżej jest z 2026-11-04)
 // WERSJA ROBOCZA (2026-11-04, po przeglądzie R1). Źródło: cad/spec/v05_tactical_spec.md — gdzie ten plik różni się
 // od specyfikacji, odstępstwo jest opisane w komentarzu przy parametrze (szukaj „ODSTĘPSTWO”; poprawki z przeglądu:
 // „PRZEGLĄD”). Parametry przeniesione bez zmian z camera_mount.scad (v0.4, zostaje jako wersja zapasowa) mają te same

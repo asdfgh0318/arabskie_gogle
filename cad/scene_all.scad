@@ -1,16 +1,24 @@
 // arabskie_gogle — CAŁY ZESTAW NA HDO2 (podgląd, WERSJA ROBOCZA)
-// Gogle: bryła zastępcza z wymiarów research/04 (169,2 × 80 × 45,5), 06 (gniazdo wentylatora, przód) i 07b
-// (narożniki R58, środek łuku 27 mm od osi). To NIE jest model producenta: pełnego modelu HDO2 nie znaleziono
-// (papers/hdo2_body_models/, research w commicie). Położenie zatok, gniazd AV i drzwiczek jest przybliżone.
+// Gogle — domyślnie (hdo_model = false, działa po świeżym klonie): bryła zastępcza z wymiarów research/04
+// (169,2 × 80 × 45,5), 06 (gniazdo wentylatora, przód) i 07b (narożniki R58, środek łuku 27 mm od osi). To NIE jest
+// model producenta; położenie zatok, gniazd AV i drzwiczek jest przybliżone.
+// Opcjonalnie model GrabCAD oryginalnego HDO (nie HDO2; autor: „wymiary niedokładne”) — plik lokalny w papers/, którego
+// nie ma w repo (papers/ jest ignorowane):
+//   openscad -D hdo_model=true scene_all.scad            (okno, podgląd F5 — nie sprawdzony z wiersza poleceń)
+//   openscad -D hdo_model=true -D 'which="hdo2"' -o hdo.stl scene_all.scad   (sam model: działa, 83301 ścian)
+//   Render całości z modelem (F6 albo -o plik.stl) kończy się „ERROR: The given mesh is not closed!” i eksportem BEZ
+//   gogli — siatka GrabCAD nie jest zamknięta. Z bryłą zastępczą (domyślnie) render całości przechodzi bez błędu.
+// Przy hdo_model = true pod i AI Box stoją na współrzędnych zatok z modelu GrabCAD, przy false — z bryły zastępczej.
 // Układ: x = do przodu, y = w lewo (strona noszącego), z = w górę; z = 0 = blat gniazda wentylatora.
 
+$fn = 64;   // jak w camera_mount.scad: `use` nie przenosi $fn, a bez niego circ() = r/cos(180/$fn) daje nan w wycięciu osłony
 use <camera_mount.scad>
 use <pod.scad>
 use <aibox_mount.scad>
 
 which = "all";
 // model GrabCAD (Aisak, oryginalne HDO, „wymiary niedokładne” wg autora) — plik lokalny, nie w repo (papers/ ignorowane)
-hdo_model = true;
+hdo_model = false;   // true tylko z -D hdo_model=true i gdy plik niżej istnieje
 hdo_file = "../papers/hdo2_body_models/grabcad_fatshark-hdo-goggles-1/hdo_grabcad_goggle_frame.stl";
 tilt = 10;
 
@@ -45,7 +53,9 @@ module hdo2_body() {
 }
 
 module camera_stack() {
-    adapter_top(); knob(); m5_hw(); pushers();        // v0.6: gałka, M5, popychacze (moduły same się ustawiają)
+    // v0.6: gałka M5, śruba, popychacze (moduły same się ustawiają). knob() to gałka M5 z camera_mount.scad; gałka
+    // enkodera w pod.scad nazywa się pod_knob() — przy dwóch `use` z tą samą nazwą modułu OpenSCAD bierze ostatni bez ostrzeżenia
+    adapter_top(); knob(); m5_hw(); pushers();
     translate([adapter_axis_x_(), 0, 0]) rotate([0, tilt, 0]) translate([-cage_axis_x_(), 0, -axis_z_()]) { cage(); shroud(); ghost_cams(); cables(); }
 }
 // wartości z camera_mount.scad (przez `use` zmienne nie są widoczne → funkcje-kopie, zgodne z v0.6 — położenie osi
@@ -57,7 +67,7 @@ function cage_axis_x_() = -(15.4 + 1.0) - 4.5 - 9.0;
 module pod_on_goggle() {
     translate([pod_c[0], side_m, pod_c[1]]) to_goggle() {
         shell(); chassis();
-        translate([12.5, 0, 12 + 1.2]) knob();
+        translate([12.5, 0, 12 + 1.2]) pod_knob();
         translate([-14.5, 1.2, 12]) cap_cam();
     }
 }

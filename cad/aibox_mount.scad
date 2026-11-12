@@ -13,7 +13,11 @@ part = "assembly";
 $fn = 40;
 
 box   = [33.5, 33.5, 16.5];
-hole  = 25.5;           // rozstaw otworów AI boxa
+// ROZSTAW OTWORÓW — DWA RYSUNKI SKLEPU SIĘ RÓŻNIĄ: rysunek wymiarowy (…_dimensions_aibox_thermal.png, „Unit: mm”)
+// podaje 25.5, a grafika z wymiarami w tym samym zestawie (papers/bzbuas_tr1-220sl_dimensions_infra.png) podaje „25mm”.
+// Przyjęte 25.5 (rysunek wymiarowy). Przy pilotach Ø1.8 pod M2 różnica 0.5 mm ma znaczenie → ZMIERZYĆ po dostawie,
+// przed drukiem uchwytu.
+hole  = 25.5;           // [A] rozstaw otworów AI boxa (25.5 albo 25 — patrz wyżej)
 base  = [38, 37];       // płytka pod VHB (07b: ≈37 × 36 przed gniazdem AV — do pomiaru P3)
 base_t = 2.0;
 so_h  = 5.0;            // dystanse: miejsce na złącze kamer od spodu boxa i wyjście przewodu bokiem [A]

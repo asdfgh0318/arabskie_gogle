@@ -249,7 +249,8 @@ module shim(t) {   // tylko pod korpusem B3S (zaciski wychodzą w kanały gniazd
 
 // ================= GAŁKA =================
 module d_bore(h) { intersection() { cylinder(d = knob_bore, h = h); translate([knob_bore/2 - knob_flat, -knob_bore, 0]) cube([knob_flat, 2*knob_bore, h]); } }
-module knob() {
+// pod_knob, nie knob: scene_all.scad robi `use` także na camera_mount.scad, który ma własny moduł knob() (gałka M5)
+module pod_knob() {
     bore = ms_z + ec11_tip_z - (body_top + knob_gap) + 0.3;
     ss_z = bore - 1 - (ec11_flat_len - 2)/2;      // śruba M3 na środku płaskiego odcinka osi
     difference() {
@@ -329,7 +330,7 @@ module assembly() {
     if (show_goggle) ghost_goggle();
     color("LightSteelBlue", 0.85) shell();
     color("Khaki") chassis();
-    color("DimGray") translate([enc_xy[0], enc_xy[1], body_top + knob_gap]) knob();
+    color("DimGray") translate([enc_xy[0], enc_xy[1], body_top + knob_gap]) pod_knob();
     color("tomato") translate([cam_xy[0], cam_xy[1], body_top]) cap_cam();
     color("white") translate([cam_xy[0], cam_xy[1], pocket_z]) shim(shim_nom);
     ghost_parts();
@@ -342,7 +343,7 @@ module assembly() {
 module mx() { mirror([1, 0, 0]) children(); }
 module print_shell()   { mx() translate([0, 0, body_top]) mirror([0, 0, 1]) shell(); }
 module print_chassis() { mx() translate([0, 0, -(ch_top - ch_t)]) chassis(); }
-module print_knob()    { mx() translate([0, 0, knob_h]) mirror([0, 0, 1]) knob(); }
+module print_knob()    { mx() translate([0, 0, knob_h]) mirror([0, 0, 1]) pod_knob(); }
 module print_caps()    { for (i = [0 : 2]) translate([i*30 - 30, 0, cap_stop + cap_t]) mirror([0, 0, 1]) cap_cam(); }
 module print_shims()   { for (i = [1 : 5]) translate([(i - 3)*10, 0, 0]) shim(0.2*i); }
 module print_gauge()   { mx() translate([0, 0, fl_t]) mirror([0, 0, 1]) gauge(); }
@@ -352,7 +353,7 @@ module to_goggle() { multmatrix([[1,0,0,0],[0,0,1,0],[0,1,0,0],[0,0,0,1]]) child
 
 if (part == "shell") shell();
 else if (part == "chassis") chassis();
-else if (part == "knob") knob();
+else if (part == "knob") pod_knob();
 else if (part == "cap_cam") cap_cam();
 else if (part == "gauge") gauge();
 else if (part == "print_shell") print_shell();

@@ -15,7 +15,7 @@ module lid_fixed() {  // obudowa bez języczka (to, o co nakładka może się op
 module P(n) {
     if (n == "shell") shell();
     else if (n == "chassis") chassis();
-    else if (n == "knob") translate([enc_xy[0], enc_xy[1], body_top + knob_gap]) knob();
+    else if (n == "knob") translate([enc_xy[0], enc_xy[1], body_top + knob_gap]) pod_knob();
     else if (n == "cap") translate([cam_xy[0], cam_xy[1], body_top]) cap_cam();
     else if (n == "shim") translate([cam_xy[0], cam_xy[1], pocket_z + 0.01]) shim(shim_nom - 0.02);
     else if (n == "enc") translate([0, 0, 0.01]) g_enc();
@@ -30,5 +30,11 @@ module P(n) {
     else if (n == "cap_stop") cap_at(d_stop - 0.05);        // tuż przed uszami: nie może dotykać wieka
     else if (n == "lid_fixed") lid_fixed();
     else if (n == "tongue_stop") translate([0, 0, -(d_stop - 0.05)]) intersection() { shell(); translate([cam_xy[0] - tongue_w/2, cam_xy[1] - 3, body_top - lid_t]) cube([tongue_w, 6, lid_t]); }
+    // kontrole pozytywne (run_pod_clash.sh, oczekiwanie „h”): te bryły MUSZĄ dać kolizję
+    else if (n == "cap_over") cap_at(d_stop + 1.6);         // 1.6 mm za ogranicznikiem: uszy nakładki w wieku
+    else if (n == "sweep_off") translate([ctl_dx, 0, 0]) for (dz = [1 : 1 : 16]) translate([0, 0, -dz]) stack();   // wsuwanie obok osi
+    else if (n == "knob_low") translate([enc_xy[0], enc_xy[1], body_top - 1.0]) pod_knob();   // gałka 1 mm w wieku
+    else if (n != "") assert(false, str("pod_clash.scad: nieznana bryła \"", n, "\""));   // literówka w liście par = błąd, nie „czysto”
 }
+ctl_dx = 1.5;   // [mm] przesunięcie w kontroli sweep_off
 intersection() { P(which[0]); P(which[1]); }

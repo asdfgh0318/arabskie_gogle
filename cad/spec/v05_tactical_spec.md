@@ -1,6 +1,16 @@
 # camera_mount v0.5 design spec: "PANCERZ+" (goggle mount and camera heads only)
 
-**Status:** working draft, nothing built or rendered yet. This spec is derived from the three concepts, the two judge reports and `cad/camera_mount.scad` v0.4.
+> **ODRZUCONA 2026-11-06 — nie drukować.** (Rejected 2026-11-06, do not print.) Archived, not maintained.
+> - This spec was implemented as `cad/tactical_mount.scad` (v0.5) and then rejected by Adam on 2026-11-06: the GoPro
+>   joint stays at the camera, so the trunnion and the PA66 fuse were dropped (`ZALOZENIA.md`, decision table). The
+>   current design is v0.6 in `cad/camera_mount.scad`, described in `cad/README.md`.
+> - The text below was **not corrected** after the review. Its known errors are listed under "Erraty specyfikacji" in
+>   `cad/spec/v05_tactical_README.md`; where this spec and `cad/tactical_mount.scad` differ, the `.scad` file governs.
+> - §9 "Decisions needed from Adam" was answered on 2026-11-06 (`ZALOZENIA.md`): decision 1 refused, the added mass
+>   and the cable exit at the top rear accepted. Items 2 and 4 have no recorded answer; v0.6 puts the pushers at
+>   z −9.5 and has tilt detents.
+
+**Status (as written on 2026-11-04, superseded by the banner above):** working draft, nothing built or rendered yet. This spec is derived from the three concepts, the two judge reports and `cad/camera_mount.scad` v0.4.
 - For any parameter carried over unchanged, `camera_mount.scad` governs.
 - Values marked [calc] are hand estimates and must be recomputed from the model. Values marked [A] are assumptions.
 - Camera dimensions are still from shop drawings. The HDO2 dimensions are from research/06 and have not been measured on the hardware.
@@ -359,12 +369,14 @@ The load paths:
 3. Accept about +6 g of sliced print in exchange for the hood, tube, arms and field boresight.
 4. Is a tilt that holds by friction (push the cage against 0.5–0.9 N·m, knob only to lock) the everyday mode, with detents (S8) later?
 
-Reference files (concept prototypes, not the repo):
-- `/tmp/claude-1000/tactical/protect/v05.scad`
-- `/tmp/claude-1000/tactical/protect/chk.sh`
-- `/tmp/claude-1000/tactical/precision/overhang.py`
-- `/tmp/claude-1000/tactical/field/flip2.py`
+Reference files (concept prototypes). These were session scratch files under `/tmp/claude-1000/tactical/`; they
+were **not preserved** and are not in the repo, so what they contained cannot be checked:
+- `protect/v05.scad`
+- `protect/chk.sh`
+- `precision/overhang.py`
+- `field/flip2.py`
 
-Base files:
-- `/home/adam/ŻYCIE/VIBECODING/arabskie_gogle/cad/camera_mount.scad`
-- `/home/adam/ŻYCIE/VIBECODING/arabskie_gogle/cad/README.md`
+Base files (paths relative to the repo root; both have changed since this spec was written — `camera_mount.scad` is
+now v0.6, v0.4 is in git history at commit `6217b93`):
+- `cad/camera_mount.scad`
+- `cad/README.md`

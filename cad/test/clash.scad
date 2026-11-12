@@ -30,6 +30,9 @@ module buckle_body() translate([helm_x, 0, helm_z]) rotate([0, buckle, 0]) union
 }
 
 // ---- pary ----
+clash_known = ["adapter_ghost", "stack_ghost", "stack_front", "knob_front", "detent", "shroud_cage", "shroud_cams", "cams_cage",
+  "cables_cage", "fov", "buckle", "x_front", "x_stack", "par"];
+assert(len([for (k = clash_known) if (k == which) 1]) == 1, str("clash.scad: nieznane which = \"", which, "\""));   // literówka = błąd, nie „czysto”
 if (which == "adapter_ghost") intersection() { yawed() front(); ghostbox(); }                    // yaw 0, ±2
 if (which == "stack_ghost")   intersection() { stack(); ghostbox(); }
 if (which == "stack_front")   intersection() { stack(); union() { front(); pushers(g_fx); keypaths(); } }
