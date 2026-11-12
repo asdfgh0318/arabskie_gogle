@@ -423,4 +423,4 @@ All passages above were re-checked against the source files. Changes made to thi
 - E8: added the "shocky" sentence and the figure captions (T-peel of F-9473PC) cited in the report.
 - E9: primer table has no substrate mapping; flash points added.
 - E15, E16: new (sources already in `papers/`, read in verification).
-Arithmetic re-run: `/tmp/claude-1000/pod_research/verify-ergo/check.py` (scratch).
+Arithmetic re-run: `/tmp/claude-1000/pod_research/verify-ergo/check.py` (a scratch location that was **not preserved**: the file no longer exists and there is no copy in the repo, so the re-run cannot be repeated from the repo; noted 2026-11-11).

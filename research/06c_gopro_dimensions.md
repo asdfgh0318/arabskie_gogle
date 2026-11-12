@@ -2,8 +2,9 @@
 
 Context: the HDO2 fan is being removed and the camera mount goes in its place. (06 check: the fan is on the **top** of the shell, not on the front face. See 06a/06b and `06_hdo2_front_and_gopro.md`.) The cage carries a
 2-prong (male) GoPro joint. It must fit Adam's real GoPro buckle on a VHB base and the printed 3-prong
-adapter (`cad/camera_mount.scad`). *Corrected by the 06 check:* the file does **not** use the ridercz 3.5 slot. Line 53 reads
+adapter (`cad/camera_mount.scad`). *Corrected by the 06 check:* the file does **not** use the ridercz 3.5 slot. Its GoPro block reads
 `gp_leg = 3.0;  gp_slit = 3.3;  gp_od = 15;  gp_hole = 5.5;`, so finger 3.0, slit **3.3** for both the male slot and the female gaps, Ø15, hole 5.5.
+(Line number removed 2026-11-11: the line has moved; the values are the same in the current v0.6 file.)
 
 **Tags.** [V-comm] = a number written in a community source I downloaded and read (quote in
 `papers/extracts_gopro_dims.md`, G-number). [M] = I measured it on a downloaded STL/3MF by ray casting.
@@ -28,7 +29,7 @@ caliper sketch.
 | 2-prong (male) **finger** | 2.85–3.02 | **≈3.0** (only one source claims a measurement: 3.02) | low–medium | **3.0** (test coupon 2.8 / 2.9 / 3.0) |
 | 2-prong **slot** (takes the middle finger) | 3.12–3.6 | ≈3.1–3.3 | low–medium | **3.5** |
 | Finger end (boss) **Ø** | 14.55–15.0 (one outlier at 16.0) | **Ø15** | high | 15.0 |
-| **Hole** | 4.97–5.09 claimed or measured; 5.2–5.5 in print libraries | M5 clearance, ≈Ø5.1 moulded | high | **5.4–5.5** |
+| **Hole** | two groups in the claimed or reverse-engineered models: 4.97–5.09 (4 sources) and 5.46–5.49 (3 sources, §2.1); 5.2–5.5 in print libraries | M5 clearance; moulded Ø ≈5.0–5.1 or ≈5.5, not settled | high (M5); medium (real Ø) | **5.4–5.5** |
 | Width over 3 fingers | 14.6–16.0 | ≈15.3–16 | medium | follows from the above |
 | Hole axis to base face | 9.0–19.5, set by each design | depends on the design | — | ≥ R + 1.5 = 9 mm [calc] |
 | Thumbscrew | M5; 18–18.5 mm of thread sticks out; built on an M5×50 bolt | M5 | high (M5); medium (18 mm) | M5×50 + hex/square nut |
@@ -110,8 +111,13 @@ GoPro joints (5 mm prongs, 4 mm slot, Ø3 hole) [M]. Details are in the extracts
   writes: "some compatible mounts have tighter gaps (at the bottom), so you have just to increase the tolerance
   of 0.1" (G5 l.22).
 - **Boss Ø.** 14.55–15.0, with #65294 at 16.0 as the outlier. Ø15 is the common value.
-- **Hole.** Values that claim to reproduce the real part are 4.97–5.09. Print libraries open it to 5.2–5.5
-  for an M5.
+- **Hole.** *(Corrected 2026-11-11; the earlier text gave only 4.97–5.09.)* The same groups that are counted
+  as real-part sources for the middle finger and gap above split into two for the hole: **4.97–5.09** (G5
+  stated 5.09, #153569 5.07, #95616 4.99, #934640 4.97) and **5.46–5.49** (#579629 5.46, #189423 5.49, #65294
+  5.48, the one "verified ... using a GoPro Hero 4 case"). #95616 and #189423 are counted as one origin for the
+  fingers but differ here (4.99 vs 5.49). The second group was left out of the earlier range without a stated
+  reason; I have no basis for excluding it, so the real moulded hole is somewhere in 5.0–5.5 until Adam
+  measures one. Print libraries open it to 5.2–5.5 for an M5. The print value (5.4–5.5) is not affected.
 - **Hole axis to base.** This is a design choice, not a standard. Each buckle sets it differently
   (13.2–19.5 mm). The only hard limit is that the partner's Ø15 boss must clear the base when it pivots:
   ≥ 7.5 mm + clearance [calc].
@@ -221,11 +227,11 @@ The goal is a printed **male 2-prong on the cage** that fits **Adam's real GoPro
 |---|---|---|
 | Male finger thickness | **3.0**, but print a coupon at 2.8 / 2.9 / 3.0 first | Real gap ≈3.10–3.18 [§2.1], so 3.0 leaves 0.1–0.2. BeppeITA prints 2.82 against his 3.12 (G5 STL). Too tight means it won't go in; too loose is fixed by the screw clamp. |
 | Male slot | **3.5** | Real middle finger 3.0–3.3, so 0.2–0.5 clearance; same as ridercz and julietta |
-| Female gap (printed adapter) | **3.4–3.5** | Takes the printed 3.0 male and real GoPro males (2.85–3.02) |
-| Female middle finger | **3.0** | Fits real male slots of 3.12–3.3 and the printed 3.5 slot |
+| Female gap (printed adapter) | **3.4–3.5** | Takes the printed 3.0 male and GoPro males of 2.85–3.02. That range is library/claimed, not measured: 2.85 is the MoonCactus library value and 3.02 is BeppeITA's stated measurement, the only one (§2.2) |
+| Female middle finger | **3.0** | Fits male slots of 3.12–3.3 (3.12 BeppeITA stated; 3.3 MoonCactus library [calc], §2.2) and the printed 3.5 slot |
 | Female outer fingers | 3.0 + nut boss on one side | non-critical; MoonCactus 2.75, ridercz 3.0 |
 | Boss | **Ø15.0** | 11 of 12 values in §2 fall within 14.55–15.0 (the outlier is 16.0) |
-| Hole | **Ø5.4–5.5** | j-h-a 5.3/5.4, MoonCactus 5.5, ridercz 5.0 + 0.5. Measured real holes are ≈5.0–5.1 but are moulded. |
+| Hole | **Ø5.4–5.5** | j-h-a 5.3/5.4, MoonCactus 5.5, ridercz 5.0 + 0.5. Models that claim the real part give ≈5.0–5.1 or ≈5.5 (§2.1); no real hole has been measured here. |
 | Hole axis to nearest base face | **≥ 9 mm** | Ø15 boss of the partner + 1.5 mm pivot clearance [calc] |
 | Nut | M5 square pocket 8.2 × 3.0–3.5 deep (ridercz layout), or M5 hex 8.1–8.2 across flats | MoonCactus 7.97 (press) and j-h-a 8.66 bracket it [calc] |
 | Screw | M5×50 in a printed knob, about 18 mm out; or a GoPro thumbscrew | §3 |

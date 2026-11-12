@@ -1,7 +1,8 @@
 # 07b — Where the control pod can go on the HDO2 (WORKING DRAFT)
 
-Track 07b of `arabskie_gogle`. **ZALOZENIA.md governs; where this file disagrees with `research/06` (the HDO2
-geometry table) or with a source in `papers/`, those govern.** Verbatim quotes for every [V] / [V-comm] tag are
+Track 07b of `arabskie_gogle`. **Authority: ZALOZENIA.md §4 governs decisions; for facts and numbers this file
+governs over the §1b/§1c summary in ZALOZENIA.md; where this file disagrees with `research/06` (the HDO2
+geometry table) or with a source in `papers/`, those govern. A later bench measurement governs over all of these.** Verbatim quotes for every [V] / [V-comm] tag are
 in `papers/extracts_pod_placement.md` (IDs P, S, F, E, O, X). Status 2026-11-03: **working draft.** Nothing here
 has been measured on Adam's goggles; it rests on product photos, the manual, one receiver-module manual, one
 forum measurement and the v0.3 camera-mount CAD. §6 lists what Adam must measure before the pod is drawn.
@@ -80,11 +81,27 @@ Sides are named from the **wearer's** point of view. In the CAD, +y = wearer's l
     12.6–13.4 mm at ±64 mm (06 B2, which governs over 06a's slightly larger figures);
   - nose notch ≈37 × 8 mm;
   - front portions of the bay doors: 18.5 mm (right) and 24 mm (left) wide, 35.7 mm tall; antenna-port cover
-    Ø≈7 mm on the left door (06 B5). **Discrepancy flagged for 06:** in the same front view the cover is 69 px
+    Ø≈7 mm on the left door (06 B5 as it stood). **Discrepancy flagged for 06:** in the same front view the cover is 69 px
     ≈ **9.6 mm tall**. Only its width (53 px ≈ 7.4 mm) gives "≈7", and the width is foreshortened by the corner
-    (V2);
+    (V2). *(06 B5 was updated to 7.4 × 9.6 mm on 2026-11-11.)*;
   - because the doors differ in width, the panel between them is off-centre. Measured from the silhouette centre,
     the door edges lie at lateral **≈65–66 mm (right)** and **≈60–61 mm (left)**, not ±62.7 (V3);
+  - **open conflict of lateral reference (added 2026-11-11).** Those figures are measured from the silhouette
+    centre of the front view (x 998.5). 06a §2.4 finds the fan-cover centre and the nose-notch apex at x 979 / 975
+    in the same image, ≈20 px left of the silhouette centre, and says "Laterally I trust the feature axis";
+    07c V8 uses x 979. From x 979 both door edges are at (979 − 528) × 0.139 = (1430 − 979) × 0.139 = **62.7 mm**;
+    from x 998.5 they are (998.5 − 528) × 0.139 = 65.4 mm (right) and (1430 − 998.5) × 0.139 = 60.0 mm (left).
+    The two references differ by 19.5 px = 2.7 mm. Arguments each way: the CAD origin is the fan centre, which
+    is the feature axis; but V3's cross-check against the top-view half-width and the door widths (84.6 − 18.5 =
+    66.1; 84.6 − 24 = 60.6) supports the silhouette centre, and in the top view the fan is only 1.2–1.3 mm off
+    the centreline (06 A9). **Not resolved from photos.** So every lateral figure in this note that derives from
+    the door edges has two candidate values up to **2.7 mm** apart: the door edges (62.7 for both, or 65.4 R / 60.0 L), the
+    door-edge setback and arc (≈12 mm and ≈53 mm for both with x 979 [calc on the R 58 fit of §1.1: sin θ =
+    (62.7 − 27)/58, setback 58·(1 − cos θ) = 12.3, arc 58·(90° − θ) = 52.6; V3's pre-correction figures were ≈13
+    and ≈52]; ≈11/55 L and ≈15/48 R with x 998.5), the contoured front-pod widths (35 both, or 37 R / 32 L) and the distance from the cage side
+    to the left door's front edge (62.7 − 12.95 ≈ 50, or ≈47). The figures elsewhere in this note are the
+    x 998.5 ones. The recommendation of candidate (b) does not rest on the difference: the distance from the
+    cage is ≈47 mm or more either way. P1, P3 and P4 measure the real positions;
   - deck free ±18 mm; VOL/CH buttons from ±21.7/22.6 mm; DVR/Display joysticks at ≈±40 mm (B1–B6, A5).
 - **Controls I must not cover** [V: P1, P4]:
   - **Display 5-way** (top, wearer's left, ≈40 mm out). Needed for the image menu: "contrast, brightness,
@@ -288,6 +305,17 @@ and on the press.
 
 - **Files** (scratch, not in the repo): `/tmp/claude-1000/pod_research/placement/pod_fov.scad`, `one.sh`,
   `fov_summary.txt`.
+  - **Not reproducible from the repo (noted 2026-11-11).** That path was a scratch location that was **not preserved**: the directory no longer exists and there is no copy in the repo.
+    Nothing in the repo replaces it: `cad/test/pod_clash.scad` checks the pod's own parts against each other
+    (pairs, sliding the board in, CAM cap travel) and contains no FOV pyramids and no candidate boxes;
+    `cad/test/clash.scad` has an FOV mode, but for the camera mount's own parts, not for pod boxes on the goggles.
+    So the [cad] numbers in this section — the 288 zero-volume runs, the positive control and the depth-sweep
+    table (first Infra entry at ≈54 mm, the mm³ values) — are a **record of runs that cannot be re-run or
+    checked here**. Two things can still be checked from the text: the "all zeros" result follows from the
+    geometric argument in the Limitation paragraph below, and the method is described well enough to rebuild the
+    script. The depth-sweep numbers were also made against `camera_mount.scad` v0.3; the file is now v0.6
+    (`cam_gap` changed from 1.5 to 2.0, so the Infra camera sits 0.5 mm higher), so they would not reproduce
+    exactly even with the script.
 - **Method.** The script includes `cad/camera_mount.scad` (part = "none") and re-uses the FOV pyramids of
   `cad/test/clash.scad`: thermal 50° × 37.2°, Infra worst case 96° × 72°, 300 mm long. Each candidate box is
   intersected with each pyramid, with the cage and with the adapter.
@@ -329,7 +357,8 @@ and on the press.
     | 80 mm | enters both FOVs |
 
     So the Infra FOV is first entered at **≈53–54 mm**. Keep **≤45 mm** as the design limit, which leaves ≈8 mm of
-    margin for the unmeasured Infra FOV [cad].
+    margin for the unmeasured Infra FOV [cad]. (Table not reproducible from the repo, see "Files" above. It
+    concerns only the front-face fallback (a), not the recommended bay pod.)
 - **Caveats:**
   - The goggle is a box ghost, and the eye-axis height is `seat_above_eye = 23`. FOV results are insensitive to
     that height because the pods move with the goggles.
@@ -355,16 +384,17 @@ and on the press.
 |---|---|---|---|
 | XIAO | 21 × 17.8 | 374 | [V: X1] |
 | EC11E body | 11.7 × 12 | 140 | [V: E3] |
-| 2 × B3S | 6 × 6 each | 72 | [V: O1] |
+| 2 × B3S | 6.0 × 6.6 each (corrected 2026-11-11 to the Omron drawing as read in 07a §2; was 6 × 6 = 72) | 79 | [V: O1] |
 | D36V6F5 | 13 × 10 | 130 | [V: X2] |
 | Vibration motor | Ø10 | 79 | [V: X3] |
 | 2 × JST-GH 5-pin side-entry header (SM05B-GHS-TB) | 9.5 × ≈4.85 each (4.05 + 0.8 deep; 4.25 high) | ≈92 | [V: X4, drawing p.3] |
-| **Total** | | **≈887** | |
+| **Total** | | **≈894** (374 + 140 + 79 + 130 + 79 + 92; was 887) | |
 
-- That is **≈887 mm²**, against **1260 mm²** for a 42 × 30 board, on one layer. Body outlines only: the B3S SMT
+- That is **≈894 mm²**, against **1260 mm²** for a 42 × 30 board, on one layer. Body outlines only: the B3S SMT
   terminals, the EC11 bracket legs (12.5 mm apart) and the mating GHR plugs add area, so this is a lower bound.
 - Heights: EC11E body 4.5 + shaft 20 = 24.5 from the board [V: E3]; B3S 4.3 [V: O1]; XIAO thickness not in the
-  text [A ≈3.5 with USB-C].
+  text [A ≈3.5 with USB-C]. (07a §3.1 parsed Seeed's DXF and KiCad files the same day: they give no component
+  heights, and the PCB thickness is unknown. The ≈3.5 stays an assumption until a board is measured.)
 - The reference plane is the goggle side surface (the bay rim). The terminals project 3.5 mm below the board
   [V: E3], so in an 11 mm in-bay budget the board can sit at most ≈7.5 mm below the side surface. The shaft tip
   is then ≈17 mm proud of the side surface. That fits the 12 + 12 = 24 mm budget, with the knob's top at 17–24 mm
@@ -456,7 +486,8 @@ and on the press.
 - `fatshark/fs_hdo2_media0_HDO2_1024x1024.jpeg` and `oscarliang/…module-bay-front.jpg` (door wrap and labels,
   qualitative).
 
-Annotated crops are in the scratch dir only (`/tmp/claude-1000/pod_research/placement/img/`).
+Annotated crops were in `/tmp/claude-1000/pod_research/placement/img/` only, a scratch location that was **not preserved**: the directory no longer exists and there is no copy in the repo.
+The source images listed above are in `papers/hdo2_front_img/`, and the pixel coordinates are in the text.
 
 **Project inputs:** `ZALOZENIA.md` §1c; `research/04`, `05`, `06` (+06a); `cad/camera_mount.scad` v0.3;
 `cad/test/clash.scad`.
@@ -469,12 +500,12 @@ Annotated crops are in the scratch dir only (`/tmp/claude-1000/pod_research/plac
 | IntoFPV 7613 (bay 44 × 32 × 13, HDO v1) and 24557 | **retrieved, read** |
 | Alps EC11E series catalog PDF + EC11E09244BS product page | **retrieved, read**. The older URLs `tech.alpsalpine.com/assets/products/catalog/ec11.en.pdf` and `…/cms.media/product_catalog_ec_02_ec11e_en_611f078659.pdf` returned 403. Mouser mirrors returned HTML |
 | Fat Shark drawing of the HDO2 shell or the VRx bay (opening, depth, socket, door latch) | **not found**. No claim; replaced by P1/P2 |
-| GetFPV HDO2 disassembly ("Fatshark dust removal") https://www.getfpv.com/learn/fpv-diy-repairs-and-mods/fatshark-dust-removal/ | **not retrieved** (403, see 06a). Would show the bay and door latch. Adam: please save it from a browser |
+| GetFPV HDO2 disassembly ("Fatshark dust removal") https://www.getfpv.com/learn/fpv-diy-repairs-and-mods/fatshark-dust-removal/ | **not retrieved** on 2026-11-03 (403, see 06a). Since then (2026-11-06, research/09 §6) the **text** has been saved as `papers/hdo2_net/getfpv_fatshark_dust_removal_via_jina.md`; the **images**, including `module-bay.jpg` (empty bay), are still missing. Adam: please save them from a browser (URLs in 09 §5) |
 | ImmersionRC rapidFIRE module dimensions / casing drawing (https://www.immersionrc.com/?p=5781) | not attempted beyond search; no claim |
 | SpeedyBee product page https://www.speedybee.com/speedybee-5-8ghz-goggles-receiver | not fetched; the manual covers it |
 | HDO2 confirmation of the 9-pin bay pinout | **not found**. Only the community schematic (research/04 G1) |
 | ISO 4762 / DIN 125 dimensions (M5 head, washer) | not retrieved; used as [A] in §0 |
-| XIAO ESP32-C3 thickness (DXF linked on the wiki) | not fetched; [A] |
+| XIAO ESP32-C3 thickness (DXF linked on the wiki) | not fetched for this report. Fetched and parsed in 07a (dimensioning DXF and KiCad v1.3 files): they contain **no thickness** (07a §3.1: PCB thickness "unknown", component heights "unknown"). Still [A] |
 | MIL-STD-1472H, DTIC ADA256894 (gloved control spacing) | MIL-STD-1472H is now in `papers/pod_MIL-STD-1472H_2020_human_engineering.pdf` (downloaded by another track). It was **not read for this report**, and no spacing claim here rests on it. DTIC ADA256894 is still missing (see research/05) |
 
 **Waiting on:** P1, P2, P5 and P7. Until they are measured, the envelope in §4.1 is a design target, not a
@@ -484,8 +515,11 @@ verified fit.
 
 I checked every numeric claim against the files in `papers/`. I re-rendered the PDFs (SpeedyBee pp. 3–5,
 HDO2 manual pp. 5–6, 9, 11, Alps p.2, JST GH p.3), re-measured the images and re-ran the OpenSCAD intersections.
-Scratch files are in `/tmp/claude-1000/pod_research/verify-placement/` (`top.py`, `side.py`, `edges.py`,
-`one.sh`, gridded crops `Lg.png`, `Rg.png`, `Fg.png`, `sb5_top.png`, `sb3_draw.png`, `ec2.png`, `jst-3.png`).
+Scratch files were in `/tmp/claude-1000/pod_research/verify-placement/` (`top.py`, `side.py`, `edges.py`,
+`one.sh`, gridded crops `Lg.png`, `Rg.png`, `Fg.png`, `sb5_top.png`, `sb3_draw.png`, `ec2.png`, `jst-3.png`),
+a scratch location that was **not preserved**: the directory no longer exists and there is no copy in the repo (noted 2026-11-11). The image re-measurements and
+OpenSCAD re-runs of this pass therefore cannot be repeated from the repo; the pixel coordinates and scales are
+given in the text and in `papers/extracts_pod_placement.md`.
 
 **Changes made:**
 
@@ -529,7 +563,7 @@ Scratch files are in `/tmp/claude-1000/pod_research/verify-placement/` (`top.py`
   The strip in front of the panels was re-measured at 11.1–12.7 mm (reported 11.0–12.6; fine).
 - **V7. JST-GH area.** The side-entry header drawing (p.3) gives 4.05 + 0.8 mm deep and 4.25 mm high. "≈4.3" was
   the height. Area per header ≈46 mm², total ≈887 mm² (was 875). Added that the table is a body-outline lower
-  bound.
+  bound. *(2026-11-11: the B3S row was corrected from 6 × 6 to 6.0 × 6.6, so the total is now ≈894.)*
 - **V8. Encoder height paragraph rewritten.** It was ambiguous about the reference face. Including the 3.5 mm
   terminals, "8 mm under" broke the 11 mm in-bay budget. Re-derived: board ≤7.5 mm below the side surface,
   shaft tip ≈17 mm proud.
@@ -575,5 +609,8 @@ Scratch files are in `/tmp/claude-1000/pod_research/verify-placement/` (`top.py`
   P9).
 - Whether a knock can actually slip the 4-screw clamp (friction is unknown).
 - The 06 B5 antenna-cover diameter (≈7 mm) disagrees with this pass (≈9.6 mm). It needs re-checking in 06.
+  *(2026-11-11: 06 B5 now quotes this pass's 7.4 × 9.6 mm. Neither reading has been checked on the goggles.)*
+- **Lateral reference of the front view** (silhouette centre x 998.5, used in V3, or feature axis x 979, used by
+  06a §2.4 and 07c V8): unreconciled, up to 2.7 mm on the door-edge positions and what derives from them (§0).
 - Alternatives not assessed, because the 2026-11-03 decision puts buttons on the goggles: a tethered handheld or
   wrist remote, and a pod on the rear strap or battery-case area.

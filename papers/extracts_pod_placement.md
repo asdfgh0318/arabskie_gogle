@@ -154,12 +154,15 @@ Confirmed unchanged: P2–P6 (text matches `pdftotext` of pp. 6, 8, 9, 11); S1�
 X1–X3; and the R entries against `cad/camera_mount.scad` and the `x.echo` output.
 
 Image measurements re-done in verification (not quotes; scratch scripts in
-`/tmp/claude-1000/pod_research/verify-placement/`):
+`/tmp/claude-1000/pod_research/verify-placement/`, a scratch location that was **not preserved**: the directory no longer exists and there is no copy in the repo, so
+these measurements cannot be re-run from the repo; the pixel coordinates below are what remains; noted 2026-11-11):
 - **Side views `manual/img-099.png`.** The door outline is tilted, so its perpendicular height is ≈180–185 px,
   not the 205 px bounding box. That gives ≈0.196 mm/px for 35.7 mm.
 - **Front view `fatshark/fs_hdo2_media4_HDO2_e.jpeg`, antenna cover.** The cover spans x 1444–1497 and y 405–474,
   so 7.4 × 9.6 mm at 0.139 mm/px. Its 49 px height in img-099 confirms 0.196 mm/px.
 - **Front view, door edges.** The silhouette runs x 390–1607 (centre 998.5) and the panel x 528–1430. The door
-  edges are therefore at lateral ≈65.4 (R) and ≈60.0 (L).
+  edges are therefore at lateral ≈65.4 (R) and ≈60.0 (L). *(2026-11-11: this is from the silhouette centre.
+  research/06a §2.4 and 07c V8 use the feature axis x 979, which gives 62.7 for both edges. The two references
+  are not reconciled; see research/07b §0.)*
 - **Top view `manual/img-001.png`.** The half-widths in report §1.1 reproduce within ≤0.5 mm. The deck strip in
   front of the panels measures 11.1–12.7 mm.

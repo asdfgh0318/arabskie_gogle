@@ -162,6 +162,7 @@ File: `Kuhl2008_VSS_poster.pdf`, p.1
 > "Minifying the graphics displayed in the HMD by 30% reduces the angle of declination by approximately the same amount as the tilt manipulation."
 > "Baseline condition: Subjects judged targets to be 80% of their actual distance on average when using the HMD with no manipulations."
 > "Subjects walked an average of 98% of the way to the targets. This result differs significantly from the baseline condition (F(1,21)=5.94, p<0.05)."
+> "1. We tilted the virtual world up 5.7 degrees" (Introduction column, `Kuhl2008_VSS_poster.txt` l.14; the results column is headed "Tilt world up 5.7 degrees", l.9) [added 2026-11-11: the report cited the 5.7° under this [V] tag with no quote here]
 > "World tilted up condition: Subjects judged targets to be 84% of their actual distance when the world was tilted up. This result is not significantly different from the baseline condition (F(1,21)=0.03, p=0.86)."
 > "▸ Minification increases the perceived distance to targets in HMDs."
 > "- Direct blind walking ... - Targets on floor at 3,4,5,6m"
@@ -194,7 +195,7 @@ pdf p.1, Abstract ("Purpose") [section corrected by verifier: was "Introduction"
 > "In the minified display, objects appear closer to the heading direction than they really are."
 pdf p.1, Abstract ("Methods") [added by verifier]
 > "Ten normally sighted subjects were tested (1) when not using the device and with one eye patched, and (2) when the see-through view of device was blocked and only minified images were visible."
-pdf p.1, Introduction [added by verifier]
+pdf p.2, Introduction [added by verifier; page corrected 2026-11-11: was "pdf p.1". Section 1 "INTRODUCTION" starts on pdf p.1, but this sentence is on pdf p.2 (`pdftotext -f 2 -l 2`)]
 > "The video signals are processed by a portable controller to derive edge images that are presented in the display (FOV=16°) on another side."
 
 ### C4. McLean, Erkelens, Sherbak, Mikkelsen, Sharma & Cooper 2023, J Vis 23(8):10 (PMC10414133; Europe PMC full-text XML, no page numbers)

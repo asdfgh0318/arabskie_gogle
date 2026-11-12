@@ -198,7 +198,8 @@ File: `ctrl_jst_GH.pdf` (+ `.txt`), already in the repo from track 05. Renders: 
 
 ## Verification log (adversarial pass, 2026-11-03)
 Every entry above was re-checked against the source files by a separate agent (renders and scripts in
-`/tmp/claude-1000/pod_research/verify-components/`). Changes to this file: E1.6 (2.5 interpretation, tab/terminal
+`/tmp/claude-1000/pod_research/verify-components/`, a scratch location that was **not preserved**: the directory no longer exists and there is no copy in the repo, so that
+check cannot be re-run from the repo; noted 2026-11-11). Changes to this file: E1.6 (2.5 interpretation, tab/terminal
 protrusion), E2.8 new, E4.8 (mounting-surface label corrected, S-variant dimensions, 14.0, 0.8), E4.12 note, E4.13–E4.15
 new, E5.4 (the "0.1" is a vertical offset, not terminal thickness), E5.8 new, E6b.4 (line location), E6c (§ reference
 fixed, completeness note), E6e layer note, E6e.5 new (castellation pads ø1.27/0.7, peg holes, B.Cu contents, second USB

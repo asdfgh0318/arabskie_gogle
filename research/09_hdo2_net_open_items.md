@@ -2,13 +2,17 @@
 
 **WORKING DRAFT, 2026-11-06.** Every claim comes from a file in `papers/hdo2_net/`. Verbatim quotes, line numbers and
 image methods are in `papers/extracts_hdo2_net.md` (codes G, O, F, B, M, P, X). **Where this report and a source
-disagree, the source governs. ZALOZENIA.md governs the design.**
+disagree, the source governs. For facts and numbers this report governs over the §1b/§1c summary in ZALOZENIA.md;
+ZALOZENIA.md §4 governs decisions. A later measurement on Adam's goggles governs over all of these.**
 
 This report waits on two things:
 - Adam's 30-second faceplate check (U1);
 - the GetFPV teardown images, which could not be downloaded (§5).
 
 It does not replace any measurement in research/06 §3 or research/07b §6.
+
+Updated 2026-11-11 (audit): the VRx-connector headline (TL;DR 4, row 2.1) and three "high" labels that rested on a
+single community source or one photo (rows 1.1, 1.5, 1.10) were downgraded. No new source was added.
 
 Tags:
 - [V]: manufacturer or primary document, read at source;
@@ -42,11 +46,16 @@ Tags:
    - A Polish repair video shows a square fan frame directly under the cover, with the rotor pulled out while the
      faceplate stays on [img F4].
    - 25 × 25 mm stays the working value from research/06 A4 (community covers). No new source confirms it.
-4. **VRx bay connector: 9 pins, 2.54 mm pitch, single row.**
-   - The goggles have a **female socket inside the bay**; the module carries **male pins standing 9 mm off its PCB**,
-     pushed in until the housing "touches the RX bay back-wall" [V-comm M3, M4].
-   - This holds for the Dominator-family module standard. HDO2 compatibility of that standard comes from SpeedyBee
-     listing the HDO2 and describing a "female socket" [V M10].
+4. **VRx bay connector: probably 9 pins, 2.54 mm pitch, single row — from one community module design; not
+   confirmed for the HDO2. Count and pitch are to be confirmed in 07b P2.**
+   - *(Wording and confidence corrected 2026-11-11; the headline was stated as fact.)* The pin count and the pitch
+     come only from skaman82's board (`GOOGLE_IO`, package 1X09) and its wiki ("1x 2.54 Pin header - long
+     version") [V-comm M3, M4]. That is one hobby design for Dominator-family goggles. The same author's pinout
+     in `papers/extracts_hdo2.md` §G is labelled "generation not confirmed for HDO2".
+   - In that design the goggles have a **female socket inside the bay** and the module carries **male pins standing
+     9 mm off its PCB**, pushed in until the housing "touches the RX bay back-wall" [V-comm M3, M4].
+   - HDO2 compatibility is an inference: SpeedyBee lists the HDO2 and describes a "female socket" [V M10], and
+     GetFPV mentions "headers" between shell and module [V-comm G5]. Neither gives a pin count or a pitch.
    - Module PCB footprint: **42 × 25 mm** (Fat Shark module, [V M1]) to **43.2 × 27.9 mm** (skaman82 board, [V-comm M3]).
 5. **Bay door envelopes (Dominator family, not HDO2-specific):**
    - face **45–51 × 33.5–34.5 mm**, 10.9–14.9 mm deep (bounding boxes), retained by **inward clip hooks** [STL M5–M8];
@@ -69,16 +78,16 @@ Tags:
 
 | # | Item | Value | Source | Tier | Conf. |
 |---|---|---|---|---|---|
-| 1.1 | Cover screws, type | 4 × cross-recess pan head | HDO2 close-up `papers/hdo2_front_img/oscarliang/fatshark-hdo2-fpv-goggles-control-buttons-oled.jpg` (O5); GetFPV tools "Phillips screwdriver set" (G2) | [img] + [V-comm] | high (type); size none |
+| 1.1 | Cover screws, type | 4 × cross-recess pan head | HDO2 close-up `papers/hdo2_front_img/oscarliang/fatshark-hdo2-fpv-goggles-control-buttons-oled.jpg` (O5); GetFPV tools "Phillips screwdriver set" (G2) | [img] + [V-comm] | medium (type: one photo read by eye plus a tool list); size none |
 | 1.2 | Cover screws, thread / length / head | **not found** | — | — | — |
 | 1.3 | Fan type | square-frame axial fan with corner holes; 2-wire lead with a small 2-pin plug; replacement sold as "12V 9500RPM" anti-fog fan | Banggood 1235351 title (B1), images (B2), linked from TitanFPV's HDO2 video (F1) | [V] title, [img] | medium (it is the fan one user chose, not Fat Shark's part) |
 | 1.4 | Fan size | **not confirmed online**. Keep 25 × 25 (06 A4). A seller page stating "25mm x 25mm … HDO2" came up in search, but its domain does not resolve (uksparesandrepairs.com), so no claim | — | — | — |
-| 1.5 | Electrical | HDO2 fan plugs into the VIN board ("socket for the fan plug"); HDO v1 fan had "no electrical connection to the main board" | F5; O4 | [V-comm] | high |
+| 1.5 | Electrical | HDO2 fan plugs into the VIN board ("socket for the fan plug"); HDO v1 fan had "no electrical connection to the main board" | F5; O4 | [V-comm] | medium (one forum post for the HDO2, one blog for the v1) |
 | 1.6 | Fan on faceplate or shell | **HDO v1: faceplate** (O3, O4). **HDO2: conflicting.** The forum wording says faceplate (F5). A TitanFPV frame shows the black block staying on the body with the faceplate off (F2). The fan cable goes to the VIN board in the shell (F5). The FlyingTech "faceplate fan" controller "excluding the new HDO2" (F6) | O3, O4, F2, F5, F6 | [V-comm] + [img] low-res | **unresolved: U1** |
 | 1.7 | What is under the cover | a square fan frame with corner screw positions; the rotor lifts out with the cover off and the faceplate on | DobreLoty video ≈5–8 min (F4) | [img] low-res | medium-low |
 | 1.8 | What is under the fan (opening, PCB) | **not found**. GetFPV `inside_1.jpg` ("upper shell with electronics") would show it but could not be downloaded | G6 | — | — |
 | 1.9 | Seat tilt vs optical axis (M4) | **no source** | — | — | — |
-| 1.10 | Shell construction (context for a shell-mounted adapter) | faceplate clips on at the sides. The top shell (with CH/VOL buttons) is clipped and held by 3 screws: two "between the headphone jack and HDMI port" and one "next to the power button" | G3, G4, G5 | [V-comm] | high |
+| 1.10 | Shell construction (context for a shell-mounted adapter) | faceplate clips on at the sides. The top shell (with CH/VOL buttons) is clipped and held by 3 screws: two "between the headphone jack and HDMI port" and one "next to the power button" | G3, G4, G5 | [V-comm] | medium (one community teardown, text only; its photos were not retrieved) |
 
 Disassembly sources found and downloaded:
 - GetFPV HDO2 teardown text (G);
@@ -91,7 +100,7 @@ Video frames are only 160 × 90 px, so they show arrangement, not dimensions.
 
 | # | Item | Value | Source | Tier | Conf. |
 |---|---|---|---|---|---|
-| 2.1 | Connector | **9-pin single row, 2.54 mm pitch**. Female socket in the goggle, male pins on the module | skaman82 board `GOOGLE_IO` 1X09 (M3); "2.54 Pin header - long version" (M4); SpeedyBee "female socket" (M10); GetFPV "headers" between shell and module (G5) | [V-comm] + [V] | high (Dominator standard); HDO2 by compatibility |
+| 2.1 | Connector | **9-pin single row, 2.54 mm pitch**. Female socket in the goggle, male pins on the module | skaman82 board `GOOGLE_IO` 1X09 (M3); "2.54 Pin header - long version" (M4); SpeedyBee "female socket" (M10); GetFPV "headers" between shell and module (G5) | [V-comm] + [V] | **medium** for count and pitch (one community design; the other two sources give neither); HDO2 only by compatibility inference; confirm in 07b P2 |
 | 2.2 | Pin length above module PCB | **9 mm**, set so "the module housing touches the RX bay back-wall" | M4 | [V-comm] | medium |
 | 2.3 | Header position on the module PCB | along one 27.94 mm edge, centreline 1.27 mm in; pins 1.27…21.6 mm from one long edge; on the PCB underside | M3 (Eagle file parsed) | [V-comm] | medium (one design) |
 | 2.4 | Module PCB footprint | 42 × 25 (Fat Shark race-band module); 43.18 × 27.94 (skaman82) | M1; M3 | [V]; [V-comm] | high |
@@ -102,8 +111,9 @@ Video frames are only 160 × 90 px, so they show arrangement, not dimensions.
 | 2.9 | HDO2 door dimensions | **not found**. HDO v1 GrabCAD 42 × 38 (research/08) | — | — | — |
 | 2.10 | Expansion (HT) bay precedent | printed DC-jack/switch module, "a design for the HDOs (Which will also fit, HD2, HD3, HDO2, Dominator etc)", STEP included; envelope 45.4 × 33.8 × 26.7 | M9 | [V-comm] + [STL] | medium (HDO2 fit per author) |
 
-For the 07b pod, a pod with a 9-pin, 2.54 mm male header standing about 9 mm off its board engages the bay socket the
-same way every commercial module does [V-comm]. The pinout still needs metering (P2).
+For the 07b pod: if the HDO2 bay follows the skaman82 design, a pod with a 9-pin, 2.54 mm male header standing about
+9 mm off its board engages the bay socket the way that module does [V-comm, one design]. Pin count, pitch and pinout
+all still need checking on the goggles (P2), and 07b §4.2 keeps every pin unconnected until then.
 
 ## 3. Protec helmet front and GoPro base (research H1–H3)
 

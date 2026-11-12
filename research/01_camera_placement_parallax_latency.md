@@ -1,6 +1,6 @@
 # 01: Camera position relative to the eyes, and latency, for walking in fully occluded video see-through
 
-> **Status: working draft, 2026-11-03.** `ZALOZENIA.md` is the governing document; where this file disagrees with it, or with a later bench measurement, those govern.
+> **Status: working draft, 2026-11-03.** **Authority:** for facts and numbers this file governs, and behind it the extracts file and the sources in `papers/`; `ZALOZENIA.md` §4 governs decisions, and its §1b/§1c summary gives way to this file where the two differ. A later bench measurement governs over both.
 > Verbatim quotes, with IDs such as **M6** and **H2**, are in `papers/extracts_placement.md`.
 > **Tags:**
 > - `[V: papers/<file>, p.X]`: read at source; the quote is in the extracts file.
@@ -36,7 +36,7 @@
 
 ### 2.1 Forward offset (Δz) is the cheapest axis for locomotion
 
-- **Mullins 2008 (ARL/NVESD) is the closest match to this project.** A Sony *day* camera with a 40° FOV and a monochrome Kopin microdisplay were mounted on the helmet. The display was over the preferred eye and the other eye was patched [V: Mullins 2008, p.3–4, M3/M11]. The course was lit: the Fig. 2 layout gives 190–359 lux [V: p.4, M12]. So this is a viewpoint-offset study, not a night or thermal one. Seventeen participants walked an indoor mobility course "Obstacles included furniture, windows, doorways, steps, and a ramp" [V: p.1, p.4, M2/M5]. Against the "front" position (camera directly in front of the display), the "front forward" position (camera shifted forward 17.8 cm) took only **+2.9 % time**, and errors (stumbles etc.) **fell by 21.6 %** [V: p.5, M6]. The paper does not report the front-forward vs front difference (time or errors) as significant. The significant pairwise results are the vertical-offset positions against both front positions [V: p.6, M7].
+- **Mullins 2008 (ARL/NVESD) is the closest match to this project.** A Sony *day* camera with a 40° FOV and a monochrome Kopin microdisplay were mounted on the helmet. The display was over the preferred eye and the other eye was patched [V: Mullins 2008, p.3–4, M3/M11]. The course was lit: the Fig. 2 layout gives 190–359 lux [V: p.4, M12]. So this is a viewpoint-offset study, not a night or thermal one. Seventeen participants walked an indoor mobility course "Obstacles included furniture, windows, doorways, steps, and a ramp" [V: p.1, p.4, M2/M5]. Against the "front" position (camera directly in front of the display), the "front forward" position (camera shifted forward 17.8 cm) took only **+2.9 % time**, and errors (stumbles etc.) **fell by 21.6 %** [V: p.5, M6]. The paper does not report the front-forward vs front difference (time or errors) as significant. The significant pairwise results differ by measure [V: p.6, M7]: for course *time*, the vertical-offset positions (above and center) were significantly slower than both the front and the front-forward position; for *errors*, the only significant result quoted is that front-forward had fewer errors than center and above. M7 does not report the +14.3 % / +19.9 % error increases of above and center *against front* as significant.
 - **Close-in hand task in the same study** (touching lit posts): +8.3 % time for front-forward, against +22.8 % for above and +34.2 % for centre [V: p.6, M8]. So forward offset costs more within arm's reach than when walking, but vertical offset still costs more.
 - **Park 2008 (video see-through, hand–eye tasks):** depth displacements of 130, 165 and 200 mm did not differ significantly: "No significant effects of depth displacement were found during this experiment" [V: p.51, P4]. **Scope:** this compares 130, 165 and 200 mm *with each other*, between subjects (20 per level [V: P6]). No displaced-camera condition at 0 mm depth was tested, so it does not show that forward offset is free compared with none.
 - **Forward offset does have an effect in the near field.** In Rolland 1995 the virtual eye was moved 165 mm forward and 62 mm up. While wearing the HMD, subjects "tended to point short of the target" in the forward axis and "point downward" in the vertical axis. The manual task "took 43% longer" (the abstract words this as speed "decreased by 43%") [V: Rolland 1995, p.56/p.64, R1–R4, R8]. Edwards 1993 notes the same qualitatively: cameras in front of the eyes make the world "appear magnified and closer than they actually are" [V: Edwards 1993, p.225, E2].
@@ -47,7 +47,7 @@
 | Angular error | 2.4° | 1.6° | 0.7° | 0.2° |
 | Apparent-distance bias (ground-angle model) | −11 % | −5 % | −3 % | −1 % |
 
-  Foothold selection works mostly about 2–3 steps ahead [V: Bonnen 2021, p.1/p.3, B2/B4], roughly 1.5–3 m [I]. At that range the forward offset of position A gives about 1–2° and about 3–5 % [C].
+  Foothold selection works mostly about 2–3 steps ahead [V: Bonnen 2021, p.3, B4, Bonnen's own gaze data; V2: Bonnen 2021, p.1, B2, citing earlier laboratory work that was not retrieved], roughly 1.5–3 m [I]. At that range the forward offset of position A gives about 1–2° and about 3–5 % [C].
 
 ### 2.2 Vertical offset (Δy) costs measurably in walking; keep it at or under ~35 mm
 
@@ -229,4 +229,6 @@ The geometry was computed with `python3` in the session scratchpad. Not saved in
 - Balachandran Ba1–Ba4 (Ba4 is the VR condition, §3.2.1);
 - HDO2 F1 "46 degrees diagonal" (manual p.11).
 
-**Still open:** the MISSING list above is unchanged, and no claim rests on those papers. Melzer & Moffitt (the 0.5° tolerance and arc walking) remains [V2] only. It is the most load-bearing second-hand claim in this file, so fetching doi:10.1117/12.721156 would firm up TL;DR 3. This file remains a working draft; `ZALOZENIA.md` governs.
+**Still open:** the MISSING list above is unchanged, and no claim rests on those papers. Melzer & Moffitt (the 0.5° tolerance and arc walking) remains [V2] only. It is the most load-bearing second-hand claim in this file, so fetching doi:10.1117/12.721156 would firm up TL;DR 3. This file remains a working draft; `ZALOZENIA.md` §4 governs decisions, and this file with its extracts and sources governs facts and numbers (see the status line).
+
+**Later corrections (audit, 2026-11-11):** the status line now states one authority rule (it used to say `ZALOZENIA.md` governs, while `ZALOZENIA.md` §1c said the research files govern); §2.1 now splits the Mullins significance result by measure (time vs errors), as M7 reads; the "2–3 steps ahead" citation is split into B4 [V] and B2 [V2]. M7 was re-read in `papers/Mullins_2008_ADA505752_indirect_view_viewpoint_offset.pdf` (pdf p.6).

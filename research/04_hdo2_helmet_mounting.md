@@ -1,18 +1,25 @@
 # 04 — Fat Shark Dominator HDO2: mounting, power/AV integration, helmet mass and CoG
 
-Track 04 of the research for `arabskie_gogle`. ZALOZENIA.md is the governing document; where this report
-and ZALOZENIA.md disagree, ZALOZENIA.md wins. Verbatim quotes for every [V] tag are in
+Track 04 of the research for `arabskie_gogle`. Authority: for facts and numbers this report governs, and
+behind it the extracts file and the sources in `papers/`; ZALOZENIA.md §4 governs decisions, and its §1b/§1c
+summary gives way to this report where the two differ. A later bench measurement governs over both. Where
+a decision in ZALOZENIA.md §4 has overtaken a recommendation here, the place is marked "superseded".
+Verbatim quotes for every [V] tag are in
 `papers/extracts_hdo2.md` (section letter in brackets, e.g. (A12)).
 
 Evidence tags: **[V: file, p.X]** = read at source in a downloaded file. **[V-fig]** = value I read off a
 plotted curve in a downloaded file (±~3 mm / ±~0.1 kg). **[V-comm]** = downloaded community source
 (Printables/GitHub), not the manufacturer. **[calc]** = my arithmetic on [V] numbers. **[A]** = my
-assumption, to be replaced by Adam's measurement. Status: 2026-11-03, working draft. Helmet mass, camera
+assumption, to be replaced by Adam's measurement. A finding that a read source reports from a study that
+was not retrieved (Fraser et al. 2006; McEntire & Shanahan 1998) is second-hand; it is named as such in the
+prose ("cited in") and carries the tag of the chapter that was read. Status: 2026-11-03, working draft. Helmet mass, camera
 mass and the HDO2 fan/front geometry are still unmeasured.
+
+**Superseded (note added 2026-11-12):** TL;DR 1 and the pack table in §1.2 recommend 3S. Adam decided on a 4S Li-ion pack, the one he already runs his HDO goggles from (`ZALOZENIA.md` §4). The sourced facts stand (HDO2 manual: 7–13 V); the 4S choice rests on his practice, not on a source here.
 
 ## TL;DR (recommendations for THIS build)
 
-1. **One 3S Li-ion pack (3× 18650, e.g. Molicel P28A, ~165 g with holder) powers everything directly.** HDO2 takes 7–13 V and the camera takes 9–24 V, so the usable overlap is **9.0–12.6 V**, which is exactly 3S at 3.0–4.2 V/cell. **No LiHV** (4.35 V/cell gives 13.05 V, above the 13 V limit), no 4S without a buck, and the **stock Fat Shark 2S case cannot run the camera**. The HDO2 low-battery beep is useless on 3S, so the MCU must measure pack voltage and warn at about 10.2 V.
+1. **One 3S Li-ion pack (3× 18650, e.g. Molicel P28A, ~165 g with holder) powers everything directly.** HDO2 takes 7–13 V and the camera takes 9–24 V, so the usable overlap is **9.0–12.6 V**, which is exactly 3S at 3.0–4.2 V/cell. **No LiHV** (4.35 V/cell gives 13.05 V, above the 13 V limit), no 4S without a buck, and the **stock Fat Shark 2S case cannot run the camera**. The HDO2 low-battery beep is useless on 3S, so the MCU must measure pack voltage and warn at about 10.2 V. *Cell not chosen (note added 2026-11-11):* the P28A is an example; track `05` computes on the Samsung 35E instead, so the two notes give different pack energy, mass and runtime (§1.2).
 2. **Feed CVBS into the HDO2 3.5 mm AV jack.** It is a 4-pole plug: sleeve = GND, ring 2 = **Video**, ring 1 = Audio R, tip = Audio L. Switch the **RX module off or remove it**, otherwise the module video conflicts with the jack. Use Analog 4:3 mode.
 3. **Put the battery at the back, in the HDO2 strap pocket or on the rear of the helmet, as the counterweight.** With an assumed 500 g helmet it brings the head-borne CoG from about +37 mm to about +14 mm ahead of the tragion, and the static pitch moment from 0.30 to 0.13 N·m [calc]. The total stays under 1 kg, far inside the USAARL aviation envelope (2.5 kg max, CoG between −20 and about +17 mm at 2.5 kg). Do not overshoot behind −20 mm.
 4. **Keep the cameras, AI box, MCU and buttons on or just above the goggles' front, and keep them small** (about 105 g ahead of the face, [A] masses). Run the goggle strap around the helmet so the helmet, not your nose, carries that load. Make the camera bracket **break away** (a GoPro joint with a single M5 that can shear, no rigid PETG lever toward the face). This is an HMD frangibility principle, applied by me to falls.
@@ -73,11 +80,19 @@ holds 3 × 10.3 Wh = 30.9 Wh typical [V: ctrl_molicel_p28a.pdf] (I2); 30.9 Wh / 
 losses [calc]. Stopping at 9.0 V instead of the cell's 2.5 V cut-off leaves some capacity unused, and the AI
 box adds an unknown load, so treat **about 4–5 h as an estimate only** and measure it (Q10). Mass: 3 × 46 g =
 138 g of cells [V] (I2) + holder and lead ≈ 165 g [A].
+**Open point: which cell (note added 2026-11-11).** The figures in this paragraph and the CoG table in §3.2
+use the Molicel P28A as an example (30.9 Wh, 138 g of cells). Track `05` (§4.1, §4.3) builds on the Samsung
+35E instead (≈37.9 Wh, cells ≤ 150 g, about 6 h mid case) and argues for an energy cell over a power cell;
+its runtime table also has a P28A column (5.0 h mid case). The two notes therefore describe different
+packs and their runtime figures are not directly comparable. Adam has not chosen the cell. Until he does,
+`05` §4.1/§4.3 governs pack energy and runtime, and the masses here are valid for the P28A only.
 Cold: the cell discharges down to −40 °C, but the camera is specified only to **−10 °C** [V] (I1, I2).
 
 MCU supply: a small buck from 3S to 5 V/3.3 V. Pack sense through a divider into the XIAO ADC. Warn at about
-10.2 V (3.4 V/cell) and urgently at about 9.3 V, before the camera drops out at 9 V. These thresholds are
-my design choice. The HDO2 itself will not warn on 3S (A5).
+10.2 V (3.4 V/cell) and urgently at about 9.6 V (3.2 V/cell), before the camera goes out of its 9 V minimum.
+These thresholds are a design choice. (Corrected 2026-11-11: this note used to say 9.3 V for the urgent
+level. 9.6 V is the value in `05` §4.4 and the one implemented in `firmware/include/config.h`:
+`VBAT_WARN_MV 10200`, `VBAT_CRIT_MV 9600`. Neither value has been tested on hardware.) The HDO2 itself will not warn on 3S (A5).
 
 ### 1.3 VRx module bay as an integration port (hypothesis, bench-verify)
 
@@ -112,6 +127,12 @@ Bench test: Q6.
   camera bracket there must **not block the fan's airflow**. Open the STLs next to the goggles to confirm (Q3).
 - Fogging: an occluded headset worn while walking at night in cold air needs the fan. On 3S, the manual says
   to lower the fan speed (A4).
+- **Superseded (note added 2026-11-11):** the two fan statements above ("must not block the fan's airflow",
+  "needs the fan") were overtaken by decisions in `ZALOZENIA.md` §4 (2026-11-03): the HDO2 fan is removed
+  and the camera mount takes its place, on the stated ground that the goggles will not seal to the face;
+  per research 06 the fan is on the top of the goggles, not the front, and the adapter is a plate on the four
+  20 × 20 screws. The decision governs. Fogging without the fan has not been tested on hardware; Q11 below
+  now asks that question.
 
 ## 3. Helmet: head-supported mass (HSM) and CoG
 
@@ -153,7 +174,7 @@ Coordinates: x is forward of the tragion. Every row marked [A] needs a measureme
 | HDO2 | 207 g | +90 mm | mass [V] (A12); x [A] |
 | 2 camera heads + AI box + bracket + GoPro joint | 80 g | +115 mm | [A]. Shop lists "Weight 55g" under the AI box spec, scope unclear (I1) |
 | XIAO + buck + 2–3 buttons + wiring | 25 g | +90 mm | [A] |
-| 3S 18650 pack + holder | 165 g | −100 mm (rear) / +90 / off-head | 138 g of cells [V] (I2) + 27 g [A] |
+| 3S 18650 pack + holder | 165 g | −100 mm (rear) / +90 / off-head | 138 g of cells [V] (I2) + 27 g [A]. P28A example; with the 35E that `05` uses the cells are ≤ 150 g, i.e. up to 12 g more. Table not recomputed; cell not chosen (§1.2) |
 
 | Scenario | Head-borne mass | CoG x | Static pitch moment (fwd +) | vs USAARL curve |
 |---|---|---|---|---|
@@ -218,7 +239,8 @@ Q9. Camera set real masses: AI box, Infra head, thermal head, cable lengths AI b
 Q10. Current on 3S at 12.6 V and 10 V: HDO2 alone (OLED power 50/75/100, fan low/high), then plus the
      camera. Confirms the 4–5 h runtime estimate.
 Q11. Whether the HDO2 fan keeps the lenses clear at the night temperatures you will walk in, with the
-     fan at the 3S "lowered" speed.
+     fan at the 3S "lowered" speed. *Superseded (2026-11-11 note):* the fan is removed by decision
+     (`ZALOZENIA.md` §4), so the question is now whether the lenses stay clear with no fan.
 
 ## Retrieved (read at source)
 
@@ -310,3 +332,14 @@ These are design judgement and are labelled as such.
 **Not verifiable here (left in MISSING):** USAARL TM 2019-11; the IntoFPV "output-only jack" thread; an
 official HDO2 bay pinout, drawing or fan location; the Protec mass. No claim in the report rests on them.
 The Fat Shark 1071 spec sheet is still downloaded but uncited.
+
+**Later corrections (audit, 2026-11-11):**
+1. Authority line rewritten to the rule used across tracks 01–05 (it said "ZALOZENIA.md wins" while
+   ZALOZENIA.md §1c said the research files govern).
+2. §1.2: urgent low-battery level 9.3 V → 9.6 V (3.2 V/cell), to agree with `05` §4.4 and
+   `firmware/include/config.h`.
+3. TL;DR 1, §1.2, §3.2: stated that this note uses the P28A as an example while `05` uses the 35E, that the
+   cell is not chosen, and that `05` governs pack energy and runtime until it is. Nothing was recomputed.
+4. §2 and Q11: the fan statements are marked superseded by the fan-removal decision in ZALOZENIA.md §4.
+5. Extract B1 (HDO v1 "PS/2 Data Port") is on p.5 of the HDO v1 manual, not p.6; fixed in
+   `papers/extracts_hdo2.md` after checking each page with `pdftotext -layout -f N -l N`.

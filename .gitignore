@@ -10,5 +10,4 @@ __pycache__/
 papers/*
 !papers/extracts_*.md
 !papers/README.md
-!papers/.gitkeep
 cad/web/full.html

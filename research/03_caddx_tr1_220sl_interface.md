@@ -1,7 +1,8 @@
 # 03 — Caddx TR1-220SL Dual: control & electrical interface
 
-Track 03 · 2026-11-03 · **working draft**. `ZALOZENIA.md` governs project objectives. Where this file
-disagrees with `papers/extracts_camera.md`, the extracts (verbatim source text) govern.
+Track 03 · 2026-11-03 · **working draft**. `ZALOZENIA.md` governs project objectives, and its §4 governs
+decisions. For facts and numbers this file governs over the §1b/§1c summary in `ZALOZENIA.md`. Where this
+file disagrees with `papers/extracts_camera.md`, the extracts (verbatim source text) govern.
 The main open item: there is **no Caddx document for the TR1-220SL itself**. Every protocol claim comes
 from the **Eclipse 004 Dual** Quick Start Guide. Its AI-box wiring drawing is label-for-label identical
 to the TR1-220SL drawing BZB UAS publishes. **Caveat (verifier):** the two drawings are the same
@@ -30,7 +31,8 @@ confirmed".
 5. **Power and connectors:** 12 V @ 120 mA (≈1.44 W) per the diagram, 9–24 V input. **4S Li-ion
    (10.0–16.8 V) works with no step-down. 3S Li-ion does not over its full discharge**: 3 × 2.5 V cutoff
    = 7.5 V, which is below the 9 V minimum. It only works with a ≥3.0 V/cell cutoff (= 9.0 V, zero
-   margin). The **2-pin "OSD" port is probably ADKEY**, inferred from the 005SL's label at that position.
+   margin). (Since resolved, 2026-11-11 note: the project adopted exactly that, direct 3S feed with a
+   ≥3.0 V/cell cutoff, and 4S is out because it exceeds the HDO2's 13 V input; see §2.6.) The **2-pin "OSD" port is probably ADKEY**, inferred from the 005SL's label at that position.
    "Resistor-ladder" is the usual meaning of ADKEY but no retrieved source says so. No menu board ships
    with the TR1 kit. Connector pitches are unknown; the only sourced figure is a "2pin 1.25mm" cable in
    the 005SL kit. **Photograph and caliper all four sockets before ordering pigtails.**
@@ -181,8 +183,15 @@ Whether a small MCU can act as the UVC host was not assessed by this track (no s
   "Charge 4.2 V", "Discharge 2.5 V" [V: papers/ctrl_molicel_p28a.txt l.32–34]. So **4S Li-ion =
   10.0–16.8 V**, entirely inside 9–24 V. **3S Li-ion = 7.5–12.6 V**: it falls below 9 V for the last part
   of the discharge. 3S needs a ≥3.0 V/cell low-voltage cutoff (= 9.0 V, no margin) or a boost/buck-boost.
-  `ZALOZENIA.md` lists "3S/4S Li-ion" as an option, and this rules plain 3S out for direct feed. Battery
-  selection belongs to another track.
+  When this was written `ZALOZENIA.md` listed "3S/4S Li-ion" as an option, and the point here was that
+  3S run down to the cell's own 2.5 V cutoff is ruled out for direct feed. Battery selection belongs to
+  another track.
+  **Superseded wording (note added 2026-11-11):** this does not mean 3S was rejected. `ZALOZENIA.md` no
+  longer says "3S/4S"; its §1b, and tracks `04` (TL;DR 1) and `05` (§4.1), adopt **direct 3S feed with a
+  ≥3.0 V/cell cutoff**, which is the first of the two conditions named above. For this build 4S is the
+  option that is out, not because of the camera but because it exceeds the HDO2's 7–13 V input
+  (`ZALOZENIA.md` §1b; `04` §1.2). The "no margin" at 9.0 V still stands, and where the camera actually
+  drops out is unmeasured (`05` §8 item 11).
 - The MCU should get its own 5 V/3.3 V buck from the pack. Join grounds at the AI box. Don't power the
   MCU from the camera's VBUS pin: its direction is unknown.
 

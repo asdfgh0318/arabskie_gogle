@@ -441,8 +441,10 @@ p.2 at 300/800 dpi, Bourns PEC11R pp.1–3 at 250–500 dpi, Omron B3S p.2 at 40
 P1012 p.12, JST GH pp.2–3), re-parsed the three Seeed CAD archives with my own scripts (DXF DIMENSION entities, the
 Gerber-export DXF polylines, and every pad of the KiCad v1.3 footprints converted to the report frame), checked every
 quoted text line in the `.txt` files, and re-ran the OpenSCAD block (it parses; echo gives pec_tip_z 21.5,
-pec_max_panel 2.5, pololu_h 2.82, gh_hdr_w(2/6) 5.75/10.75, gh_plug_w(5) 7.5, USB overhang 1.508). Scripts and renders:
-`/tmp/claude-1000/pod_research/verify-components/`.
+pec_max_panel 2.5, pololu_h 2.82, gh_hdr_w(2/6) 5.75/10.75, gh_plug_w(5) 7.5, USB overhang 1.508). Scripts and renders
+were in `/tmp/claude-1000/pod_research/verify-components/`, a scratch location that was **not preserved**: the directory no longer exists and there is no copy in the repo (noted 2026-11-11). The parsing scripts of this pass therefore cannot
+be re-run from the repo. What remains checkable: the source PDFs and CAD archives in `papers/`, the renders
+`papers/pod_render_*.png`, the quotes in `papers/extracts_pod_components.md`, and the OpenSCAD block in §7.
 
 Confirmed unchanged: all EC11E drawing No.2/No.3 values (24.5, 4.5, (20), 7, 10, 3.5, 11.7, 6+6, 7.5 max, 9.2,
 12.5±0.05, 7/7.5, 5/5, 1.5/2.6 slots, ø1 holes, ±0.1); shaft-variety tables; product-page specs; PEC11R ordering

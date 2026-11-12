@@ -1,16 +1,18 @@
 # 05: Controller and power architecture (working draft)
 
-Track 05 of the arabskie_gogle research. **`ZALOZENIA.md` is authoritative.** Where this report disagrees with it, ZALOZENIA governs.
+Track 05 of the arabskie_gogle research. **Authority:** for facts and numbers this report governs, and behind it the extracts file and the sources in `papers/`; `ZALOZENIA.md` §4 governs decisions, and its §1b/§1c summary gives way to this report where the two differ. A later bench measurement governs over both.
+**Superseded layout (note added 2026-11-11):** TL;DR 5, §5, BOM items 11–12 and the §7 diagram were drawn for a layout with the camera and AI box on the helmet. That layout was not adopted: the camera is fixed to the goggle shell (`01` TL;DR 3, `04` TL;DR 4, `ZALOZENIA.md` §1c.2). Those parts are marked where they stand; §5 says what follows for the adopted layout. For pin assignments `firmware/include/config.h` governs over the §7 sketch.
+**Superseded pack choice (note added 2026-11-12):** Adam decided on a **4S Li-ion pack, the one he already runs his HDO goggles from** (`ZALOZENIA.md` §4). That overrides the 3S recommendation in TL;DR 1 and §4. The facts here are unchanged: the manual's HDO2 input range is 7–13 V and this report's 4S row calls for a regulator to the goggles; running the HDO2 from 4S directly is Adam's choice from his own practice, not something a source here supports. Firmware thresholds were rescaled to 4S (`firmware/include/config.h`); the 100k/22k divider in §4 becomes 100k/15k. Runtime on 4S without a regulator is not computed here.
 Status: **working draft.** It depends on track 03 (camera control interface: what GPIO2, UART and the OSD port really do on the TR1-220SL). The controller section is final only after the bench checks in §8.
 Verbatim quotes for every [V] tag are in `papers/extracts_controller.md` (C1…C28). An adversarial verification pass was run on this file (see **Verification** at the end); where the extracts file and this report disagree, the extracts (and behind them the source files in `papers/`) govern.
 Tags: **[V]** = read at source. **[calc]** = my arithmetic on [V] numbers. **[A]** = assumption, not sourced; must be measured. **[design]** = engineering recommendation, not a sourced claim.
 
 ## TL;DR (recommendations for this build)
-1. **One 3S1P Li-ion pack (3× Samsung 35E, ≈37.9 Wh) on the back of the helmet feeds both devices directly.** The HDO2 accepts 7–13 V and the camera 9–24 V, so 3S (9.0–12.6 V) fits both with no regulator. The pack also counterweights the front camera. Expect about 6 h in the mid case and about 4.4 h in the worst case with an assumed cold derating (both rest on [A] figures, §4.3). Use 3S2P for a full night. Note the cold limits: the TR1 is rated to −10 °C and the 35E discharges down to −10 °C (§1.2, §4.1).
+1. **One 3S1P Li-ion pack (3× Samsung 35E, ≈37.9 Wh) on the back of the helmet feeds both devices directly.** The HDO2 accepts 7–13 V and the camera 9–24 V, so 3S (9.0–12.6 V) fits both with no regulator. The pack also counterweights the front camera. Expect about 6 h in the mid case and about 4.4 h in the worst case with an assumed cold derating (both rest on [A] figures, §4.3). Use 3S2P for a full night. *Cell not chosen (note added 2026-11-11):* track `04` runs its numbers on the Molicel P28A as an example, so its energy, mass and runtime differ from the ones here (§4.1). Note the cold limits: the TR1 is rated to −10 °C and the 35E discharges down to −10 °C (§1.2, §4.1).
 2. **Controller: a Seeed XIAO ESP32-C3 (21 × 17.8 mm), or the XIAO nRF52840 if you want BLE without an external U.FL antenna.** Mount it in the printed button pod on the goggles. Power it from a Pololu D36V6F5 (13 × 10 × 3 mm, 0.5 g) through a Schottky into the 5 V pin. It drives camera GPIO2 directly and optionally the camera UART (115200). The 3.3 V level and 115200 baud are documented only for the sister Eclipse 004 Dual, not for the TR1 (§1.2).
 3. **Buttons (glove-friendly, operated blind): one Alps EC11E09244BS encoder with push** (11 mm body, 18 detents, push switch) **plus two Omron B3S IP67 sealed 6×6 tactiles (1.57 N max operating force; 2.26 N B3S-1002 variant available).** Put 3D-printed oversized caps on the tactiles. The camera-switch button gets its own distinct shape.
 4. **Low-battery warning must not rely on sight or on the HDO2 alarm.** Fat Shark says not to rely on its alarm on 3S; its threshold is 6.8 V (manual p.8), which on 3S is 2.27 V/cell, below the cell cut-off and far below the camera's 9 V floor, so on 3S it effectively never fires before the camera drops out [calc]. Instead, an ADC divider (100k/22k) feeds an ADC1 pin. Below 3.4 V/cell the MCU pulses a 10 mm vibration motor and (if the UART protocol works on the TR1) briefly flashes the image brightness.
-5. **Goggle-to-helmet trunk has 5 conductors (VBAT, GND, CVBS, GPIO2, UART-TX) through a 5-pin magnetic pogo breakaway**, with JST-GH (1.25 mm, 1 A) inside the pods. Bench-test the pogo contacts for CVBS noise and for current first. Phase 0, no MCU, is also possible: a switch on GPIO2 plus, if compatible, the Caddx 5-way OSD board on the OSD/ADKEY wire (what that board controls on the TR1 is unknown). See §2a.
+5. **[Superseded: assumes the camera and AI box on the helmet, which was not adopted. With the camera on the goggles only VBAT and GND cross between helmet and goggles; see §5.]** **Goggle-to-helmet trunk has 5 conductors (VBAT, GND, CVBS, GPIO2, UART-TX) through a 5-pin magnetic pogo breakaway**, with JST-GH (1.25 mm, 1 A) inside the pods. Bench-test the pogo contacts for CVBS noise and for current first. Phase 0, no MCU, is also possible: a switch on GPIO2 plus, if compatible, the Caddx 5-way OSD board on the OSD/ADKEY wire (what that board controls on the TR1 is unknown). See §2a.
 
 ---
 
@@ -79,7 +81,7 @@ The user is **fully occluded**, so the controls are found and identified by touc
 - Why the encoder over a 5-way joystick: detents give counted, blind feedback through a glove. A miniature 5-way risks diagonal mis-hits [design]. (All the tactiles above, including the B3S, also have sub-millimetre travel, so the printed caps, not the switch, must give the gloved finger something to find.) The Caddx OSD board (5-way) stays an option for menu-only use (§2a).
 - Why higher force: 1.57–2.55 N (B3S-1000 1.57 N max, B3S-1002 2.26 N max, B3F-4055 2.55 N) rather than 0.98 N, so the button doesn't trigger when it brushes the helmet brim or the hand rests on the pod [design].
 - Use a 10–20 ms firmware debounce. The B3S datasheet gives bounce ≤ 5 ms [V: C23].
-- No sourced glove spacing standard was retrieved (MIL-STD-1472H is listed as MISSING). As a starting point, use caps ≥ 12 mm and centre spacing ≥ 18 mm [design], then **test with your own gloves**.
+- No sourced glove spacing standard was retrieved (MIL-STD-1472H is listed as MISSING). *Since resolved (note added 2026-11-11):* MIL-STD-1472H is now in `papers/` (`pod_MIL-STD-1472H_2020_human_engineering.pdf`) and was read by track 07c; for gloved control sizes and spacing use `research/07c_pod_ergonomics_mount.md`, not the starting figures in this bullet. As a starting point, use caps ≥ 12 mm and centre spacing ≥ 18 mm [design], then **test with your own gloves**.
 
 ## 4. Power architecture
 
@@ -94,6 +96,7 @@ The user is **fully occluded**, so the controls are found and identified by touc
 
 **Cell choice:** for about 0.5 A pack current (≈ 0.15 C), use an energy cell, not a power cell [calc].
 - Samsung **35E**: 3450 mAh typ, 12.62 Wh at 0.2C, ≤ 50 g, Ø ≤ 18.5 × 65.25 mm, discharge −10…60 °C [V: papers/ctrl_samsung_35E_rapid.pdf, p.2–3].
+- **Open point: which cell (note added 2026-11-11).** Adam has not chosen the cell. Track `04` (TL;DR 1, §1.2, §3.2) uses the Molicel P28A as an example: 30.9 Wh, 138 g of cells, "about 4–5 h". This note uses the 35E: ≈37.9 Wh, ≤ 150 g, about 6 h mid case (§4.3; the same table gives 5.0 h mid case for the P28A). The two notes describe different packs. Until Adam chooses, this section and §4.3 govern pack energy and runtime; `04`'s mass and CoG table hold for the P28A only.
 - Molicel P28A (power cell) only gives 10.3 Wh [V: papers/ctrl_molicel_p28a.pdf, p.1], but its rated discharge range is −40…60 °C versus −10…60 °C for the 35E [V: C18, C19]. Below −10 °C that is a real argument for it, though the camera itself is rated only to −10 °C [V: C5].
 - Use a **3S BMS (protection) board** and a balance lead (JST-XH) so the pack charges on your normal FPV balance charger [design].
 - Winter: 35E discharge is rated down to −10 °C [V: C18]. Keep the pack inside a printed or insulated shell on the helmet rear, or in a jacket pocket on a longer lead [design].
@@ -128,13 +131,24 @@ Pack current at the 35E's nominal 3.60 V/cell (10.8 V for 3S) [V: C18 p.2]: 5.57
 
 ### 4.4 Voltage monitoring and warning
 - **Divider:** 100 kΩ (top) / 22 kΩ (bottom) gives 12.6 V → 2.27 V and 9.0 V → 1.62 V; static draw 12.6 / 122 kΩ ≈ 0.10 mA [calc]. Add 100 nF across the bottom resistor. Use **A0/A1/A2 (ADC1)** on the ESP32-C3 [V: C8 L203]. Seeed's own battery example uses a 1/2 divider (200k) into A0 [V: C8 L355]. Ours scales 1/5.5 because the input is 3S [calc]. Calibrate once against a multimeter. The ESP32-C3 ADC attenuation range was not retrieved, so the 2.3 V ceiling is a conservative choice [A].
-- **Thresholds [design]:** WARN at 10.2 V (3.4 V/cell, average over 10 s): 3 short buzzes every 60 s. CRITICAL at 9.6 V (3.2 V/cell): continuous pattern every 10 s, roughly "minutes left". Below 9.0 V the camera is out of spec (3.0 V/cell, §4.1); the real dropout point is to be measured (§8 item 11).
+- **Thresholds [design]:** WARN at 10.2 V (3.4 V/cell, average over 10 s): 3 short buzzes every 60 s. CRITICAL at 9.6 V (3.2 V/cell): continuous pattern every 10 s, roughly "minutes left". Below 9.0 V the camera is out of spec (3.0 V/cell, §4.1); the real dropout point is to be measured (§8 item 11). Track `04` §1.2 now gives the same two levels (it said 9.3 V for the urgent one until 2026-11-11), and `firmware/include/config.h` implements them as `VBAT_WARN_MV 10200` and `VBAT_CRIT_MV 9600`. Not tested on hardware.
 - **Output channels, given full occlusion:**
   1. **Haptic**, primary: a 10 mm coin vibration motor, 10 mm Ø × 2.7 mm, 0.9 g, 100 mA @ 5 V, switched by a small transistor [V: papers/ctrl_adafruit_1201_vibration_motor.txt, L114–122]. Note Adafruit gives the **rated** voltage as 2.5–3.8 V and says only that "it vibrates from 2V up to 5V" [V: same file, L113]; driving it from 5 V is outside the rated range, so either accept that for short alarm pulses or drop it to ~3.3 V with PWM or a series resistor [design]. Put it in the goggle pod against the forehead foam [design].
-  2. **Visual**, if the UART works on the TR1: the MCU sends brightness 80 % → 50 % → back, using the documented frame format "FF 5A 00 01 00 00 01 00 00 00 50 EA A2" [V: C6]. That should produce a visible "blink" without switching cameras [design]. Unknown: on the 004 the protocol belongs to the thermal core, so the blink may only show while the thermal view is selected; check on the bench (§8 item 3). (The CRC16-Modbus checksums of this frame and the 50 % and Get-version frames were recomputed with the guide's own routine and match, low byte first [calc].) Do **not** use camera switching as an alarm, because it swaps FOV 50°↔120° while you are walking [design].
+  2. **Visual**, if the UART works on the TR1: the MCU sends brightness 80 % → 50 % → back, using the documented frame format "FF 5A 00 01 00 00 01 00 00 00 50 EA A2" [V: C6]. That should produce a visible "blink" without switching cameras [design]. Unknown: the 004 Dual guide does not say whether the serial commands act on the thermal core, the AI box or both (see `03` §2.2), so the blink may not show while the Infra view is selected; check on the bench (§8 item 3). (The CRC16-Modbus checksums of this frame and the 50 % and Get-version frames were recomputed with the guide's own routine and match, low byte first [calc].) Do **not** use camera switching as an alarm, because it swaps FOV 50°↔120° while you are walking [design].
   3. The HDO2's own beeper: its 6.8 V threshold [V: C1 p.8] is below the 3S pack's useful range, so on 3S it is effectively useless [calc; C1 p.7].
 
 ## 5. Cabling and quick-disconnect
+**Superseded layout (note added 2026-11-11).** The proposal below puts the camera and AI box on the helmet. The project adopted the opposite: the camera is fixed to the goggle shell, not the helmet, because of the 0.5° yaw tolerance (`01` TL;DR 3; `ZALOZENIA.md` §1c.2); `04` TL;DR 4 keeps the cameras, AI box, MCU and buttons on or just above the goggles' front; only the pack goes to the rear of the helmet (`04` TL;DR 3; `ZALOZENIA.md` §1c.8). `ZALOZENIA.md` §4 also records the controller pod in the left VRx bay (decision) and the AI box on the right side of the goggles (proposal, not yet accepted).
+
+What follows for the adopted layout, from the conductor table below and nothing else [design]:
+- CVBS, GPIO2 and UART-TX run between the AI box, the pod and the HDO2 AV jack, all of which are on the goggles. They no longer cross between helmet and goggles.
+- Only **VBAT and GND** run from the pack on the helmet rear to the goggles. A breakaway in that lead, if one is kept, needs 2 contacts, not 5; the Adafruit connector cited below is listed in 3/4/5 contacts.
+- The CVBS-through-pogo noise concern (below and §8 item 9) no longer applies. The missing current rating of the pogo connector still does, and so does the IR-drop remark on the ADC reading.
+- BOM item 11 (5-contact connector) and the pigtail count in item 12 were sized for the old layout.
+- Not worked out here: connector choice, cable routing and lengths on the goggles for the adopted layout. Nothing of this has been built or tested.
+
+*Original text, kept for the record (camera and AI box on the helmet, not adopted):*
+
 Proposal [design]: the MCU, buttons, buck and vibration motor sit in one printed pod on the goggles. The camera, AI box and pack sit on the helmet. One trunk runs helmet ↔ goggles.
 
 | Conductor | Purpose |
@@ -163,14 +177,18 @@ Proposal [design]: the MCU, buttons, buck and vibration motor sit in one printed
 | 8 | 3S1P pack, Samsung INR18650-35E ×3, 3S BMS, XT30 + JST-XH balance | 1 | cells ≤ 3 × 50 g, Ø18.5 × 65.25 mm each | [V: C18]; BMS/XT30 [design] |
 | 9 | Reverse-polarity P-FET or Schottky + 1 A fuse/polyfuse at pack | 1 | — | [design] |
 | 10 | Master switch (inline, ≥ 2 A) | 1 | — | [design] |
-| 11 | Magnetic pogo connector, 5-contact | 1 pair | 0.1″ pitch | [V: C26] (no current rating) |
-| 12 | JST-GH 4–6 pin pigtails, AWG26 | 3–4 | 1.25 mm pitch | [V: C24] |
+| 11 | Magnetic pogo connector, 5-contact (superseded: sized for the helmet-camera layout; the adopted layout needs 2 contacts if a breakaway is kept, §5) | 1 pair | 0.1″ pitch | [V: C26] (no current rating) |
+| 12 | JST-GH 4–6 pin pigtails, AWG26 (count from the helmet-camera layout, see §5) | 3–4 | 1.25 mm pitch | [V: C24] |
 | 13 | HDO2 barrel plug (size TBD) + 3.5 mm 4-pole AV plug | 1+1 | measure | [V: C1 p.10–11; C3 L103] (size not given) |
 | 14 | (opt.) Pololu D36V6F3 3.3 V for the no-MCU Phase 0 | 1 | ≈13 × 10 × 3 mm [A] | [V: C14 L65] |
 | 15 | (opt.) Pololu D36V6F9 for a 4S pack → HDO2 | 1 | 13 × 10 × 3 mm, 0.5 g | [V: C15] |
 | 16 | (opt.) Caddx OSD menu board (5-way, ADKEY) | 1 | — | [V: C7] (compatibility with TR1 unconfirmed) |
 
 ## 7. Wiring block diagram
+**Superseded in part (note added 2026-11-11).** The diagram shows the AI box in a "HELMET (front)" column and a 5-pin breakaway. In the adopted layout the AI box and both camera heads are on the goggles, and only VBAT and GND come from the helmet (§5). The signal connections themselves (which AI-box pin goes to which pod pin) are unchanged. Two more points where the sketch differs from the firmware, which governs for pins (`firmware/include/config.h`, v0.1, not compiled for the ESP32 and not run on hardware):
+- The battery divider goes to **A1 (D1, GPIO3)**, corrected below. The sketch used to say A0; A0 is GPIO2, which the XIAO ESP32-C3 wiki lists among the strapping pins (`papers/ctrl_xiao_esp32c3_wiki.txt`, "Strapping Pins"), and `config.h` avoids it for that reason. §4.4 allows A0/A1/A2.
+- The firmware reads the encoder (A, B, SW) and **one** B3S button (CAM), not two, so it uses 8 pins, not the 9 counted below: ADC 1 + encoder 3 + button 1 + UART TX 1 + motor 1 + camera GPIO2 1.
+
 ```
  HELMET (rear)                     HELMET (front)                         GOGGLES (HDO2 + printed pod)
  ┌────────────────────┐            ┌──────────────────────────┐
@@ -194,7 +212,7 @@ Proposal [design]: the MCU, buttons, buck and vibration motor sit in one printed
                                    │ POD       │ │       ├─► D36V6F5 ─►|─ 5V  XIAO    │
                                    │           │ └─ GPIO out (camera select)  ESP32-C3│
                                    │           └─── TX (UART1, 3.3 V, 115200)        │
-                                   │  VBAT─100k─┬─22k─GND ; mid ──► A0 (ADC1)        │
+                                   │  VBAT─100k─┬─22k─GND ; mid ──► A1/GPIO3 (ADC1)  │
                                    │  EC11E (A,B,SW) ──► 3 GPIO (internal pull-ups)  │
                                    │  B3S #1, #2 ──► 2 GPIO                          │
                                    │  GPIO ─► FET ─► 10 mm vibration motor (5 V)     │
@@ -211,7 +229,7 @@ GPIO budget on the ESP32-C3 (11 GPIO, 4 ADC [V: C8 L200]): encoder 3 + buttons 2
 6. **HDO2 current at 3S** (11.1 V and 12.6 V), fan low vs high, OLED power 50/75, black vs white-hot full-screen image.
 7. **HDO2 barrel size** and polarity; AV jack pole order (meter: which ring is Video).
 8. **Usable capacity** of your 3S pack to 9.0 V at about 0.5 A, at room temperature and at 0 °C (a fridge test). This replaces the 0.9 × and 0.8 × assumptions.
-9. **Magnetic pogo connector:** contact resistance at 1 A; CVBS image stability while you shake your head; pull-off force versus goggle strap tension.
+9. **Magnetic pogo connector:** contact resistance at 1 A; CVBS image stability while you shake your head; pull-off force versus goggle strap tension. (2026-11-11 note: in the adopted layout CVBS does not pass through a breakaway, so only the current and pull-off checks remain, and only if a breakaway is kept; §5.)
 10. **Gloves:** your actual winter gloves on printed cap prototypes: minimum cap size and spacing; can you find button A blind in under 1 s?
 11. Whether the camera browns out (9 V min) under a cold pack. Does the AI box survive a dip, or reboot (and how long does the reboot take)?
 
@@ -237,7 +255,7 @@ GPIO budget on the ESP32-C3 (11 GPIO, 4 ADC [V: C8 L200]): encoder 3 + buttons 2
 - **Mini560 / JW5068A manufacturer datasheet** (Joulwatt). Only retailer data found; https://aws.robu.in/wp-content/uploads/2023/07/DE077-DE080.pdf did not download.
 - **C&K KSC6 IP67 tactile datasheet.** https://www.ckswitches.com/media/1972/ksc6.pdf returned HTML.
 - **Alps SKRH (SMD multi-direction) page.** https://tech.alpsalpine.com/e/products/category/multi-control-devices/sub/01/series/skrh/ returned "AccessDenied".
-- **MIL-STD-1472H** (human engineering: pushbutton size and spacing for gloved hands). everyspec download URL 404; get it from https://quicksearch.dla.mil (ASSIST).
+- ~~**MIL-STD-1472H** (human engineering: pushbutton size and spacing for gloved hands). everyspec download URL 404; get it from https://quicksearch.dla.mil (ASSIST).~~ **Since retrieved (note added 2026-11-11):** `papers/pod_MIL-STD-1472H_2020_human_engineering.pdf` (456 pages) is on disk and was read by track 07c (`research/07c_pod_ergonomics_mount.md`). This track did not read it and still makes no claim from it.
 - **DTIC ADA256894, "Gloved Operator Performance Study"** (button spacing with gloves). https://apps.dtic.mil/sti/pdfs/ADA256894.pdf returned HTML (blocked).
 - **Li-ion low-temperature capacity data** for the 35E (only the rated −10…60 °C range was found). The 0.8 × cold factor above is an assumption.
 - **IntoFPV thread on the HDO2 6.8 V alarm** (https://intofpv.com/printthread.php?tid=24767). Search snippet only; not used. Not needed either: the 6.8 V threshold is in the manual itself (p.8, C1).
@@ -271,6 +289,14 @@ Method: every [V] citation was re-checked against the file in `papers/` (`pdftot
 20. Cold: added that the P28A is rated to discharge down to −40 °C, against −10 °C for the 35E.
 21. UART framing "8N1" is not in the guide; marked [A].
 22. Noted that `papers/ctrl_attiny412_ds.pdf` is a 400-byte HTML error page, not a datasheet.
-23. Visual (brightness) alarm: added the caveat that on the 004 the protocol belongs to the thermal core, so the blink may not show in Infra view.
+23. Visual (brightness) alarm: added the caveat that the blink may not show in Infra view. (Corrected 2026-11-11: the caveat was worded "on the 004 the protocol belongs to the thermal core". The 004 Dual guide does not say which component handles the commands, and `03` §2.2 says so; the unsupported statement was removed here and in §4.4.)
 
 **Still unverified (unchanged, correctly tagged in the text):** every [A] (90 % usable capacity, 0.8× cold factor, 80 %/88 % regulator efficiencies, 3.0 W HDO2 on 3S, D36V6F3 size, ESP32-C3 ADC range and I/O voltage, 5 V basis for the C3 current); every [design] item; and the transfer of 004 Dual / 005SL behaviour to the TR1-220SL, which track 03 and the §8 bench checks must settle. **This report remains a working draft until then.**
+
+**Later corrections (audit, 2026-11-11):**
+1. Authority line rewritten to the rule used across tracks 01–05 (it said `ZALOZENIA.md` is authoritative, while `ZALOZENIA.md` §1c said the research files govern).
+2. TL;DR 5, §5, BOM 11–12, §7 and §8 item 9 marked as drawn for a layout (camera and AI box on the helmet) that was not adopted, with the wiring consequence for the adopted layout stated in §5. No new source was used; the consequence follows from the §5 conductor table and from `01`, `04` and `ZALOZENIA.md`.
+3. §4.4 item 2 and change 23 above: removed the statement that the 004 Dual protocol "belongs to the thermal core"; `papers/ctrl_caddx_eclipse004dual_ft483dual.txt` was searched and its serial section does not say which component handles the commands.
+4. §7 sketch: divider pin A0 → A1 (GPIO3), as in `firmware/include/config.h`; D0 = GPIO2 and D1 = GPIO3 and the strapping-pin note were checked in `papers/ctrl_xiao_esp32c3_wiki.txt`. The checked figure "GPIO budget 9 of 11" in the confirmed list above is the arithmetic of the original sketch; the firmware uses 8.
+5. §4.1, TL;DR 1: stated that `04` uses a different cell (P28A as an example) and that the cell is not chosen. §4.4: noted that `04` and the firmware now carry the same 10.2 / 9.6 V levels.
+6. §3 and MISSING: MIL-STD-1472H has since been retrieved and read by track 07c; pointers added.

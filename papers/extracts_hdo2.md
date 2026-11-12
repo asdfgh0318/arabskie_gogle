@@ -52,7 +52,7 @@ A14. Headset overview figure labels — p.5: top: "HT Button", "DVR 5-way Switch
 
 File: `papers/FatShark_HDO_FSV1122_Manual_RevB.pdf` (same help-centre page). Applies to HDO v1, NOT HDO2.
 
-B1. "PS/2 Data Port (Head Tracker)" — overview figure, p.6 (txt l.130–132)
+B1. "PS/2 Data Port (Head Tracker)" — overview figure, p.5 (txt l.130–132) [page corrected 2026-11-11: was p.6; "PS/2" occurs only on the page with the printed number 5, which is also pdf page 5. The label is printed on two lines, "PS/2 Data Port" / "(Head Tracker)"]
 B2. "Power Supply: 7 - 13 V (2S/3S supply – fan plate only accepts 2S input)" / "MiniDIN4 data port (head tracking)" / "Weight: 159 g" — Specifications (txt l.412, 442, 455)
 B3. "If multiple power sources are supplied at same time (i.e. Futaba radio and head strap battery) the headset will draw power from the highest voltage." — "Power Options" (txt l.267–268)
 

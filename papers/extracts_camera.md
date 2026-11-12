@@ -28,6 +28,9 @@ Wire colours in drawing: GPIO2 green, GPIO1 yellow, GPIO0 blue, GND black, RX wh
 File: `papers/bzbuas_tr1-220sl_product_page_en.txt` (from https://www.bzbuas.com/shop/tr1-220sl-caddx-tr1-220sl-dual-thermovision-camera-3230), line 48:
 > "You can easily switch between the cameras via the included GPIO cable, giving you instant access to the view you need."
 
+Same line 48, earlier sentence [added 2026-11-11: `research/03` §2.2 cited "white hot" under a [V] tag with no quote here]:
+> "combining an AI unit with two cameras: a thermal VOx 256×192 (“white hot”) and a 0-lux night vision sensor (1500 TVL, 120° FOV)"
+
 Package list, lines 132–135:
 > "Caddx TR1-220SL Dual Thermovision Camera Package Includes" … "1x 3pin Silicon Cable" / "1x GPIO Connection Cable"
 

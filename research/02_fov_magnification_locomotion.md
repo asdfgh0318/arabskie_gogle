@@ -3,17 +3,21 @@
 > **Status: working draft, 2026-11-03.** All hardware numbers come from spec sheets (Fat Shark manual,
 > BZB UAS shop page). None of them has been measured on the real units yet. `ZALOZENIA.md` sets the
 > objectives. Where this file and the spec sheets disagree with a bench measurement, the measurement
-> governs. Verbatim quotes are in `papers/extracts_fov.md`.
+> governs. For facts and numbers this file governs, and behind it the extracts file and the sources in
+> `papers/`; `ZALOZENIA.md` §4 governs decisions, and its §1b/§1c summary gives way to this file where the
+> two differ. Verbatim quotes are in `papers/extracts_fov.md`.
 > **Tags:** `[V: file, p.X]` means the passage was read at source and the quote is in the extracts file.
+> `[V2: file, p.X, citing Y]` means the passage was read at source, but the source is reporting someone
+> else's study (Y), and that study was **not** retrieved.
 > `[C]` means my own calculation from `[V]` inputs (formula shown). `[A]` means an assumption that
 > still needs a bench check. `[inference]` means my reading of the evidence, not a finding of any paper.
 
 ## TL;DR (for this project)
 
-1. **The thermal camera on the HDO2 is ≈0.75× (25% minification), not ≈0.92× as `ZALOZENIA.md` §1b says.** The HDO2's 46° is a *diagonal* figure, so the display is ≈37.5°H × 28.6°V. The thermal camera is 50°H × 37.2°V. The 0.92 came from comparing a diagonal with a horizontal angle. The Infra camera (120°, most likely diagonal) comes out at **≈0.38×**, with fisheye compression at the edges on top of that.
+1. **The thermal camera on the HDO2 is ≈0.75× (25% minification), not ≈0.92× as `ZALOZENIA.md` §1b said.** (Since resolved: `ZALOZENIA.md` §1b now has the 0.92 struck through and gives ≈0.75×.) The HDO2's 46° is a *diagonal* figure, so the display is ≈37.5°H × 28.6°V. The thermal camera is 50°H × 37.2°V. The 0.92 came from comparing a diagonal with a horizontal angle. The Infra camera (120°, most likely diagonal) comes out at **≈0.38×**, with fisheye compression at the edges on top of that.
 2. **Make thermal the default for walking.** It is closest to 1:1, so head turns cause ≈25% retinal slip against ≈61% for Infra. It needs no light. It detects a person at ≈146 m (Johnson criteria, 1.5 px; 50% probability, ΔT ≥ 2 °C, ideal conditions). Put the Infra camera on a button as a "wide look" mode for orientation, or for when terrain shows no thermal contrast. Check first that Infra shows anything at all in a moonless forest: the kit contains no IR illuminator.
 3. **1:1 is not reachable with this hardware without cropping.** It would need a 1.33× digital zoom, which would cut the camera FOV to ≈37.5° × 28°. **Don't chase 1:1 in v1.** On this display the field is already in the range where walking measurably slows down (40°×25° in Jansen 2011). Accept 0.75×, tell the wearer to scan with the head and walk slower, and A/B-test a 1.33× zoom only if the AI Box turns out to have one.
-4. **Tilt the camera down ≈10° (adjustable, 0–20°).** With the camera level and its eye at ≈1.8 m, the thermal image shows no ground nearer than ≈5.3 m. At 10° down the nearest visible ground is ≈3.3 m, and at 15° it is ≈2.7 m. The same TNO group reports that restricting the *vertical* field degraded local obstacle avoidance more than restricting the horizontal field (Jansen et al. 2010, known here only from the authors' own one-line summary; primary not retrieved).
+4. **Tilt the camera down ≈10° (adjustable, 0–20°).** With the camera level and its lens at ≈1.65 m (eye height, the adopted placement; the height is an assumption, §1.5), the thermal image shows no ground nearer than ≈4.9 m. At 10° down the nearest visible ground is ≈3.0 m, and at 15° it is ≈2.5 m. (Earlier versions of this file gave 5.3 / 3.3 / 2.7 m; those are for a helmet-top camera at 1.8 m, a position that was not adopted.) The same TNO group reports that restricting the *vertical* field degraded local obstacle avoidance more than restricting the horizontal field (Jansen et al. 2010, known here only from the authors' own one-line summary; primary not retrieved).
 5. **PAL does not limit the thermal image:** 256 columns need ≈2.5 MHz and PAL B/G carries 5 MHz. PAL *does* limit the Infra camera: a 5 MHz channel carries at most ≈390 TVL, so the shop's "1500 TVL" cannot get through. One thermal pixel lands on ≈5×5 HDO2 pixels and subtends 11.8 arcmin of world angle. That is a pixel-limited acuity of about 20/240 at best, against ≈20/25 for a 40° image intensifier NVG (measured in semi-dim illumination with pinhole-capped objectives, so a best case for the NVG too).
 
 ---
@@ -34,7 +38,7 @@
   - Vertical: tan 14.29° / tan 18.6° = **0.76**.
   - Diagonal angle ratio: 46/62.3 = 0.74.
   - **⇒ M ≈ 0.73–0.77, i.e. ≈25% minification**, plus or minus any overscan or crop in the goggles' PAL decoder [A]. A 5% overscan would raise M by about 5%.
-- **Correction to `ZALOZENIA.md` §1b**: "Termo 50°H na ekranie HDO2 46° → ~0.92×" compares a horizontal angle with a diagonal one. The correct figure is ≈0.75× [C]. I have not edited `ZALOZENIA.md`. Adam should decide.
+- **Correction to `ZALOZENIA.md` §1b**: "Termo 50°H na ekranie HDO2 46° → ~0.92×" compares a horizontal angle with a diagonal one. The correct figure is ≈0.75× [C]. I have not edited `ZALOZENIA.md`. Adam should decide. (Since resolved: `ZALOZENIA.md` §1b now shows the 0.92 line struck through, marked as an error, with ≈0.75× in its place.)
 
 ### 1.3 Infra camera → angular magnification
 - Shop specification: B/W, "1500 TVL", **FOV 120°** (axis not stated), M16 F1.0 **2.8 mm**, "0 Lux" [V: bzbuas_tr1-220sl_product_page_en.txt]. The sensor size is not given.
@@ -52,17 +56,18 @@
 
 The two cameras end up with about the same angular resolution in the world. The Infra camera spreads it over ≈1.9× the thermal camera's horizontal angle (96° against 50°; 2.6× the display's 37.5°) and then shows it 0.39× smaller [C]. Infra's figure is only the PAL ceiling; the sensor's own resolution behind it is unknown [A]. For comparison, aviator image intensifier NVGs with a ~40° FOV gave a Snellen acuity "approaching 20/25" [V: CuQlock-Knapp_2001_ARL-TR-2407…pdf, pdf p.16], measured in "semi-dim illumination" with pinhole lens caps on the objectives [V: same page]. The thermal image is therefore roughly 10× coarser than a 40° NVG, which is expected for 256 px across 50° [C]. The real acuity will be worse than the pixel bound because of optics MTF, NETD and PAL resampling [inference].
 
-### 1.5 How much ground the image shows (camera at h ≈ 1.8 m, flat ground)
-The nearest visible ground point is d = h / tan(half-VFOV + camera pitch-down) [C, A: h = 1.8 m for a helmet-top camera].
+### 1.5 How much ground the image shows (camera at h ≈ 1.65 m, flat ground)
+The nearest visible ground point is d = h / tan(half-VFOV + camera pitch-down) [C].
+Inputs: half-VFOV = 37.2°/2 = 18.6° (§1.2); h = 1.65 m [A], the eye height track 01 uses (`01` §5), because the adopted placement puts the thermal lens at eye height on the goggle front, not on top of the helmet (`01` TL;DR 1; `ZALOZENIA.md` §1c.1). The 1.65 m is an assumption, not Adam's measured lens height; d scales in proportion to h. Example: 0° → 1.65 / tan 18.6° = 4.90 m; 10° → 1.65 / tan 28.6° = 3.03 m.
 
-| Camera pitch-down | Thermal (half-V 18.6°): nearest ground | Horizon position in the camera image |
-|---|---|---|
-| 0° | **5.3 m** | centre |
-| 10° | **3.3 m** | 10° above centre (≈7.5° on the display at 0.75×) |
-| 15° | **2.7 m** | 15° above centre |
-| 20° | **2.3 m** | 20° above centre (just past the 18.6° top edge, so the horizon leaves the frame) |
+| Camera pitch-down | Thermal (half-V 18.6°): nearest ground, h = 1.65 m | Same for a helmet-top camera, h = 1.8 m (not adopted; the figures this file gave before 2026-11-11) | Horizon position in the camera image |
+|---|---|---|---|
+| 0° | **4.9 m** | 5.3 m | centre |
+| 10° | **3.0 m** | 3.3 m | 10° above centre (≈7.5° on the display at 0.75×) |
+| 15° | **2.5 m** | 2.7 m | 15° above centre |
+| 20° | **2.1 m** | 2.3 m | 20° above centre (just past the 18.6° top edge, so the horizon leaves the frame) |
 
-The Infra camera (half-V ≈36°, f-θ) sees ground from ≈2.5 m even when level [C]. Walkers also pitch their heads down, and with a head-fixed camera that works the same way [inference]. A fixed downward tilt makes the image horizon sit away from the vestibular horizon. In an HMD (virtual scene), tilting the world up by 5.7° did not change blind-walking distance judgments significantly (84% against 80% baseline, p = 0.86) [V: Kuhl2008_VSS_poster.pdf, p.1]. No retrieved source tests 10–20° tilts, so this needs a bench and field check.
+The Infra camera (half-V ≈36°, f-θ) sees ground from ≈2.3 m even when level (1.65 / tan 36° = 2.27 m; 2.5 m at h = 1.8 m) [C]. Walkers also pitch their heads down, and with a head-fixed camera that works the same way [inference]. A fixed downward tilt makes the image horizon sit away from the vestibular horizon. In an HMD (virtual scene), tilting the world up by 5.7° did not change blind-walking distance judgments significantly (84% against 80% baseline, p = 0.86) [V: Kuhl2008_VSS_poster.pdf, p.1]. No retrieved source tests 10–20° tilts, so this needs a bench and field check.
 
 ### 1.6 Head rotation: retinal slip with a head-fixed camera and display
 The camera and the display both move with the head. A head turn of ω therefore moves the image by M·ω on the display. The VOR counter-rotates the eye by ω ("the VOR gain … is ideally 1" [V: McLean2023…, Background]). **Retinal slip = (1 − M)·ω** [C]:
@@ -81,8 +86,8 @@ All of these studies restricted the view with **optical apertures at 1:1 magnifi
 - **Same group, obstacle crossing (J Motor Behav 2011, summarised in the paper above):** a 40–90° vertical field led to larger toe clearance and step length at unchanged speed. A **25° vertical** field also slowed walking [V: Jansen2011…PMC3127014.txt, Introduction]. (That study restricted the *lower* field; the primary J Motor Behav paper was not retrieved; see MISSING.)
 - **Same group, earlier study (Jansen et al. 2010, Ergon Open J, summarised in the same Introduction):** "restriction of the vertical viewing angle causes greater performance degradation than that of the horizontal angle" for local obstacle avoidance [V: Jansen2011…PMC3127014.txt, Introduction]. This is the authors' one-sentence summary of their own 2010 paper, which was not retrieved; the summary does not say whether the upper or lower field was cut.
 - **Toet et al. 2008 (SPIE):** an 18° vertical field was significantly slower than 48°. Traversal time was flat for horizontal fields from 75° to 180° and rose significantly at 30° [V: Toet2008_FOV_human_locomotion_SPIE.pdf, pdf p.1]. The effect looks "stepwise" rather than gradual [V: same, pdf p.9]. In an indoor "artificial forest" course with simulated-NVG goggles (20/40/60° circular), time fell as FOV grew. Binocular viewing was faster than monocular (one eye occluded) by a constant factor of **1.26** at every FOV [V: same, pdf pp.2–3].
-- **Toet, Jansen & Delleman 2008 (Ergonomics):** every restriction (30°/75°/120° H × 48° V) increased time and number of footsteps. 30° was worst, and 75° and 120° did not differ. The **error count (stumbling or distinct contact) did not change** [V: Toet2008_FOV_manoeuvring_3D_Ergonomics.pdf, pp.385, 390, 392], but participants were told that touching any obstacle was "extremely important" to avoid, and "This instruction served to keep the error count at a low level" [V: same, p.390]. So the flat error count partly reflects the instruction and should not be read as "a narrow field causes no extra collisions". NVG FOVs are "typically limited to 30–40°" [V: same, p.386].
-- **Creem-Regehr et al.:** with a 42°×32° FOV and **free head rotation**, blind-walking distance judgments matched full FOV (slopes 0.93 and 0.92). With head rotation blocked, the slope fell to 0.78 [V: CreemRegehr2003…pdf, pp.7–8]. Monocular viewing equalled binocular for these distance judgments [V: same, p.10]. People in HMDs limit their head movement unless told to "look around" [V: Jansen2011…PMC3127014.txt, Introduction].
+- **Toet, Jansen & Delleman 2008 (Ergonomics):** every restriction (30°/75°/120° H × 48° V) increased time and number of footsteps. 30° was worst, and 75° and 120° did not differ. The **error count (stumbling or distinct contact) did not change** [V: Toet2008_FOV_manoeuvring_3D_Ergonomics.pdf, pp.385, 390, 392], but participants were told that touching any obstacle was "extremely important" to avoid, and "This instruction served to keep the error count at a low level" [V: same, p.390]. So the flat error count partly reflects the instruction and should not be read as "a narrow field causes no extra collisions". NVG FOVs are "typically limited to 30–40°" [V2: same, p.386, citing RCTA Inc. 2001, not retrieved].
+- **Creem-Regehr et al.:** with a 42°×32° FOV and **free head rotation**, blind-walking distance judgments matched full FOV (slopes 0.93 and 0.92). With head rotation blocked, the slope fell to 0.78 [V: CreemRegehr2003…pdf, pp.7–8]. Monocular viewing equalled binocular for these distance judgments [V: same, p.10]. People in HMDs limit their head movement unless told to "look around" [V2: Jansen2011…PMC3127014.txt, Introduction, reporting Creem-Regehr et al. 2005, whose journal version was not retrieved].
 
 **What this means here [inference]:** the field is set by the HDO2 (≈37.5°×28.6°) whatever camera is used. That puts the wearer in the "small field" regime, so expect slower walking, wider steps and bigger clearances. Collisions did not rise in Toet's Ergonomics course, but under an explicit no-contact instruction (above), and Jansen 2011 did not report contacts, so the collision question is open. Mitigations: (a) deliberate head scanning, which should be trained, (b) as much *vertical* coverage of the near ground as possible (§1.5), (c) a slower pace. The system is bi-ocular (one camera to both eyes, no disparity). Toet's 1.26 factor compares one occluded eye with normal binocular vision; a bi-ocular display (both eyes open, identical images) is a different condition, so 1.26× slower traversal of cluttered obstacles is only a rough upper-end guess, not a measured value for this setup [inference from V: Toet SPIE pdf p.3]. For distance judgment, monocular viewing matched binocular in Creem-Regehr's real-world hallway [V: Creem-Regehr p.10], so loss of stereo alone should not distort distance much [inference].
 
@@ -90,7 +95,7 @@ All of these studies restricted the view with **optical apertures at 1:1 magnifi
 
 - **Direction of the effect:** minification makes things look **farther**. In an HMD, minifying by 30% (≈0.7×, close to our 0.75×) raised blind-walking distance from 80% to 98% of true distance [V: Kuhl2008_VSS_poster.pdf, p.1]. Scaling to 0.7× raised it from 76% to 95% in a second study, while verbal reports were not significantly affected (74% and 77%, separate participant groups) [V: Zhang2012…pdf, pdf pp.1, 3, 5, 6]. Proposed mechanisms: smaller visual angle (familiar size), less optic flow per metre walked, and less binocular disparity [V: Zhang2012, pdf p.5]. (The disparity mechanism does not apply to our bi-ocular display, which has none to begin with [inference].)
   - Caveat: these were VR scenes that start out compressed (≈76–80%). In a correctly scaled real scene viewed at 0.75×, the same push toward "farther" would turn into **overestimation**. For stepping, that means obstacles look farther and smaller than they are, so the wearer would tend to step late or too low [inference]. Chapman et al. 2011 (gait with lens magnification) would be the direct test, but the paper was **not retrieved**, so no claim is made about its methods or results.
-- **Large minification still works for collision avoidance:** a 5× minifying HMD increased the judged collision envelope by only 18% (13 cm) [V: Luo_Peli_2007…pdf, p.1]. That was a judgment task on simulated walking (virtual corridor), not real walking, with 10 normally sighted subjects; the control was unaided viewing with one eye patched, and the test condition blocked the see-through view so "only minified images were visible" [V: same, pdf p.1, Abstract]. The device shows edge images on a 16° display [V: same, pdf p.1, Introduction]. In a minified display, "objects appear closer to the heading direction than they really are" [V: same, pdf p.1, Abstract]. Read together, Infra at 0.38× should be usable for **gross orientation and avoiding collisions** but is poor for **foot placement** [inference].
+- **Large minification still works for collision avoidance:** a 5× minifying HMD increased the judged collision envelope by only 18% (13 cm) [V: Luo_Peli_2007…pdf, p.1]. That was a judgment task on simulated walking (virtual corridor), not real walking, with 10 normally sighted subjects; the control was unaided viewing with one eye patched, and the test condition blocked the see-through view so "only minified images were visible" [V: same, pdf p.1, Abstract]. The device shows edge images on a 16° display [V: same, pdf p.2, Introduction]. In a minified display, "objects appear closer to the heading direction than they really are" [V: same, pdf p.1, Abstract]. Read together, Infra at 0.38× should be usable for **gross orientation and avoiding collisions** but is poor for **foot placement** [inference].
 - **Comfort:** discomfort rose with minification already at 2–4% [V: McLean2023, Abstract]. Expect it to be noticeable at 25%, and strong at 61% [inference].
 - **Design norm:** "NVGs are specified to be a unity magnification. That is, the input FOV must match the output FOV to within a few percent." [V: USAARL_HMD2009_…Chapter-17…pdf, p.813].
 
@@ -127,7 +132,7 @@ Range for n pixels across a critical size W: R = W / (n · IFOV) [C].
 | 5 m | 17 mm | 2.9 px | 5.8 px | 12 px |
 | 10 m | 34 mm | 1.5 px | 2.9 px | 5.8 px |
 
-"Distance" is line-of-sight range and the pixel counts are for the object's width *across* the line of sight. Its extent *along* the ground is foreshortened by the depression angle: from 1.8 m eye height, ground at 3 m horizontal is seen at ≈31° down, so a flat 5 cm patch spans only ≈0.5× as many pixels in depth as in width [C]. Geometry is still not what limits stepping hazards: within 5 m a 5 cm object covers ≈3 px or more across [C]. **Thermal contrast is the limit:** the Johnson-type numbers assume a ΔT of at least 2 °C [V: Axis]. Ground, roots and stones at night can be close to isothermal [inference, no source retrieved]. That is the main argument for keeping Infra one button away.
+"Distance" is line-of-sight range and the pixel counts are for the object's width *across* the line of sight. Its extent *along* the ground is foreshortened by the depression angle: from 1.65 m lens height (§1.5), ground at 3 m horizontal is seen at ≈29° down (atan(1.65/3) = 28.8°, sin = 0.48), so a flat 5 cm patch spans only ≈0.5× as many pixels in depth as in width [C]. (From the 1.8 m used earlier: ≈31°, 0.51.) Geometry is still not what limits stepping hazards: within 5 m a 5 cm object covers ≈3 px or more across [C]. **Thermal contrast is the limit:** the Johnson-type numbers assume a ΔT of at least 2 °C [V: Axis]. Ground, roots and stones at night can be close to isothermal [inference, no source retrieved]. That is the main argument for keeping Infra one button away.
 
 ## 7. Recommendation: default camera for walking
 
@@ -136,7 +141,7 @@ Range for n pixels across a critical size W: R = W / (n · IFOV) [C].
 - It works in complete darkness. The Infra camera's "0 Lux" claim [V: shop page] comes with **no IR illuminator in the kit** [V: shop page, "Package Includes"]. Whether Infra shows usable terrain under forest canopy with no moon is unverified, and it may need an 850/940 nm IR flood on the helmet.
 - People: detection out to ≈146 m (50% probability, ΔT ≥ 2 °C) [C/V]. Animals are not covered by the retrieved criteria (critical sizes given only for a person and a vehicle), so no range is claimed for them.
 
-**Infra as a button-held or toggled "wide look":** ≈96°×72° gives the full lower field from ≈2.5 m with the camera level, and good orientation and collision avoidance. It is poor for foot placement at 0.38× with fisheye edges. It is the fallback when thermal contrast is washed out (rain, fog on the lens, isothermal ground) and some light or IR illumination is available.
+**Infra as a button-held or toggled "wide look":** ≈96°×72° gives the full lower field from ≈2.3 m with the camera level (§1.5), and good orientation and collision avoidance. It is poor for foot placement at 0.38× with fisheye edges. It is the fallback when thermal contrast is washed out (rain, fog on the lens, isothermal ground) and some light or IR illumination is available.
 
 **Mounting and use:** camera tilt adjustable over 0–20°, starting at about 10° (§1.5); train deliberate head scanning; walk slower. Expect the first sessions to bring swim and dizziness (§1.6).
 
@@ -237,7 +242,7 @@ arithmetic is correct.** The verifier did not edit `ZALOZENIA.md`.
     unsourced and is now marked [inference]. VOR gain ≈1 now carries the McLean quote. Head-pitch and
     "expect swim" statements are tagged [inference].
 11. *Geometry caveat, §6.* Terrain pixel counts are widths across the line of sight. Depth along the ground
-    is foreshortened by sin(depression), ≈0.5× at 3 m from 1.8 m.
+    is foreshortened by sin(depression), ≈0.5× at 3 m from 1.8 m. (Later: §6 now uses 1.65 m; still ≈0.5×.)
 12. *PAL caveat, §5.* 5 MHz is the nominal broadcast bandwidth; on a wired link the encoder and decoder set
     the real limit. The interlace citation was moved to pdf p.1 and BT.601 got its page (pdf p.9, Table 3).
 13. *Literature over-reach, §8 item 7.* "Only 5.7° has been tested in the literature" became "of the sources
@@ -266,3 +271,20 @@ page or manual; the 576-active-line figure is [A]; the HDO2 decoder behaviour is
 Jansen 2010/2011 and Collewijn findings rest on unretrieved primaries. **This file is a working draft. The
 spec sheets and this file give way to bench measurements (§8), and the cited sources govern over any
 paraphrase here.**
+
+**Later corrections (audit, 2026-11-11):**
+1. *Camera height, TL;DR 4, §1.5, §6, §7.* The nearest-visible-ground figures assumed a helmet-top camera at
+   1.8 m, which contradicts the adopted eye-height placement (`01` TL;DR 1). Recomputed with h = 1.65 m, the
+   height `01` uses: 4.90 / 3.03 / 2.48 / 2.07 m at 0 / 10 / 15 / 20° (was 5.35 / 3.30 / 2.71 / 2.25 m), Infra
+   2.27 m (was 2.48 m). The 1.8 m values stay in the §1.5 table, labelled. The ≈10° recommendation is unchanged.
+   1.65 m is still an assumption [A]; Adam's measured lens height replaces it.
+2. *Tier, §2.* Two findings that the read source reports from an unretrieved study were tagged [V]; now [V2]
+   (NVG FOV 30–40°: Toet citing RCTA Inc. 2001; "look around": Jansen reporting Creem-Regehr et al. 2005).
+   The [V2] tier was added to the tag legend.
+3. *Page, §3.* The Luo & Peli "(FOV=16°)" sentence is on pdf p.2 (Introduction), not pdf p.1; checked per
+   page with `pdftotext -f N -l N`. Fixed here and in the extracts file.
+4. *Missing extract, §1.5.* The Kuhl poster's "5.7 degrees" had no quote in `papers/extracts_fov.md`; added
+   (C1) after re-reading `papers/Kuhl2008_VSS_poster.txt`.
+5. *Stale cross-references, TL;DR 1 and §1.2.* `ZALOZENIA.md` §1b has since been corrected to ≈0.75×; noted in
+   both places.
+6. *Authority.* The status block now states the rule used across tracks 01–05.

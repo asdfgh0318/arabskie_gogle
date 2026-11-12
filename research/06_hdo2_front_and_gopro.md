@@ -1,10 +1,15 @@
 # 06 — HDO2 fan seat, front face and GoPro joint: reconciled design parameters for the CAD
 
-Track 06 (reconciliation of 06a, 06b and 06c). ZALOZENIA.md governs. **Where this file disagrees with a source
-in `papers/`, the source governs.** The corrections found in this check have also been written into 06a, 06b
+Track 06 (reconciliation of 06a, 06b and 06c). Authority: for facts and numbers this file governs over the
+§1b/§1c summary in ZALOZENIA.md; ZALOZENIA.md §4 governs decisions. **Where this file disagrees with a source
+in `papers/`, the source governs.** A later bench measurement governs over all of these. The corrections found in this check have also been written into 06a, 06b
 and 06c (see Verification).
 Status 2026-11-03: **working draft.** Every HDO2 number here comes from product photos, the manual or community
 models. Nobody has measured Adam's goggles yet. §3 lists the measurements that replace the low-confidence rows.
+Updated 2026-11-11 (audit): §0 and §3 now carry the open question U1 from research/09 (fan seat on the shell or
+on the clip-on faceplate); §4 retrieval status brought in line with 09; `camera_mount.scad` line numbers replaced
+by variable names; B5, D3, D4 and D6 corrected. This file summarises 06a/06b/06c and predates research/08 and 09;
+on the points those later notes cover (U1, what was retrieved), they are the newer record.
 
 Tags: [STL] mesh measurement (by 06b/06c, and by me where marked "re-checked"); [img] pixel measurement with
 the scale reference given; [V] manual or datasheet text; [V-comm] community text; [calc]; [inf] inference.
@@ -12,7 +17,7 @@ the scale reference given; [V] manual or datasheet text; [V-comm] community text
 ## 0. Headline: the HDO2 fan is on the TOP, not on the front face
 
 Adam's decision (ZALOZENIA log, 2026-11-03): the fan is removed and the camera mount goes in its place. All the
-evidence puts that place **on the top shell**:
+evidence puts that place **on top of the goggles, not on the front face**:
 - it is centred left to right;
 - its rear edge sits against the black faceplate rim;
 - it sits between the VOL and CH button panels;
@@ -24,15 +29,37 @@ The front face carries only the logo, a parting line and two bay doors. Evidence
 - `manual/img-099.png` (side views);
 - `oscarliang/fatshark-hdo2-fpv-goggles-control-buttons-oled.jpg` (close-up).
 
-06a and 06b reached this independently. Confidence: high.
+06a and 06b reached this independently. Confidence that the seat is on top and not on the front face: high
+(photos and the manual; not checked on Adam's goggles).
 
-**Consequence for `cad/camera_mount.scad` (not edited; outside this task's scope).** `adapter_fan` and
-`hdo2_ghost` model the fan as a **vertical** 25 × 25 face **on the front** of the goggles:
-- l.6: "ramka nasuwana na wentylator 25x25 z przodu HDO2";
-- l.13: "x=0 = przednia płaszczyzna wentylatora";
-- l.211: "wentylator na środku przodu".
+**Open: shell or clip-on faceplate (research/09 U1).** The photos do not show which part carries the 4-screw
+seat, and 06a found no source for it (06a, MISSING). research/09 (2026-11-06) looked for one and left it
+**unresolved**:
+- on the HDO v1 the fan is "built into the face-plate" (09 O3, O4);
+- for the HDO2 a forum post says "the fan on the faceplate" (09 F5, the same post as A6 below), but a 160 × 90 px
+  video frame shows a black block still on the body with the faceplate removed (09 F2), and the fan plugs into
+  the VIN board inside the shell (09 F5);
+- the HDO2 faceplate is held by clips at its sides (09 G3).
 
-That geometry is wrong. The adapter needs:
+If the seat is on the faceplate, the camera adapter hangs on a clip-retained part, which threatens the ≤0.5°
+yaw rule (ZALOZENIA item 2). So "top shell" below means "top of the goggles" until Adam has done the check
+U1 (§3). Nothing in this file settles it.
+
+**Consequence for `cad/camera_mount.scad`: RESOLVED in CAD v0.2** (ZALOZENIA decision log, 2026-11-03:
+"adapter = płytka na 4 śrubach 20×20 + ramię do przodu, kamery wiszą przed przednią ścianą (`cad/`, v0.2)").
+The paragraph below describes the v0.1 file as it was when this note was written and is kept as a record. The
+three quoted comments no longer occur in the file. The current file is v0.6 (`cad/README.md`); its header
+describes `adapter_top` as "płytka na gnieździe wentylatora (4 śruby 20x20)" with the GoPro fingers "przed
+przednią ścianą", and the origin as "środek wzoru śrub wentylatora, z=0 = blat skorupy". The CAD assumes the
+seat is on the shell; U1 above is not reflected in it.
+
+As written on 2026-11-03 (v0.1 file): `adapter_fan` and `hdo2_ghost` model the fan as a **vertical** 25 × 25
+face **on the front** of the goggles:
+- "ramka nasuwana na wentylator 25x25 z przodu HDO2";
+- "x=0 = przednia płaszczyzna wentylatora";
+- "wentylator na środku przodu".
+
+That geometry was wrong. The adapter needed:
 - a **horizontal seat plate** on the top shell;
 - an arm reaching **forward past the front edge**, which is ≈10 mm ahead of the cover's front edge and ≈23 mm
   ahead of the fan centre;
@@ -69,7 +96,7 @@ eyepiece lens centres.
 | B2 | Flatness in plan | setback from the front-most point: ≤0.7 mm within ±35 mm, 2.9–3.6 mm at ±46.7 mm, 12.6–13.4 mm at ±64 mm (re-checked). Arc fit R ≈ 400–560 mm in the central ±23…41 mm | ±0.5 mm | [img] `img-001.png`, lowest object pixel per column (06a §3.1) | medium |
 | B3 | Front face height | ≈47 ± 2 mm in the photo; spec 45.5 (the manual does not label the axes) | — | [img] 06a §1; [V] `papers/FatShark_HDO2_Manual_RevC.txt` l.411, PDF p.11 | medium |
 | B4 | Parting line | ≈20.6 mm below the front-face top edge, running x 528…1430 | ±1 mm | [img] front view y 487–490 | medium |
-| B5 | Keep clear, front | bay doors at both ends: wearer's right 18.5 × 35.7 mm, wearer's left 24 × 35.7 mm. Antenna-port cover Ø≈7 mm on the left door, ≈10 mm below the top edge. Nose notch ≈37 wide × 8 deep. Rounded top edge (no radius known). No buttons or vents on the front | ±4 % | [img] 06a §3.2 | medium |
+| B5 | Keep clear, front | bay doors at both ends: wearer's right 18.5 × 35.7 mm, wearer's left 24 × 35.7 mm. Antenna-port cover on the left door, ≈10 mm below the top edge: **≈7.4 mm wide (foreshortened by the corner) × ≈9.6 mm tall** (07b V2: x 1444–1497, y 405–474, i.e. 53 × 69 px at 0.139 mm/px; 06a read it as Ø≈50 px ≈ 7 mm; corrected here 2026-11-11). Nose notch ≈37 wide × 8 deep. Rounded top edge (no radius known). No buttons or vents on the front | ±4 % | [img] 06a §3.2; antenna cover 07b V2 (`papers/extracts_pod_placement.md`, verification) | medium |
 | B6 | Keep clear, top and sides | VOL/CH buttons from ±21.7 / 22.6 mm; HT and the DVR/Display 5-way joysticks further out (knobs ≈2.5 mm proud). Power and AV ports on the sides (manual p.6). Power/fan button and receiver switch underneath (manual p.5) | — | [img] 06a §3.3; [V] manual p.5–6 | medium |
 
 ### C. Eyepiece axis relative to the fan seat
@@ -81,18 +108,18 @@ eyepiece lens centres.
 | C3 | **Seat (deck) above the lens axis** | **≈23 mm, range 19–29** | +6 / −4 mm | 06a gives 23 ± 4 (C2 minus a 13 mm cover, and the front-view chain "axis at the parting line"). With the cover at 7–13 mm (A11), C2 alone gives 23–29 [calc]. The main open number | **low; measure (M5)** |
 | C4 | Lateral offset, fan centre to lens midline | ≤2 mm | — | A9 | high |
 | C5 | Fore-aft position of the lenses or eyes relative to the fan centre | **not found** | — | no source | none |
-| C6 | Thermal axis if the camera sits directly on the seat | seat + 3 mm plate + 9.75 mm (half of the 19.5 mm body) ≈ **36 mm above the eye axis (≈32–42)**, against ZALOZENIA's 0…+35 window. **So the arm must drop the camera in front of the front face** | — | [calc] C3; camera 19.5 mm (`cad/camera_mount.scad` l.25 `th_w = 19.5`, from track 03) | estimate |
+| C6 | Thermal axis if the camera sits directly on the seat | seat + 3 mm plate + 9.75 mm (half of the 19.5 mm body) ≈ **36 mm above the eye axis (≈32–42)**, against ZALOZENIA's 0…+35 window. **So the arm must drop the camera in front of the front face** | — | [calc] C3; camera 19.5 mm (`cad/camera_mount.scad`, `th_w = 19.5`, from track 03) | estimate |
 
 ### D. GoPro joint (cage = male 2-prong; adapter = female 3-prong)
 
-| # | Parameter | Print value (PETG, MK4) | Real-part estimate (spread) | Source | Conf. | Current CAD (l.53–54) |
+| # | Parameter | Print value (PETG, MK4) | Real-part estimate (spread) | Source | Conf. | Current CAD (`gp_leg`, `gp_slit`, `gp_od`, `gp_hole`, `gp_nut_af`; values unchanged in v0.6) |
 |---|---|---|---|---|---|---|
 | D1 | Male finger | **3.0**; coupon at 2.8 / 2.9 / 3.0 | real gaps 3.0–3.175, median 3.14 | [M] `papers/gopro_dims/measurements_raw.txt` l.8–57 (intervals re-derived) | medium | `gp_leg = 3.0` ✓ |
 | D2 | Male slot | **3.5** | real middle finger 3.0–3.3, median 3.18 | same; ridercz `__gopro_slit_width = 3.5` [`papers/gopro_ridercz_GoPro.scad.txt` l.11] | medium | `gp_slit = 3.3`: **only 0–0.3 mm clearance, flag** |
-| D3 | Female gap | **3.4–3.5** | takes real male fingers of 2.85–3.02 | 06c §2.2, §6 | medium | 3.3 (same `gp_slit`): tight |
-| D4 | Female middle finger | 3.0 | real male slots 3.12–3.3 | 06c §2.2 | low–medium | 3.0 ✓ |
+| D3 | Female gap | **3.4–3.5** | takes male fingers of 2.85–3.02. These are library or claimed values: 2.85 is the MoonCactus library value (`gopro_connector_th2 = 2.85`), and only BeppeITA claims a measured real male part (3.02). No real male finger has been measured here | 06c §2.2, §6 | low–medium | 3.3 (same `gp_slit`): tight |
+| D4 | Female middle finger | 3.0 | male slots 3.12–3.3 (3.12 BeppeITA stated; 3.3 MoonCactus library, calculated) | 06c §2.2 | low–medium | 3.0 ✓ |
 | D5 | Finger-end boss | **Ø15** | 11 of 12 values in 14.55–15.0 | 06c §2.1 (count re-checked) | high | 15 ✓ |
-| D6 | Hole | **Ø5.4–5.5** for M5 | moulded real holes 4.97–5.09 | raw l.10, 19, 29, 39 (re-derived) | high | 5.5 ✓ |
+| D6 | Hole | **Ø5.4–5.5** for M5 | two groups among the models that claim or were checked against a real part: **4.97–5.09** (BeppeITA stated 5.09; #153569 5.08; #95616 5.00; #934640 4.97) and **5.46–5.49** (#579629 5.46; #189423 5.49; #65294 5.48, "verified … using a GoPro Hero 4 case"). No real hole has been measured here | BeppeITA: 06c §2.1 (G5). Raw `measurements_raw.txt`, hole intervals re-derived 2026-11-11: l.10 19.367 − 14.288 = 5.08; l.29 −0.003 − (−5.0) = 5.00; l.39 22.028 − 17.058 = 4.97; l.19 15.431 − 9.970 = 5.46; l.51 2.747 − (−2.747) = 5.49; l.55 11.738 − 6.262 = 5.48. (The earlier text cited l.19 for the 4.97–5.09 range; it is 5.46.) | print value for an M5: high; real-hole Ø: medium (two groups) | 5.5 ✓ |
 | D7 | Hole axis to the nearest base face | ≥ 9 mm (design choice, not a standard) | 9.0–19.5 across designs | 06c §2.1 | — | — |
 | D8 | Screw and nut | M5 × 50 in a printed knob, ≈18 mm of thread out; M5 hex nut pocket 8.1–8.2 AF | — | ridercz l.14; j-h-a README | high (M5) | `gp_nut_af = 8.2` ✓ |
 | D9 | Quick-release buckle and base (only if a GoPro base is used) | buckle rail 27.8–28.0 × 4.05–4.34; base 28.0–28.6 between rails (caliper 1.106 in = 28.09), roof opening 22.0–22.6, overhang 3.0. Slot height 4.19 vs 4.9–5.0 **unresolved** | — | 06c §4–5; freeza36 sketch `instructables_freeza36_sketches/FOO4TUWHD2RTZE2.jpg` (viewed) | medium-high | — |
@@ -123,7 +150,7 @@ eyepiece lens centres.
   fan holes as a thread. It either passes loosely through them or the fan sits over posts (A7). Added to 06a
   §2.2.
 - **V6. 06c, current CAD values misquoted.** 06c said `camera_mount.scad` uses the ridercz 3.0 / **3.5**. The
-  file (l.53) has `gp_slit = 3.3`, which applies to both the male slot and the female gaps. Corrected in 06c's
+  file has `gp_slit = 3.3`, which applies to both the male slot and the female gaps. Corrected in 06c's
   context and bottom line, with the consequence (D2/D3).
 
 **Checked and confirmed (no change needed):**
@@ -169,6 +196,11 @@ eyepiece lens centres.
 
 ## 3. Still to be measured by Adam on the real goggles and parts (in priority order)
 
+- **U1 (first; from research/09 §5, added here 2026-11-11). Faceplate check.** Unclip the faceplate (GetFPV:
+  "gently unclipping the sides", 09 G3; the same text warns that a clip may break if pulled at the wrong angle).
+  Does the fan cover stay on the white shell, or does it come away with the faceplate? This decides whether the
+  camera adapter sits on the shell or on a clip-retained part (§0). Listed first because 09 calls it the most
+  important open item and says it needs checking before the camera mount is finalised (09 TL;DR 1, §5).
 - **M1. Stock fan-cover screw:** thread diameter and pitch (or self-tapping), length, head diameter and head
   height. Decides A2/A3 and the plate's counterbore.
 - **M2. With the cover off:**
@@ -204,11 +236,17 @@ eyepiece lens centres.
 ## 4. Not found (no claim rests on these; ask Adam to fetch them in a browser if wanted)
 
 - **GetFPV "Fatshark dust removal" (HDO2 disassembly)**
-  https://www.getfpv.com/learn/fpv-diy-repairs-and-mods/fatshark-dust-removal/. Cloudflare 403 to curl,
-  WebFetch and the archive (06a). It is the most likely source for M2/M3.
+  https://www.getfpv.com/learn/fpv-diy-repairs-and-mods/fatshark-dust-removal/. Status changed since this note
+  was written: the **text was retrieved on 2026-11-06** through a reader service and is in
+  `papers/hdo2_net/getfpv_fatshark_dust_removal_via_jina.md` (research/09 §6, extracts G1–G6). It gives the
+  faceplate clips, the three shell screws and the tool list; it does not say what is under the fan or which part
+  carries it. The **images are still not retrieved** (Cloudflare 403); 09 §5 lists the URLs for Adam to save from
+  a browser. They are the most likely source for U1 and M2/M3.
 - Thingiverse 128718, 1109091, 1163521, 1242876 and the Xerpocalypse fan shroud; Cults3D 349552, 482718,
   1082638; Thangs and MakerWorld. All returned 403 (06b).
 - Any Fat Shark drawing or CAD of the HDO2 shell; the fan model, thickness, airflow direction and screw thread.
+  (research/08 later measured a GrabCAD community model of the **original HDO**, not the HDO2; research/09 found a
+  replacement-fan listing, "12V 9500RPM", with no size, and the screw type, cross-recess pan head, but no thread.)
 - The genuine GoPro drawing and thumbscrew dimensions; GoPro design patents D829809, D880571 and D908780 (06c).
 
 Files written in this pass: this report; `papers/models_hdo2_measure/manual_p5_topview_300dpi_06recheck.png`;

@@ -1,6 +1,8 @@
 # 06a — HDO2 fan and front geometry from photos and the manual
 
-Track 06a of `arabskie_gogle`. ZALOZENIA.md governs; where this file disagrees with it, ZALOZENIA.md wins.
+Track 06a of `arabskie_gogle`. Authority: for facts and numbers this file governs, and behind it the sources in
+`papers/`; ZALOZENIA.md §4 governs decisions, and its §1b/§1c summary gives way to this file where the two differ.
+A later bench measurement governs over both.
 Status 2026-11-03: working draft. It rests on photo measurements only. Nobody has measured a real HDO2 yet (see §6).
 
 Evidence tags: **[V]** = text read in a downloaded file. **[V-img]** = seen in a downloaded image. **[M]** = my
@@ -19,7 +21,10 @@ the camera has to look forward over the front edge. Confidence **high** [V-img: 
 `manual/img-001.png`; Fat Shark front view `fatshark/fs_hdo2_media4_HDO2_e.jpeg`; Fat Shark 3/4 view
 `fatshark/fs_hdo2_media0_HDO2_1024x1024.jpeg`; Oscar Liang close-up
 `oscarliang/fatshark-hdo2-fpv-goggles-control-buttons-oled.jpg`]. The task text said "front fan". That
-premise is wrong for HDO2.
+premise is wrong for HDO2. *Audit note 2026-11-11:* "high" covers top versus front face only. These photos do
+not show whether the 4-screw seat belongs to the main shell or to the clip-on faceplate (see MISSING, last
+item); research/09 looked for a source and left it unresolved (U1). Read "top shell" here as "top of the
+goggles".
 
 | # | Quantity | Value | Confidence | Basis |
 |---|---|---|---|---|
@@ -34,7 +39,7 @@ premise is wrong for HDO2.
 | 2f | What is under the fan | **Not found.** A third-party replacement plate has a **Ø24.0 mm** through-hole, and a forum calls it "the fan on the faceplate". Air path probably goes to the eye box, not the sealed display chamber. This is an inference | low | [V-comm], [inf] |
 | 3a | Front face in plan | almost flat over the central **±35 mm** (set back ≤0.8 mm; arc fit R ≈ 400–560 mm). Wraps sharply beyond ±45 mm (set back 4 mm at ±47 mm, 14 mm at ±64 mm) | medium | [M] §3.1 |
 | 3b | Front face height | **≈47 ± 2 mm** (spec 45.5 mm). Horizontal parting line ≈21 mm below the top edge | medium | [M] §3.2 |
-| 3c | Front features a mount must avoid | 2 bay doors at the ends (≈18–24 mm wide each). A round antenna-port cover (Ø≈7 mm) on the wearer's left door. Nose notch ≈37 mm wide × 8 mm deep. **No buttons on the front.** | medium | [V-img] [M] §3.2 |
+| 3c | Front features a mount must avoid | 2 bay doors at the ends (≈18–24 mm wide each). A round antenna-port cover (Ø≈7 mm; 07b V2 re-measured it as ≈7.4 mm wide, foreshortened, × ≈9.6 mm tall) on the wearer's left door. Nose notch ≈37 mm wide × 8 mm deep. **No buttons on the front.** | medium | [V-img] [M] §3.2 |
 | 3d | Top deck around the fan | free width **≈±18 mm** from the fan centre to the black button panels. VOL/CH buttons start at **≈±21–22 mm**. Two 5-way joysticks stick up further out | medium | [M] §3.3 |
 | 4a | Lens centre spacing (as photographed) | **58.9 mm** (58.6 mm in a second copy). Fits the IPD range | medium | [M] §2.3 |
 | 4b | **Optical axis vs the fan** | axis is **≈36 ± 4 mm below the cover top** and **≈23 ± 4 mm below the deck** under the fan. That puts the axis at about the front-face parting line and ≈18 mm above the nose-notch apex | medium-low | [M] §2.3–2.4 |
@@ -221,7 +226,7 @@ Display on image right).
 | "FAT SHARK" logo | x 785…1158, y 410…478 | 52 × 9.5 mm (cosmetic, can be covered) |
 | Wearer's right end door (Expansion Bay; power port and AV jack are on the side) | x 395…528, y 365…622 | 18.5 × 35.7 mm |
 | Wearer's left end door (VRx Modular Bay) | x 1430…1605, y 365…622 | 24 × 35.7 mm |
-| Round antenna-port cover on that door | centre (1472, 440), Ø ≈ 50 px | **Ø ≈ 7 mm**, ≈10 mm below the top edge |
+| Round antenna-port cover on that door | centre (1472, 440), Ø ≈ 50 px | **Ø ≈ 7 mm**, ≈10 mm below the top edge. *Superseded:* the 07b verification (V2) measured x 1444–1497, y 405–474, i.e. 53 × 69 px = 7.4 × 9.6 mm, the width foreshortened by the corner; 06 B5 now carries that value |
 | Nose notch | apex (975, 623); edges at y = 680: x ≈ 843 / 1110 | **≈37 mm wide × 8 mm deep** |
 | Clear flat panel between the doors, above the notch | x 528…1430, y 340…623 | **≈125 × 39 mm** |
 | Joystick knobs seen above the top edge | x ≈ 690 and 1275, y ≈ 322–340 | stand ≈2.5 mm proud, ≈40 mm either side of centre |
@@ -284,6 +289,9 @@ covers the VOL/CH buttons. A mount can overhang above them if it leaves finger r
   (WP post 6492). This is the most likely source for what lies under the fan and for the faceplate/shell
   split. Cloudflare returns 403 to curl and WebFetch. web.archive.org blocks both. **Adam: please open it in
   a browser and save the page with images into `papers/hdo2_front_img/`.**
+  *Status 2026-11-06 (research/09 §6):* the **text** was later retrieved through a reader service
+  (`papers/hdo2_net/getfpv_fatshark_dust_removal_via_jina.md`); it does not mention the fan. The **images**
+  are still missing; 09 §5 lists their URLs.
 - GetFPV HDO2 review (https://www.getfpv.com/learn/fpv-product-reviews-and-comparisons/fat-shark-hdo2-fpv-goggles/): same block.
 - The RC Groups post by "Greg" on the HDO2 fan plug (linked from IntoFPV 25283): not followed.
 - Any HDO2 teardown video (YouTube) or reddit/rcgroups post showing the fan removed: none found by search.
@@ -292,3 +300,5 @@ covers the VOL/CH buttons. A mount can overhang above them if it leaves finger r
 - Fat Shark CAD/drawing of the HDO2 shell: none found (same as track 04).
 - No source found for: the fan model, its thickness or airflow direction, the screw thread, the size of the
   opening under the fan, or whether the fan belongs to the removable faceplate or the main shell.
+  (research/09 searched again on 2026-11-06: screw type and a replacement-fan listing found, faceplate versus
+  shell still unresolved, U1.)

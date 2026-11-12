@@ -1,6 +1,7 @@
 # 07c — Control pod on the HDO2: gloved/blind ergonomics, attachment without drilling, cap and knob geometry
 
-**WORKING DRAFT (2026-11-03; adversarially verified the same day, see §9).** Track 07c of `arabskie_gogle`. ZALOZENIA.md governs the project; for every
+**WORKING DRAFT (2026-11-03; adversarially verified the same day, see §9).** Track 07c of `arabskie_gogle`. ZALOZENIA.md §4 governs decisions; for facts
+and numbers this report governs over the §1b/§1c summary in ZALOZENIA.md; for every
 quoted value **the source files in `papers/` govern** over this report, and the verbatim passages are in
 `papers/extracts_pod_ergonomics_mount.md` (cited below as E1.1, E3.2 …). Electronics are not owned and the
 goggles are not measured, so every dimension comes from datasheets, the standard, or `research/06`.
@@ -9,6 +10,42 @@ and the camera-mount assembly check (cage, M5 head) in `cad/camera_mount.scad`.
 
 Tags: **[V: Ex]** read at source (extract number); **[img]** read from a drawing/chart image; **[calc]** my
 arithmetic from tagged inputs; **[A]** assumption; **[design]** my design choice, not sourced.
+
+---
+
+## Status (added 2026-11-11): the layout and the attachment in this note are SUPERSEDED
+
+This note designs a pod bonded with VHB to the **front face, wearer's right**. That is not the design.
+The decisions of 2026-11-03 (ZALOZENIA.md §4) put the pod **in the wearer's-left VRx module bay, in place of the
+bay door**, operated with the left hand in thin gloves (research/07b, candidate b), and reduced the controls to
+**encoder + one CAM button, AUX removed** (pod v0.2). The pod is held by the bay, with **no adhesive**
+(07b §4.2; `cad/README.md`, `pod.scad` section). `cad/pod.scad` implements that and governs the pod's actual
+dimensions. This note was not rewritten; read it with the table below.
+
+| Part of this note | Status |
+|---|---|
+| TL;DR 3, §2 (layout on the front face, three controls on three faces, clearances to the cage and M5 head) | **superseded** by 07b / the bay decision |
+| TL;DR 4, 5, 8; §3.3 (load cases for a 32 × 36 mm VHB pad), §3.4, §3.5 (bonding procedure); test G3 | **not used**: the pod has no bond. The 3M datasheet values quoted in §3.2 and in the extracts remain correct as data, but they size nothing in the current pod |
+| TL;DR 6 (GoPro adhesive base for the pod) | moot |
+| §5 P1–P4 (front-face footprint, depth off the face, VHB bond, hook lip) | **superseded** |
+| §5 P5 (CAM cap) | the position ("forward face", "≥ 6 mm inboard") is superseded. The Ø20 size is not what was built: `pod.scad` has `cam_cap_d = 16` with the comment "07c: ≥15 dla cienkich rękawic", i.e. the 15 mm flash-glove value of §1.1 under the thin-gloves decision, a deliberate deviation from the 19–20 mm in this note |
+| §5 P6 (AUX cap), every AUX passage in §2 and §4.2 | **superseded**: AUX removed in pod v0.2 |
+| §5 P13, the spacing paragraph of §2, V6 (spacing on a 32 × 36 × 24 mm pod with three controls) | **superseded**: different pod, two controls. The MIL separation values themselves (§1.1) stand |
+| §5 P10 and P12 (knob Ø24 × H15 "14 mm off face", skirt gap 2.0) | position superseded; `pod.scad` uses `knob_d = 20`, `knob_h = 10.8`, `knob_gap = 1.2` |
+| §6 G5 (front-face profile y −10…−65, top-edge radius) | needed only if the front-face fallback (07b candidate a) is ever revived |
+| §1 (MIL-STD-1472H and HIDH numbers, glove caveat V1), §1.2 (parts against the criteria) | **current** |
+| §4 (PETG data, strain allowance, knob bore on the D-shaft, flexure-tongue method), §5 P7–P9, P11, P14, P15 | **current as method and source data**; the values actually built are in `pod.scad` (`tongue_a = 14`, `tongue_t = 1.0`, `tongue_w = 10`, `sw_gap = 1.9`, `knob_bore = 6.2`, `knob_flat = 4.55`) and are described in `cad/README.md` |
+| §6 G1, G2, G4 (glove coupon, flexure fatigue, encoder push force) | **current** (07b P6 is the corresponding glove test for the bay pod) |
+
+**Conflict with 07b on the distance to the camera cage, stated explicitly.** §2 and P1 of this note put the pod's
+inboard edge at y −16, "≥ 3 mm clear of the cage's ±12.95 mm". 07b rates exactly that position as a high
+camera-knock risk (its §2 table: cage side "3 mm (at 16)"), and allows the front face only as a fallback with the
+pod at lateral **≥ 28 mm** (a finger gap of ≥ 15 mm) and a rib between pod and cage, because a knock on the cage
+can use up the play of the fan screws (±0.6…1.6° against the 0.5° yaw budget, 07b §2 a). The two notes were
+written in parallel on the same day and were never reconciled. The bay decision makes the conflict moot for the
+current design; if the front-face fallback is revived, 07b's ≥ 28 mm governs, not this note's y −16.
+
+Nothing in either note has been tested on hardware.
 
 ---
 
@@ -128,6 +165,9 @@ actually used [V: E1.1].
 
 ## 2. Pod layout [design]
 
+> **Superseded** (see Status at the top): the pod is in the left VRx bay, not on the front face, and AUX is gone.
+> Kept as a record.
+
 ```
    Front view of HDO2 (wearer facing you is NOT the view; this is looking at the goggles' front)
    CAD y: +62 (wearer's left) ............ 0 ............ −62 (wearer's right)
@@ -140,7 +180,7 @@ actually used [V: E1.1].
         └────────────────────────────────────────────────────────────────────┘
 ```
 
-- **Footprint:** y −16…−48 mm, i.e. ≥ 3 mm clear of the cage's ±12.95 mm (`camera_mount.scad` l.51). Height 36
+- **Footprint:** y −16…−48 mm, i.e. ≥ 3 mm clear of the cage's ±12.95 mm (`camera_mount.scad`, `cage_y`). Height 36
   of the 39 mm flat panel (06 B1). The pod sticks out **≈ 24 mm** from the face.
 - **Contoured base.** The face is flat to ≤ 0.7 mm only within ±35 mm and sets back 2.9–3.6 mm at ±46.7 mm
   [img: 06 B2]. VHB "will not flow to fill gaps" [V: E3.3]. So the pod base must be **printed to the measured
@@ -151,7 +191,9 @@ actually used [V: E1.1].
 - **Knob:** axis lateral (−y), centre ≈ 14 mm off the face, so a Ø24 knob clears the shell by ≥ 2 mm [calc]. Its
   rim reaches ≈ 26 mm off the face, i.e. ≈ 2 mm forward of a 24 mm pod. It hangs out past the pod side from
   y ≈ −50 to −65. The Expansion Bay door starts at y ≈ −62.7 (06a front view x 395…528 at 0.139 mm/px, panel
-  centre x ≈ 979) [img calc, V8], so the knob overlaps the door's span by only ≈ 2 mm, where the face is
+  centre x ≈ 979) [img calc, V8; 07b V3 measures the same edge from the silhouette centre x 998.5 and gets
+  ≈ 65.4 mm on this side — the two lateral references differ by 2.7 mm and are not reconciled, see 07b §0],
+  so the knob overlaps the door's span by only ≈ 2 mm (≈ 0 with 07b's figure), where the face is
   already set back ≈ 12–13 mm (06 B2). The manual requires removing that door to move the power-mode setting
   (`FatShark_HDO2_Manual_RevC.txt` l.161). So the knob must **not bond to the door** and should come off with its
   set screw. Check the door's opening direction on the real goggles.
@@ -183,6 +225,9 @@ actually used [V: E1.1].
   not through the forehead foam as `05` §4.4 assumed. Untested.
 
 ## 3. Attachment to the goggle shell without drilling
+
+> **Not used in the current design** (see Status at the top): the bay pod has no adhesive bond. The datasheet
+> values remain valid as data.
 
 ### 3.1 Shell material
 Not in the HDO2 manual (no hit for material/plastic/PC/ABS). Treat it as **unknown plastic with an unknown
@@ -340,8 +385,10 @@ was retrieved.
 - The tongue is cut into the pod wall, printed **flat in XY**, so it bends along the layers.
 - The tongue is a type-1 rectangular cantilever: y = 0.67 ε l²/h, P = (b h²/6)(E ε/l) [V: E14 Table 1].
   - l = 15 mm, t = 1.0 mm, w = 10 mm, E = 1.6 GPa [V: E13].
-  - **Free gap 1.75 mm** from the cap boss to the B3S plunger (plunger Ø3.3, stands 0.9 mm proud, ±0.3 mm
-    tolerance [img: E12.2]).
+  - **Free gap 1.75 mm** from the cap boss to the B3S plunger (plunger Ø3.3, stands 0.8–0.9 mm proud, ±0.3 mm
+    tolerance [img: E12.2]; 07a §2 widened the earlier 0.9 to 0.8–0.9 because the "0.1" on the drawing is an
+    offset of uncertain meaning, and uses `b3s_plunger_proud` = 0.8. The 0.1 mm is inside the ±0.3 mm that the
+    shim takes up).
   - At contact: strain 1.16 %, spring force ≈ **2.1 N** [calc].
   - **Corrected (V4).** The tongue keeps bending through the 0.25 mm pretravel, so at the click it is deflected
     2.0 mm: spring ≈ **2.36 N** (2.21–2.51 N for E 1.5–1.7 GPa), strain 1.33 %. Add the B3S-1000 operating force,
@@ -376,6 +423,9 @@ was retrieved.
 - Walls ≥ 1.6 mm (4 × 0.4 perimeters); base 2.0 mm (it is the bond face and carries the contour).
 
 ## 5. Parameters for CAD (pod v0.1)
+
+> **Partly superseded** (see Status at the top): P1–P4, P6 and P13 no longer apply; P5, P10 and P12 were changed
+> in `pod.scad`. `pod.scad` governs.
 
 | # | Parameter | Value | Basis |
 |---|---|---|---|
@@ -471,14 +521,16 @@ was retrieved.
 
 Every numeric claim was re-checked against the files in `papers/` (text extracts re-grepped, image-only pages
 and drawings re-opened, chart bar ends re-measured in pixels). Arithmetic was re-run in
-`/tmp/claude-1000/pod_research/verify-ergo/check.py` (scratch, not part of the repo). **Confirmed as quoted:**
+`/tmp/claude-1000/pod_research/verify-ergo/check.py` (a scratch location that was **not preserved**: the file
+no longer exists and there is no copy in the repo, so that re-run cannot be repeated from the repo; the inputs
+and formulas are in the text, so the sums can be redone by hand). **Confirmed as quoted:**
 all MIL-STD-1472H values and page numbers (Fig. 1 p.34, Table III p.32, Table IV p.32–33, §5.1.1.6 p.35,
 §5.1.1.7.4 p.35–36, Table VII p.47, Fig. 6 p.66, §5.1.4.1.1.1.9 p.67, p.70–71 images, Fig. 10 p.72, Fig. 11 p.73,
 §5.1.4.2.1.1 p.80, Fig. 14 p.81; PDF = printed + 17 checked on p.72 and p.81); HIDH quotes and pages
 (969, 1019, 1023, 1122); 5952 TDS 2022 values and page split; 4910 values; glazing-tape ">5" scope; cold
 bulletin −40 °C; design guide p.8/p.17; GoPro text; EC11E catalog rows and drawing No.3; B3S force, pretravel,
 ±0.3 mm note and 4.3/3.4 mm heights; Prusament PETG values; Bayer 70 %/60 % rules and Table 1 formulas; 06 B1,
-B2, A5 values; `camera_mount.scad` l.51 (12.95). Arithmetic confirmed: A, Z, 5.886 N, all §3.3 rows except the
+B2, A5 values; `camera_mount.scad` `cage_y` (12.95). Arithmetic confirmed: A, Z, 5.886 N, all §3.3 rows except the
 snag lever, 1.71 cm²/6.7×, 115/230/345 N, contact strain 1.16 % and 2.06 N, snap strains, serration pitch,
 3.6 %/2.1 % strain allowances.
 

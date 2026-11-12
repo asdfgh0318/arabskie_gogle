@@ -1,7 +1,8 @@
 # 06b — Existing 3D models that attach to the HDO2 fan: geometry for a camera mount in place of the fan
 
-Track 06b of the research for `arabskie_gogle`. ZALOZENIA.md governs; where this report and ZALOZENIA.md
-disagree, ZALOZENIA.md wins. Status 2026-11-03, working draft: every geometric number below comes from
+Track 06b of the research for `arabskie_gogle`. Authority: for facts and numbers this report governs, and behind
+it the sources in `papers/`; ZALOZENIA.md §4 governs decisions, and its §1b/§1c summary gives way to this report
+where the two differ. A later bench measurement governs over both. Status 2026-11-03, working draft: every geometric number below comes from
 community STLs or a manual photo, not from a Fat Shark drawing and not from Adam's goggles. **Measure the real
 HDO2 before printing anything final (section 6).**
 
@@ -17,8 +18,8 @@ Evidence tags: **[STL]** = my measurement of a downloaded mesh (plane slices + c
 
 | # | Finding | Value | Confidence | Source |
 |---|---|---|---|---|
-| 0 | **The HDO2 "front fan" is not on the front face.** It sits on the **top** of the shell, centred left-to-right, with its rear edge against the face-foam frame, between the VOL and CH button panels. Every HDO/HDO2 accessory found mounts there and reaches **forward** over the front edge. | — | high | [V] manual p.5 top view; [img] 262727 img0–4, 1073216 img0, 21866 img1, 1179662 img0–2, 21863 img0–2 |
-| 1 | Screw pattern | **4 holes on a 20.0 × 20.0 mm square** | high: 12 independent parts agree within ±0.02 mm | [STL] |
+| 0 | **The HDO2 "front fan" is not on the front face.** It sits on the **top** of the goggles (main shell or clip-on faceplate: unresolved, research/09 U1), centred left-to-right, with its rear edge against the face-foam frame, between the VOL and CH button panels. Every HDO/HDO2 accessory found mounts there and reaches **forward** over the front edge. | — | high | [V] manual p.5 top view; [img] 262727 img0–4, 1073216 img0, 21866 img1, 1179662 img0–2, 21863 img0–2 |
+| 1 | Screw pattern | **4 holes on a 20.0 × 20.0 mm square** | high as modelled: the 10 part rows of §3.1 with this pattern (12 STL files, counting 1028925 v1/v2/v3 separately) agree within ±0.02 mm. They are **about 7 independent designs, not 12**: 370383 is a remix of 279676; 472353 and 1028925 share one base geometry (§3.4); 21863 and 21866 are by the same author. **Only 3 are tied to an HDO2** in §2 (262727, 1073216, 279676); the others are HDO, HD3, Attitude V6 or unnamed Dominator parts. Not measured on Adam's goggles (corrected 2026-11-11; was "12 independent parts") | [STL] §3.1 |
 | 2 | Clearance hole in fan covers and plates | **Ø2.0 mm** (5 covers or plates). The cup-style holders 279676 and 1073216 use **Ø1.5 mm** holes. | high (as modelled) | [STL]; 96977 Customizer `mount_hole_d = 2` [desc] |
 | 3 | Fan or cover footprint | **25.0 × 25.0 mm square** (all 5 cover replacements); 25 mm fan | high | [STL]; 96977 `fan_side_length = 25` [desc] |
 | 4 | Airflow opening | Ø23.0–24.0 mm round, or 25.2 mm square | high (as modelled) | [STL] |
@@ -249,7 +250,8 @@ Source: `papers/FatShark_HDO2_Manual_RevC.pdf` p.5, rendered at 300 dpi; annotat
 - **MakerWorld** search API and **Thangs** (thangs.com/m/727143, /m/803564): **HTTP 403**. MakerWorld 413931
   ("Fatshark Strap Mount", Dominator 3 per the snippet) was not fetched.
 - **GrabCAD, MyMiniFactory**: blocked (MyMiniFactory 403); GrabCAD not attempted. **No Fat Shark CAD or drawing
-  of the HDO2 shell was found anywhere.**
+  of the HDO2 shell was found anywhere.** *(Later: a GrabCAD community model of the **original HDO**, not the
+  HDO2, was obtained and measured in research/08. The sentence above still holds for the HDO2.)*
 - **PyroPatch 1179662 fan-mount part**: the description talks about a "Fan mount", but the Printables files
   contain only the sleeve (3mf bbox = STEP bbox = 87 × 43 × 5 mm).
 - Not found in any source: stock screw size, fan size and thickness from Fat Shark, boss height, seat tilt,
